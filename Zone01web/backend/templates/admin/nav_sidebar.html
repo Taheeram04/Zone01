@@ -1,0 +1,16 @@
+{% load i18n %}
+<button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}"></button>
+<nav class="sticky" id="nav-sidebar" aria-label="{% translate 'Sidebar' %}">
+    <div class="zone01-sidebar-head">
+        <a href="{% url 'admin:index' %}" class="zone01-sidebar-brand">
+            <span class="zone01-sidebar-title">{{ site_header }}</span>
+        </a>
+        <p class="zone01-sidebar-subtitle">{% translate "Content management" %}</p>
+        <input type="search" id="nav-filter"
+               placeholder="{% translate 'Search models…' %}"
+               aria-label="{% translate 'Filter navigation items' %}">
+    </div>
+    <div class="zone01-sidebar-body">
+        {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+    </div>
+</nav>

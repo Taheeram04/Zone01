@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% load i18n static admin_style_tags %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% include "admin/inc/extrastyle.html" %}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    {% admin_style_css as admin_style_css_path %}
+    <link rel="stylesheet" type="text/css" href="{% static admin_style_css_path %}" />
+    <link rel="stylesheet" href="{% static 'admin/css/zone01_admin.css' %}">
+{% endblock extrahead %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Zone01 CMS') }}{% endblock %}
+
+{% block branding %}
+    <div id="site-name">
+        <a href="{% url 'admin:index' %}" class="zone01-brand">
+            <img src="{% static 'img/zone01-logo.png' %}" alt="Zone01" class="zone01-brand-logo">
+            <span class="zone01-brand-label">CMS</span>
+        </a>
+    </div>
+    {% if user.is_anonymous %}{% include "admin/color_theme_toggle.html" %}{% endif %}
+{% endblock %}
+
+{% block nav-global %}
+    {% if user.is_authenticated %}
+        <nav class="zone01-admin-nav" aria-label="{% translate 'Admin shortcuts' %}">
+            <a href="{% url 'admin:index' %}" class="zone01-nav-link">Dashboard</a>
+            {% url 'admin:cms_page_changelist' as pages_url %}
+            {% if pages_url %}<a href="{{ pages_url }}" class="zone01-nav-link">Pages</a>{% endif %}
+            {% url 'admin:cms_page_add' as add_page_url %}
+            {% if add_page_url %}<a href="{{ add_page_url }}" class="zone01-nav-link zone01-nav-link--accent">+ New page</a>{% endif %}
+            {% url 'admin:filer_folder_changelist' as media_url %}
+            {% if media_url %}<a href="{{ media_url }}" class="zone01-nav-link">Media</a>{% endif %}
+            {% url 'admin:auth_user_changelist' as users_url %}
+            {% if users_url %}<a href="{{ users_url }}" class="zone01-nav-link">Users</a>{% endif %}
+            <a href="/" target="_blank" rel="noopener" class="zone01-nav-link zone01-nav-link--ghost">View site &nearr;</a>
+        </nav>
+    {% endif %}
+{% endblock %}
+
+{% block bodyclass %}{% admin_theme_class %}{% if block.super %} {{ block.super }}{% endif %}{% endblock %}
