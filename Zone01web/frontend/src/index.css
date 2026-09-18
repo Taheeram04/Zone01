@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Colors */
+  --color-primary: #0063F9;
+  --color-secondary: #092C3E;
+  --color-accent: #35D6B4;
+  --color-black-900: #000000;
+  --color-white: #FFFFFF;
+
+  /* Font sizes */
+  --text-hero-h1: 96px;
+  --text-section-headline: 36px;
+  --text-cta-headline: 24px;
+  --text-body-l: 18px;
+  --text-body-m: 14px;
+  --text-body-s: 12px;
+  --text-stat-number: 48px;
+
+  /* Border radius */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  /* Spacing base unit */
+  --spacing: 4px;
+}
+body {
+  font-family: var(--font-sans); 
+}
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(-1.5%, -1.5%);
+  }
+}
+
+.animate-kenburns {
+  animation: kenburns 5.5s ease-out forwards;
+}
