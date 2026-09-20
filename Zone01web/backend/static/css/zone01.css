@@ -1,0 +1,42 @@
+:root {
+    --bs-primary: #0063f9;
+    --bs-primary-rgb: 0, 99, 249;
+    --zone01-primary: #0063f9;
+    --zone01-primary-dark: #0049b8;
+}
+
+.navbar,
+.navbar.bg-dark {
+    background-color: #0063f9 !important;
+}
+
+.bg-primary {
+    background-color: #0063f9 !important;
+}
+
+.text-primary {
+    color: #0063f9 !important;
+}
+
+.border-primary {
+    border-color: #0063f9 !important;
+}
+
+.btn-primary {
+    --bs-btn-bg: #0063f9;
+    --bs-btn-border-color: #0063f9;
+    --bs-btn-hover-bg: #0049b8;
+    --bs-btn-hover-border-color: #0049b8;
+    --bs-btn-active-bg: #0049b8;
+    --bs-btn-active-border-color: #0049b8;
+    --bs-btn-disabled-bg: #0063f9;
+    --bs-btn-disabled-border-color: #0063f9;
+}
+
+a {
+    color: #0063f9;
+}
+
+a:hover {
+    color: #0049b8;
+}
