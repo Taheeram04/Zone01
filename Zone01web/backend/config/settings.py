@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "applicants",
     "events",
     "content",
+    "pages",
 ]
 
 MIDDLEWARE = [
@@ -165,3 +166,10 @@ DJANGOCMS_VERSIONING_ALLOW_DELETING_VERSIONS = True
 SILENCED_SYSTEM_CHECKS = ["treebeard.E001"]
 
 INTERNAL_IPS = ["127.0.0.1"]
+
+# Content API (pages app) — origins allowed to call the JSON endpoints from a
+# browser. Use "*" to allow any origin, or a comma-separated list in the env.
+API_CORS_ALLOWED_ORIGINS = env.list(
+    "API_CORS_ALLOWED_ORIGINS",
+    default=["http://localhost:5173", "http://127.0.0.1:5173"],
+)
