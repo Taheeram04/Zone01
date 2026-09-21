@@ -65,6 +65,9 @@ INSTALLED_APPS = [
     "easy_thumbnails",
     # Local apps
     "core",
+    "applicants",
+    "events",
+    "content",
 ]
 
 MIDDLEWARE = [
