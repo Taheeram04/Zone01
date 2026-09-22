@@ -31,7 +31,9 @@ be edited in place.
 | ---------------- | ---------------------------------------------------------------- |
 | Runtime          | Python 3.12                                                      |
 | Framework        | Django 5.2                                                       |
-| CMS              | django CMS 5 (`cms`) + `menus`                                   |
+| CMS              | django CMS 5 (`cms`) + `menus` (being replaced by Wagtail)       |
+| CMS (migrating)  | Wagtail 8.0 + `wagtail-headless-preview` (runs alongside until Phase 6) |
+| Headless preview | `wagtail-headless-preview` (Phase 3) — generates preview URLs for React dev server at `http://localhost:5173/?content_type=...&token=...` |
 | Content add-ons  | `djangocms-text`, `djangocms-link`, `djangocms-alias`, `djangocms-versioning`, `djangocms-frontend` |
 | Media            | `django-filer` + `easy-thumbnails`                              |
 | Admin theme      | `djangocms-simple-admin-style` + project overrides              |
@@ -86,7 +88,8 @@ backend/
 ├── applicants/              # admissions intake schema
 ├── events/                  # events + registrations schema
 ├── content/                 # editorial articles + taxonomy (app label: site_content)
-├── pages/                   # frontend-facing page sections + JSON API
+├── pages/                   # django CMS page sections + legacy /api/v1 (removed in Phase 6)
+├── cms_pages/               # Wagtail page types + section blocks + /api/v2 (migration target)
 ├── templates/               # CMS page templates + admin overrides
 │   ├── base.html            # frontend page template
 │   └── admin/               # base_site.html, index.html, nav_sidebar.html
@@ -342,6 +345,31 @@ opened from the **page toolbar** (edit mode → *Page sections*).
 **Versioning** — `djangocms-versioning` copies the extension whenever a new page
 version is created, so drafts and the published version keep their own sections.
 
+### 6.5 `cms_pages` — Wagtail pages (migration target)
+
+Replaces `pages` in Phase 6. Page types:
+
+| Model          | Purpose                                                        |
+| -------------- | -------------------------------------------------------------- |
+| `HomePage`     | Site home page (`max_count = 1`).                              |
+| `StandardPage` | Generic content page.                                          |
+
+Both extend an abstract `BaseSectionPage` whose body is a single
+`SectionStreamBlock` StreamField (`sections`), so every page type is built from
+the same blocks:
+
+| Block           | Contents                                    |
+| --------------- | ------------------------------------------- |
+| `HeroBlock`     | title, subtitle, image, CTA text + link     |
+| `RichTextBlock` | formatted copy                              |
+| `ImageBlock`    | image, caption, alt text                    |
+| `CTABlock`      | heading, button text + link                 |
+| `StatGridBlock` | list of `{label, value}` stats              |
+
+`api_fields` exposes `sections` on `/api/v2/` (see §13). `LEGACY_SECTION_MAP` in
+`cms_pages/blocks.py` maps legacy django CMS section keys onto these blocks for
+the Phase 4 content migration.
+
 ---
 
 ## 7. Admin sidebar — detailed reference
@@ -549,55 +577,132 @@ Key URLs: site `/`, admin `/admin/`, health `/healthz`, content API `/api/v1/`.
 
 ## 13. Content API — serving the React frontend
 
-The React app does not consume Django templates. The `pages` app reads the
-**published** django CMS page content and exposes its sections as JSON through
-plain Django views — no DRF dependency.
+The React app does not consume Django templates. During the Wagtail migration
+two APIs run side by side:
 
-### 13.1 Endpoints
+- **`/api/v2/`** — Wagtail's headless API (the migration target, Phase 2).
+- **`/api/v1/`** — the legacy django CMS sections API, retained until cutover
+  (Phase 6).
 
-| Method | Path                     | Description                                  |
-| ------ | ------------------------ | -------------------------------------------- |
-| `GET`  | `/api/v1/pages/`         | Published pages (`slug`, `path`, `title`).   |
-| `GET`  | `/api/v1/pages/<slug>/`  | One published page with its sections.        |
+### 13.1 Wagtail API v2 endpoints
 
-- Only `GET` is allowed (`405` otherwise).
-- Pages without a published version return `404` and are omitted from the list.
-- `<slug>` is the page URL segment (`cms.PageUrl.slug`).
+| Method | Path                      | Description                                    |
+| ------ | ------------------------- | ---------------------------------------------- |
+| `GET`  | `/api/v2/pages/`          | Published (live) pages for the current site.   |
+| `GET`  | `/api/v2/pages/<id>/`     | One published page, including its `sections`.  |
+| `GET`  | `/api/v2/images/`         | Wagtail image library.                         |
+| `GET`  | `/api/v2/documents/`      | Wagtail document library.                      |
 
-### 13.2 Response shape
+Useful query parameters: `?type=cms_pages.HomePage`, `?child_of=<id>`,
+`?descendant_of=<id>`, `?fields=...`, `?search=...`.
 
-`GET /api/v1/pages/home/`:
+- Only **live** pages are served; unpublished pages return `404`.
+- Results are scoped to the Wagtail `Site` for the request host.
+
+### 13.2 Page response shape (detail)
+
+`GET /api/v2/pages/3/`:
 
 ```json
 {
-  "slug": "home",
-  "path": "home",
+  "id": 3,
+  "meta": { "type": "cms_pages.HomePage", "slug": "home", "first_published_at": "..." },
   "title": "Home",
   "sections": [
-    { "key": "hero", "label": "Hero", "content": "Welcome to Zone01 Kisumu" },
-    { "key": "cta", "label": "Call to action", "content": "Apply now" }
+    {
+      "type": "hero",
+      "value": {
+        "title": "Talent is everywhere. Opportunity is not.",
+        "subtitle": "Zone01 Kisumu",
+        "image": null,
+        "cta_text": "Apply now",
+        "cta_link": "/apply"
+      },
+      "id": "08952c67-5f05-494c-b0c8-415eb372bb6b"
+    },
+    {
+      "type": "stat_grid",
+      "value": { "stats": [ { "label": "Graduates", "value": "1,420" } ] },
+      "id": "3d2ba454-67f2-4dbd-bccb-c42e73793fb0"
+    }
   ]
 }
 ```
 
-Every section is an object of exactly three **strings** — `key`, `label`,
-`content`. The frontend switches on `key` to choose a component and styles
-`content` however it likes; the backend stays presentation-free. Sections keep
-the order in which they were saved.
+Sections are Wagtail StreamField blocks serialized as `{type, value, id}`. The
+frontend switches on `type` to choose a component and reads the typed `value`.
+This **replaces** the legacy `{key, label, content}` contract — confirm the final
+shape with the React dev before wiring components (open decision).
 
-### 13.3 CORS
+### 13.3 Legacy API v1 (deprecated)
 
-Browser calls from the React dev server are allowed through
-`settings.API_CORS_ALLOWED_ORIGINS` (env `API_CORS_ALLOWED_ORIGINS`, default
-`http://localhost:5173,http://127.0.0.1:5173`). Set `*` to allow any origin. The
-view echoes the request `Origin` when it is in the allow-list.
+| Method | Path                     | Description                                    |
+| ------ | ------------------------ | ---------------------------------------------- |
+| `GET`  | `/api/v1/pages/`         | Published django CMS pages (`slug`, `path`, `title`). |
+| `GET`  | `/api/v1/pages/<slug>/`  | Sections as `{key, label, content}` strings.   |
 
-### 13.4 Editing content
+Removed in Phase 6.
 
-Log in to the CMS, open a page, enter **edit mode**, and choose **Page sections**
-from the page toolbar. Paste the sections JSON (a list of `key` / `label` /
-`content` objects) and save. Publishing the page makes the sections available to
-the API.
+### 13.4 CORS
+
+All `/api/` responses (v1 and v2) are covered by
+`core.middleware.ApiCorsMiddleware`, using `settings.API_CORS_ALLOWED_ORIGINS`
+(env `API_CORS_ALLOWED_ORIGINS`, default
+`http://localhost:5173,http://127.0.0.1:5173`). Set `*` to allow any origin.
+
+### 13.5 Editing content
+
+Wagtail admin is at **`/cms-admin/`** (temporary prefix). Editors create pages
+and compose sections from the block palette (Hero, Rich text, Image, Call to
+action, Stat grid). django CMS admin remains at `/admin/` until cutover.
+
+### 13.6 Headless preview (Phase 3 — backend complete)
+
+Wagtail `HeadlessPreviewMixin` is mixed into `BaseSectionPage`. The Wagtail
+admin **Preview** button generates a preview URL:
+
+```
+http://localhost:5173/?content_type=cms_pages.homepage&token=<signed-token>
+```
+
+Configuration in `config/settings.py`:
+
+```python
+WAGTAIL_HEADLESS_PREVIEW = {
+    "CLIENT_URLS": {
+        "default": "http://localhost:5173",
+        "localhost": "http://localhost:5173",
+        "127.0.0.1": "http://127.0.0.1:5173",
+    },
+    "REDIRECT_ON_PREVIEW": True,
+    "ENFORCE_TRAILING_SLASH": True,
+}
+```
+
+**Frontend integration required**: The React app must read `content_type` and
+`token` from the query string, call the Wagtail API (`/api/v2/pages/<id>/`
+with the preview token logic), and render the page. Coordinate with the React
+dev for the preview route and sign-off checkpoint.
+
+### 13.7 Content migration inventory (Phase 4)
+
+Current django CMS database state (development):
+
+| Page | Slug | Title | PageSections |
+| ---- | ---- | ----- | ------------ |
+| 7    | home | *(empty)* | 0 |
+| 10   | others | *(empty)* | 0 |
+
+- **2 django CMS pages** exist but have empty titles and no section data.
+- **0 `PageSections` records** — no legacy section JSON to migrate.
+- Migration script (`cms_pages/management/commands/migrate_sections.py`) will
+  be a no-op on current data but is scaffolded for production content.
+
+When production content is imported, the migration will:
+1. Iterate published django CMS pages with `PageSections.sections_json`.
+2. Map legacy keys via `LEGACY_SECTION_MAP` (`hero`, `rich_text`, `image`, `cta`, `stat_grid`).
+3. Create Wagtail `HomePage` / `StandardPage` with `sections` StreamField.
+4. Preserve tree structure (parent/child).
 
 ---
 

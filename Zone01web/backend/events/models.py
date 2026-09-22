@@ -6,7 +6,6 @@ registration record. Open for review before the schema is locked.
 
 from django.db import models
 from django.utils import timezone
-from filer.fields.image import FilerImageField
 
 
 class Event(models.Model):
@@ -34,11 +33,10 @@ class Event(models.Model):
     start_at = models.DateTimeField()
     end_at = models.DateTimeField(null=True, blank=True)
     capacity = models.PositiveIntegerField(null=True, blank=True)
-    cover_image = FilerImageField(
+    cover_image = models.ImageField(
+        upload_to="events/covers/",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        related_name="event_covers",
     )
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     is_featured = models.BooleanField(default=False)

@@ -7,7 +7,6 @@ Open for review before the schema is locked.
 
 from django.conf import settings
 from django.db import models
-from filer.fields.image import FilerImageField
 
 
 class Category(models.Model):
@@ -52,11 +51,10 @@ class Article(models.Model):
     )
     summary = models.CharField(max_length=300, blank=True)
     body = models.TextField(blank=True)
-    cover_image = FilerImageField(
+    cover_image = models.ImageField(
+        upload_to="articles/covers/",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        related_name="article_covers",
     )
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
