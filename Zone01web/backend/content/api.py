@@ -119,7 +119,9 @@ def content_index(request):
         {
             "partners": [serialize_partner(request, p) for p in Partner.objects.all()],
             "staff": [serialize_staff(request, s) for s in StaffMember.objects.all()],
-            "news": [serialize_news(request, n) for n in NewsUpdate.objects.filter(is_published=True)],
+            "news": [
+                serialize_news(request, n) for n in NewsUpdate.objects.filter(is_published=True)
+            ],
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
             ],

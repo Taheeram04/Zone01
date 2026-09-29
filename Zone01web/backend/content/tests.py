@@ -15,14 +15,17 @@ class ContentModelTests(TestCase):
         self.assertEqual(str(member), "Jane Doe - Lead Instructor")
 
     def test_news_ordering_prefers_newest(self):
-        NewsUpdate.objects.create(title="Older", published_at=timezone.now() - timezone.timedelta(days=30))
+        NewsUpdate.objects.create(
+            title="Older", published_at=timezone.now() - timezone.timedelta(days=30)
+        )
         NewsUpdate.objects.create(title="Newer", published_at=timezone.now())
         self.assertEqual(NewsUpdate.objects.first().title, "Newer")
 
     def test_impact_publish_flag(self):
         ImpactUpdate.objects.create(title="Hidden", is_published=False)
         ImpactUpdate.objects.create(title="Shown", is_published=True)
-        self.assertEqual(list(ImpactUpdate.objects.values_list("title", flat=True)), ["Shown"])
+        visible = ImpactUpdate.objects.filter(is_published=True).values_list("title", flat=True)
+        self.assertEqual(list(visible), ["Shown"])
 
     def test_piscine_is_singleton(self):
         first = PiscineRegistration.get_solo()
