@@ -95,7 +95,9 @@ curl http://localhost:8000/api/content/
 
 - **Templates** live in `templates/`. `base.html` extends django CMS's Bootstrap 5
   base and defines the `"Page Content"` placeholder. Templates are selectable per
-  page via `CMS_TEMPLATES` in `config/settings.py`.
+  page via `CMS_TEMPLATES` in `config/settings.py`. See
+  [`templates/README.md`](templates/README.md) for a full guide to the CMS page
+  template.
 - **Pages** are created in the admin and can be arranged into a menu tree.
 - **Plugins** (text, image, card, grid, accordion, etc.) are provided by
   `djangocms-text` and `djangocms-frontend` and are added to placeholders in the
@@ -103,9 +105,11 @@ curl http://localhost:8000/api/content/
 - **Media** uploads are managed by `django-filer` and served from `media/`.
 - **Versioning** is provided by `djangocms-versioning`, so drafts and published
   versions are tracked separately.
-- **Admin header** is customised in `templates/admin/base_site.html` (brand,
-  logo, and quick links to Pages, Media, Users) and styled by
-  `static/admin/css/zone01_admin.css`.
+- **Admin theming** uses `djangocms-simple-admin-style` on top of Django's
+  built-in admin. The former custom `templates/admin/` overrides and
+  `static/admin/css/zone01_admin.css` theme were removed, so the admin now
+  renders with the default simple-admin style and the branding set in
+  `config/urls.py`.
 
 To add a placeholder, edit `templates/base.html` and use:
 
@@ -121,8 +125,8 @@ backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
 ├── core/                 # health endpoint
-├── templates/            # CMS page templates (base.html, ...)
-├── static/               # project static assets
+├── templates/            # CMS page templates (base.html) + README.md guide
+├── static/               # static assets (img/); no project CSS
 ├── requirements.txt
 └── requirements-dev.txt
 ```
