@@ -1,5 +1,5 @@
 // components/footer.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaFacebook, FaXTwitter, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa6';
 import { Container } from './layout.jsx';
 import Button from './button.jsx';
