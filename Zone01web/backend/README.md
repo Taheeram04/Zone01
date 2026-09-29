@@ -58,8 +58,13 @@ rows directly; the changes appear on the website and the JSON API immediately.
 | **Partners**               | name, logo, information, order                           |
 | **Staff**                  | name, role, photo, bio, order                            |
 | **News**                   | title (name), image, information, publish toggle, order  |
-| **Impact**                 | title (name), image, information, publish toggle, order  |
+| **Impact**                 | title (name), image, information, report PDF, publish toggle, order |
 | **Next piscine registration** | on/off toggle, next piscine date, optional message    |
+
+Each **Impact** row may attach an optional PDF report. Upload one with the file
+picker, select **Clear** to remove it, or pick a different file to replace it.
+The API exposes the download link as `report` (with `report_name`) so the
+frontend can offer a "Download report" action on that impact story.
 
 The **Next piscine registration** row is a singleton: toggle `is_active` on to
 show the alert under the *Apply now* button on the frontend, and off to hide it.
@@ -76,7 +81,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
-| `/api/impact/`     | published impact list                                |
+| `/api/impact/`     | published impact list (includes `report` download URL)|
 | `/api/piscine/`    | next-piscine toggle, date and message                |
 
 Example:

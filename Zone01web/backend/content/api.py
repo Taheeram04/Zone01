@@ -20,12 +20,12 @@ from django.views.decorators.http import require_GET
 from content.models import ImpactUpdate, NewsUpdate, Partner, PiscineRegistration, StaffMember
 
 
-def _image_url(request, image):
-    """Return an absolute image URL, or ``None`` when there is no image."""
-    if not image:
+def _media_url(request, media):
+    """Return an absolute URL for an image or file, or ``None`` when absent."""
+    if not media:
         return None
     try:
-        return request.build_absolute_uri(image.url)
+        return request.build_absolute_uri(media.url)
     except ValueError:
         return None
 
@@ -34,7 +34,7 @@ def serialize_partner(request, partner):
     return {
         "id": partner.id,
         "name": partner.name,
-        "logo": _image_url(request, partner.logo),
+        "logo": _media_url(request, partner.logo),
         "information": partner.information,
         "order": partner.order,
     }
@@ -45,7 +45,7 @@ def serialize_staff(request, member):
         "id": member.id,
         "name": member.name,
         "role": member.role,
-        "photo": _image_url(request, member.photo),
+        "photo": _media_url(request, member.photo),
         "bio": member.bio,
         "order": member.order,
     }
@@ -55,7 +55,7 @@ def serialize_news(request, item):
     return {
         "id": item.id,
         "title": item.title,
-        "image": _image_url(request, item.image),
+        "image": _media_url(request, item.image),
         "information": item.information,
         "published_at": item.published_at.isoformat() if item.published_at else None,
         "order": item.order,
@@ -63,11 +63,14 @@ def serialize_news(request, item):
 
 
 def serialize_impact(request, item):
+    report_url = _media_url(request, item.report)
     return {
         "id": item.id,
         "title": item.title,
-        "image": _image_url(request, item.image),
+        "image": _media_url(request, item.image),
         "information": item.information,
+        "report": report_url,
+        "report_name": item.report.name if report_url and item.report else None,
         "order": item.order,
     }
 

@@ -5,7 +5,7 @@ Each model backs one block of the public website:
 * :class:`Partner`      - partner logos shown in the "Our partners" strip.
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
-* :class:`ImpactUpdate` - impact stories (title, image, information).
+* :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
 * :class:`PiscineRegistration` - the "Apply now" alert banner and its date.
 
 The same data is exposed as JSON under ``/api/`` so the React frontend can
@@ -14,6 +14,7 @@ consume it, whether it runs locally or on a hosted domain.
 
 from django.db import models
 from django.utils import timezone
+from filer.fields.file import FilerFileField
 from filer.fields.image import FilerImageField
 
 
@@ -106,6 +107,13 @@ class ImpactUpdate(OrderedContent):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="impact_images",
+    )
+    report = FilerFileField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="impact_reports",
+        help_text="Optional PDF report visitors can download from this impact story.",
     )
     information = models.TextField(blank=True, help_text="The impact story.")
     is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
