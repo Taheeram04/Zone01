@@ -15,6 +15,7 @@ admin.site.index_title = "Content dashboard"
 
 urlpatterns = [
     path("healthz", health, name="health"),
+    path("api/", include("content.urls")),
 ] + i18n_patterns(
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("admin/", admin.site.urls),
