@@ -69,13 +69,47 @@ To add a placeholder, edit `templates/base.html` and use:
 {% placeholder "Section Name" %}
 ```
 
+## Admin search
+
+Changelist search is backed by PostgreSQL's `pg_trgm` extension:
+
+- `core/lookups.py` renders `icontains` as `ILIKE`. Django's default
+  `UPPER(col) LIKE UPPER('%term%')` cannot use a trigram index, which silently
+  turned every search into a sequential scan.
+- `core/indexes.py` provides `GinTrigramIndex`, a `GinIndex` with the
+  `gin_trgm_ops` operator class. Searchable models declare one per searched
+  column in `Meta.indexes`; migrations enable the extension first.
+- `core/search.py` provides `TrigramSearchMixin`, which adds a `SIMILARITY()`
+  score so the closest match is listed first instead of falling back to the
+  model's default ("newest first") ordering. An explicit column sort, and any
+  database other than PostgreSQL, leave the default behaviour untouched.
+
+Ranking only reorders results — the set of matches is exactly what Django's own
+search returns. Measured on 220k applicants, a selective search went from a
+426 ms parallel sequential scan to a 31 ms bitmap index scan.
+
+### Making a field searchable
+
+1. Add the column to the admin's `search_fields` (and `trigram_search_fields`
+   if you want it scored).
+2. Add a `GinTrigramIndex` for that column in the model's `Meta.indexes`.
+3. `make makemigrations && make migrate`.
+
+Steps 1 and 2 must stay in step: the admin ORs the term across every search
+field, so a single unindexed column makes PostgreSQL scan the whole table for
+every query. `SearchIndexCoverageTests` in `core/tests.py` fails the build if
+they drift apart.
+
+Terms shorter than three characters cannot form a trigram, so they still fall
+back to a sequential scan — this is a property of `pg_trgm`, not of the setup.
+
 ## Project layout
 
 ```
 backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
-├── core/                 # health endpoint
+├── core/                 # health endpoint, admin search and index helpers
 ├── templates/            # CMS page templates (base.html, ...)
 ├── static/               # project static assets
 ├── requirements.txt
