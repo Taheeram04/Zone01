@@ -9,6 +9,8 @@ from django.conf import settings
 from django.db import models
 from filer.fields.image import FilerImageField
 
+from core.indexes import GinTrigramIndex
+
 
 class Category(models.Model):
     """A taxonomy term for grouping articles."""
@@ -20,6 +22,13 @@ class Category(models.Model):
     class Meta:
         ordering = ["name"]
         verbose_name_plural = "categories"
+        # One GIN/trigram index per column searched in the admin: see
+        # core.indexes.GinTrigramIndex for why these are single-column.
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="category_name_trgm"),
+            GinTrigramIndex(fields=["slug"], name="category_slug_trgm"),
+            GinTrigramIndex(fields=["description"], name="category_description_trgm"),
+        ]
 
     def __str__(self):
         return self.name
@@ -67,6 +76,12 @@ class Article(models.Model):
         ordering = ["-published_at", "-created_at"]
         indexes = [
             models.Index(fields=["status", "published_at"]),
+            # One GIN/trigram index per column searched in the admin: see
+            # core.indexes.GinTrigramIndex for why these are single-column.
+            GinTrigramIndex(fields=["title"], name="article_title_trgm"),
+            GinTrigramIndex(fields=["summary"], name="article_summary_trgm"),
+            GinTrigramIndex(fields=["body"], name="article_body_trgm"),
+            GinTrigramIndex(fields=["slug"], name="article_slug_trgm"),
         ]
 
     def __str__(self):
