@@ -31,6 +31,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    # PostgreSQL lookups (search, trigram_similar, unaccent, ...) used by admin
+    # search; see core.search and core.indexes.
+    "django.contrib.postgres",
     # django CMS core
     "cms",
     "menus",
