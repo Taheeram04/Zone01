@@ -1,7 +1,7 @@
 """Django admin configuration for site content.
 
 Each model gets a compact, image-aware admin so editors can add and delete
-partners, staff, news and impact updates without touching code.
+partners, staff, news, impact updates and frontend pages without touching code.
 """
 
 from django.contrib import admin
@@ -10,6 +10,8 @@ from django.utils.html import format_html
 from content.models import (
     ImpactUpdate,
     NewsUpdate,
+    Page,
+    PageSection,
     Partner,
     PiscineRegistration,
     StaffMember,
@@ -101,3 +103,37 @@ class PiscineRegistrationAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class PageSectionInline(admin.StackedInline):
+    """Edit a page's ordered sections right on the page form."""
+
+    model = PageSection
+    extra = 1
+    fields = (
+        "order",
+        "heading",
+        "subheading",
+        "body",
+        "image",
+        "cta_label",
+        "cta_url",
+    )
+    ordering = ("order", "id")
+    show_change_link = True
+
+
+@admin.register(Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "is_published", "section_count", "order", "updated_at")
+    list_editable = ("is_published", "order")
+    list_filter = ("is_published",)
+    search_fields = ("title", "slug", "subtitle", "meta_description")
+    readonly_fields = ("updated_at",)
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (PageSectionInline,)
+    ordering = ("order", "title")
+
+    @admin.display(description="Sections")
+    def section_count(self, obj):
+        return obj.sections.count()
