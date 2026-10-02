@@ -2,12 +2,21 @@ import shutil
 import tempfile
 
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from filer.models import File
 
-from content.models import ImpactUpdate, NewsUpdate, Partner, PiscineRegistration, StaffMember
+from content.models import (
+    Article,
+    Category,
+    ImpactUpdate,
+    NewsUpdate,
+    Partner,
+    PiscineRegistration,
+    StaffMember,
+)
 
 
 class ContentModelTests(TestCase):
@@ -118,3 +127,57 @@ class ImpactReportTests(TestCase):
 
         response = self.client.get(reverse("content_api:impact-list"))
         self.assertIsNone(response.json()["results"][0]["report"])
+
+
+class CategoryModelTests(TestCase):
+    def test_str_is_the_name(self):
+        self.assertEqual(str(Category.objects.create(name="News", slug="news")), "News")
+
+    def test_slug_is_unique(self):
+        Category.objects.create(name="News", slug="news")
+
+        with self.assertRaises(IntegrityError):
+            Category.objects.create(name="News again", slug="news")
+
+
+class ArticleModelTests(TestCase):
+    def test_category_relation(self):
+        category = Category.objects.create(name="News", slug="news")
+        article = Article.objects.create(title="Hello", slug="hello", category=category)
+
+        self.assertEqual(article.category, category)
+        self.assertIn(article, category.articles.all())
+        self.assertEqual(article.status, Article.Status.DRAFT)
+
+    def test_defaults(self):
+        article = Article.objects.create(title="Hello", slug="hello")
+
+        self.assertIsNone(article.category)
+        self.assertIsNone(article.author)
+        self.assertIsNone(article.published_at)
+        self.assertEqual(article.status, Article.Status.DRAFT)
+
+    def test_ordering_prefers_newest_published(self):
+        older = Article.objects.create(
+            title="Older",
+            slug="older",
+            status=Article.Status.PUBLISHED,
+            published_at=timezone.now() - timezone.timedelta(days=30),
+        )
+        newer = Article.objects.create(
+            title="Newer",
+            slug="newer",
+            status=Article.Status.PUBLISHED,
+            published_at=timezone.now(),
+        )
+
+        self.assertEqual(list(Article.objects.all()), [newer, older])
+
+    def test_category_is_kept_when_deleted(self):
+        category = Category.objects.create(name="News", slug="news")
+        article = Article.objects.create(title="Hello", slug="hello", category=category)
+
+        category.delete()
+        article.refresh_from_db()
+
+        self.assertIsNone(article.category)
