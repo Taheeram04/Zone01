@@ -137,7 +137,7 @@ LANGUAGES = [
     ("en", _("English")),
 ]
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_THOUSAND_SEPARATOR = True
 USE_TZ = True

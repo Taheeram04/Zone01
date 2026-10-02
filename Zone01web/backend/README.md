@@ -69,13 +69,30 @@ To add a placeholder, edit `templates/base.html` and use:
 {% placeholder "Section Name" %}
 ```
 
+## Homepage settings
+
+The homepage **"Next Piscine"** countdown is driven from the CMS:
+**Admin → Core → Piscine countdown**. Set the local start date and time
+(`Africa/Nairobi`), and the countdown is shown on the site until that moment —
+after which it switches itself off automatically. Uncheck *is enabled* to hide
+it at any time.
+
+The React frontend reads it from a small public JSON endpoint:
+
+```bash
+curl http://localhost:8000/api/piscine/
+# {"label": "Next Piscine", "starts_at": "2026-10-12T09:00:00+03:00", "is_active": true, ...}
+```
+
+`is_active` is only `true` while the piscine is enabled and still in the future.
+
 ## Project layout
 
 ```
 backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
-├── core/                 # health endpoint
+├── core/                 # health endpoint, piscine countdown setting + API
 ├── templates/            # CMS page templates (base.html, ...)
 ├── static/               # project static assets
 ├── requirements.txt
