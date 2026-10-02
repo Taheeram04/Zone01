@@ -1,7 +1,7 @@
 // components/navbar.jsx
 import { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import logo from '../assets/mainlogo.png';
@@ -17,6 +17,7 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showDonateModal, setShowDonateModal] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -47,7 +48,11 @@ export default function Navbar() {
       </li>
     </ul>
 
-    <Button variant="primary" className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
+    <Button
+      variant="primary"
+      onClick={() => navigate('/apply')}
+      className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap"
+    >
       Apply
     </Button>
   </div>
@@ -78,7 +83,14 @@ export default function Navbar() {
                   </button>
                 </li>
                 <li>
-                  <Button variant="primary" className="w-full rounded-full text-body-s">
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate('/apply');
+                    }}
+                    className="w-full rounded-full text-body-s"
+                  >
                     Apply
                   </Button>
                 </li>

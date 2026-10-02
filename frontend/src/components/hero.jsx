@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaWhatsapp } from 'react-icons/fa6';
 import Button from './button.jsx';
@@ -134,6 +135,7 @@ const Hero = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const sectionRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -248,7 +250,9 @@ const Hero = () => {
             transition={{ duration: 0.7, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap items-center gap-3 sm:gap-4"
           >
-            <Button data-magnetic variant="primary">Apply now</Button>
+            <Button data-magnetic variant="primary" onClick={() => navigate('/apply')}>
+              Apply now
+            </Button>
             <Button
               data-magnetic
               variant="outline"
