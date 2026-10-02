@@ -70,15 +70,13 @@ const PiscineCountdown = () => {
     fetch(`${API_BASE}/api/piscine/`, { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`HTTP ${res.status}`))))
       .then((data) => {
-        if (data.is_active && data.starts_at) {
-          setConfig({
-            active: true,
-            label: data.label || 'Next Piscine',
-            startsAt: new Date(data.starts_at),
-          });
-        } else {
-          setConfig({ active: false, label: data.label || 'Next Piscine', startsAt: null });
-        }
+        // Content API returns { is_active, next_piscine_date, message }.
+        // The piscine starts at 09:00 EAT on the chosen date.
+        const startsAt = data.next_piscine_date
+          ? new Date(`${data.next_piscine_date}T09:00:00+03:00`)
+          : null;
+        const active = Boolean(data.is_active && startsAt && startsAt.getTime() > Date.now());
+        setConfig({ active, label: data.message || 'Next Piscine', startsAt });
       })
       .catch(() => {
         const startsAt = new Date(FALLBACK_PISCINE_AT);
