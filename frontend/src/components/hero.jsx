@@ -35,8 +35,35 @@ const generateNodes = () => {
 const STATIC_NODES = generateNodes();
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-// Only used if the backend is unreachable, so the homepage never breaks.
+// Refresh cadence so CMS edits (and the D-day switch-off) reach an open tab.
+const PISCINE_REFRESH_MS = 60_000;
+// Used only when the API can't be reached, so the homepage never breaks.
 const FALLBACK_PISCINE_AT = '2026-10-12T09:00:00+03:00';
+
+// Normalise the piscine payload. Handles the content API's
+// { is_active, next_piscine_date, message } plus an optional explicit
+// { starts_at, label } so a future CMS time field needs no frontend change.
+const parsePiscineConfig = (data) => {
+  let startsAt = null;
+  if (data.starts_at) {
+    startsAt = new Date(data.starts_at);
+  } else if (data.next_piscine_date) {
+    startsAt = new Date(`${data.next_piscine_date}T09:00:00+03:00`);
+  }
+
+  const valid = startsAt !== null && !Number.isNaN(startsAt.getTime());
+  return {
+    active: Boolean(data.is_active && valid),
+    label: data.label || data.message || 'Next Piscine',
+    startsAt: valid ? startsAt : null,
+  };
+};
+
+const fallbackPiscineConfig = () => ({
+  active: true,
+  label: 'Next Piscine',
+  startsAt: new Date(FALLBACK_PISCINE_AT),
+});
 
 const formatTimeLeft = (ms) => {
   const diff = Math.max(0, ms);
@@ -63,31 +90,39 @@ const PiscineCountdown = () => {
   const [config, setConfig] = useState(null);
   const [now, setNow] = useState(() => Date.now());
 
-  // Load the target date from the Django CMS (editable in the admin).
+  // Load the target from the Django CMS and refresh it periodically.
   useEffect(() => {
     const controller = new AbortController();
+    let timer;
 
-    fetch(`${API_BASE}/api/piscine/`, { signal: controller.signal })
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`HTTP ${res.status}`))))
-      .then((data) => {
-        // Content API returns { is_active, next_piscine_date, message }.
-        // The piscine starts at 09:00 EAT on the chosen date.
-        const startsAt = data.next_piscine_date
-          ? new Date(`${data.next_piscine_date}T09:00:00+03:00`)
-          : null;
-        const active = Boolean(data.is_active && startsAt && startsAt.getTime() > Date.now());
-        setConfig({ active, label: data.message || 'Next Piscine', startsAt });
-      })
-      .catch(() => {
-        const startsAt = new Date(FALLBACK_PISCINE_AT);
-        setConfig({
-          active: startsAt.getTime() > Date.now(),
-          label: 'Next Piscine',
-          startsAt,
-        });
-      });
+    const load = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/piscine/`, { signal: controller.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setConfig(parsePiscineConfig(await res.json()));
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        // Keep the last good value. In development, fall back to a demo date
+        // so the component is visible without the backend; in production we
+        // respect the CMS and stay hidden when the API can't be reached.
+        setConfig((prev) => prev ?? (import.meta.env.DEV ? fallbackPiscineConfig() : null));
+      }
+    };
 
-    return () => controller.abort();
+    load();
+    timer = setInterval(load, PISCINE_REFRESH_MS);
+
+    // Re-check when the tab regains focus (e.g. overnight on D-day).
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') load();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+      controller.abort();
+    };
   }, []);
 
   // Keep the clock ticking every second.

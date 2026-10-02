@@ -93,7 +93,16 @@ class ImpactUpdateAdmin(ImagePreviewMixin, admin.ModelAdmin):
 
 @admin.register(PiscineRegistration)
 class PiscineRegistrationAdmin(admin.ModelAdmin):
-    list_display = ("is_active", "next_piscine_date", "updated_at")
+    list_display = ("is_active", "live", "next_piscine_date", "updated_at")
+    list_display_links = ("next_piscine_date",)
+    # Flip the countdown on/off straight from the list.
+    list_editable = ("is_active",)
+    readonly_fields = ("updated_at",)
+
+    @admin.display(boolean=True, description="Live now")
+    def live(self, obj):
+        # True while the toggle is on and the 09:00 EAT start is still ahead.
+        return obj.is_live
 
     def has_add_permission(self, request):
         # Only ever one settings row.

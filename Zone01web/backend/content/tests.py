@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+from datetime import timedelta
 
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
@@ -72,7 +73,7 @@ class ContentApiTests(TestCase):
     def test_piscine_detail_exposes_date_and_toggle(self):
         piscine = PiscineRegistration.get_solo()
         piscine.is_active = True
-        piscine.next_piscine_date = "2025-10-06"
+        piscine.next_piscine_date = timezone.localdate() + timedelta(days=30)
         piscine.save()
 
         response = self.client.get(reverse("content_api:piscine-detail"))
@@ -80,7 +81,24 @@ class ContentApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         payload = response.json()
         self.assertTrue(payload["is_active"])
-        self.assertEqual(payload["next_piscine_date"], "2025-10-06")
+        self.assertEqual(payload["next_piscine_date"], piscine.next_piscine_date.isoformat())
+        self.assertIsNotNone(payload["starts_at"])
+        self.assertEqual(payload["label"], "Next Piscine")
+
+    def test_piscine_switches_off_after_its_start_time(self):
+        piscine = PiscineRegistration.get_solo()
+        piscine.is_active = True
+        piscine.next_piscine_date = timezone.localdate() - timedelta(days=1)
+        piscine.save()
+
+        response = self.client.get(reverse("content_api:piscine-detail"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()["is_active"])
+        # The admin toggle is switched off automatically so it must be
+        # re-activated for the next piscine.
+        piscine.refresh_from_db()
+        self.assertFalse(piscine.is_active)
 
 
 class ImpactReportTests(TestCase):
