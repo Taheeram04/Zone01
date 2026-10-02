@@ -90,6 +90,32 @@ Example:
 curl http://localhost:8000/api/content/
 ```
 
+## Application form API
+
+The public application form is submitted with `POST /api/apply/`. The server
+validates the payload, stores it as an `Applicant` (status `submitted`) and
+returns a reference for the applicant. Review submissions under
+**Admin → Applicants**.
+
+Accepted fields: `first_name`\*, `last_name`\*, `email`\*, `phone`,
+`date_of_birth`, `gender`, `county`, `education_level`, `current_occupation`,
+`motivation`, `portfolio_url`, `github_url`, `linkedin_url`, `referral_source`
+and `consent`\* (must be true). Fields marked \* are required.
+
+| Response | Meaning                                                        |
+| -------- | -------------------------------------------------------------- |
+| `201`    | Stored — returns `{"ok": true, "id": …, "reference": "Z01-…"}` |
+| `400`    | Validation failed — returns `{"ok": false, "errors": {…}}`     |
+| `409`    | An application with that email already exists                  |
+
+```bash
+curl -X POST http://localhost:8000/api/apply/ \
+  -H "Content-Type: application/json" \
+  -d '{"first_name":"Amina","last_name":"Otieno","email":"amina@example.com","consent":true}'
+```
+
+JSON and form-encoded bodies are both accepted. CORS is controlled by
+`API_CORS_ALLOWED_ORIGINS`, so add the frontend origin there.
 
 ## How the CMS is wired
 
