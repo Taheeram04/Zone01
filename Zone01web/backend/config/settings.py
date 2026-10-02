@@ -24,6 +24,7 @@ APP_VERSION = env("APP_VERSION", default="dev")
 
 INSTALLED_APPS = [
     "djangocms_simple_admin_style",
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -72,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -165,3 +167,22 @@ DJANGOCMS_VERSIONING_ALLOW_DELETING_VERSIONS = True
 SILENCED_SYSTEM_CHECKS = ["treebeard.E001"]
 
 INTERNAL_IPS = ["127.0.0.1"]
+
+# ---------------------------------------------------------------------------
+# Frontend / API integration
+# ---------------------------------------------------------------------------
+# The React frontend is served separately (Vite in development, a static host
+# in production) and reads content from the JSON API under /api/.
+#
+# API_CORS_ALLOWED_ORIGINS accepts full origins, local or hosted, e.g.
+#   http://localhost:5173,https://zone01-kisumu.org
+# Set API_CORS_ALLOW_ALL=true only for quick local experiments.
+API_CORS_ALLOW_ALL = env.bool("API_CORS_ALLOW_ALL", default=False)
+API_CORS_ALLOWED_ORIGINS = env.list(
+    "API_CORS_ALLOWED_ORIGINS",
+    default=["http://localhost:5173", "http://127.0.0.1:5173"],
+)
+
+CORS_ALLOW_ALL_ORIGINS = API_CORS_ALLOW_ALL
+CORS_ALLOWED_ORIGINS = API_CORS_ALLOWED_ORIGINS
+CORS_ALLOW_CREDENTIALS = True

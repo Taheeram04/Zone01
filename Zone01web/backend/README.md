@@ -42,9 +42,49 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `DATABASE_URL`         | `postgres://postgres:postgres@localhost:5432/zone01` | PostgreSQL connection URL               |
 | `DB_CONN_MAX_AGE`      | `60`                                                 | Seconds to persist DB connections       |
 | `APP_VERSION`          | `dev`                                                | Version reported by the health endpoint |
+| `API_CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173`   | Frontend origins allowed to call `/api/` |
+| `API_CORS_ALLOW_ALL`   | `false`                                              | Allow every origin to call `/api/`      |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
+
+## Managing site content
+
+Everything below is edited in the Django admin at `/admin/`. Add or delete
+rows directly; the changes appear on the website and the JSON API immediately.
+
+| Admin section              | Fields                                                   |
+| -------------------------- | -------------------------------------------------------- |
+| **Partners**               | name, logo, information, order                           |
+| **Staff**                  | name, role, photo, bio, order                            |
+| **News**                   | title (name), image, information, publish toggle, order  |
+| **Impact**                 | title (name), image, information, publish toggle, order  |
+| **Next piscine registration** | on/off toggle, next piscine date, optional message    |
+
+The **Next piscine registration** row is a singleton: toggle `is_active` on to
+show the alert under the *Apply now* button on the frontend, and off to hide it.
+Set `next_piscine_date` to the date the next piscine starts.
+
+## Content API
+
+The React frontend reads this read-only JSON API. All endpoints are `GET` and
+CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
+
+| Endpoint           | Returns                                              |
+| ------------------ | ---------------------------------------------------- |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine) |
+| `/api/partners/`   | partner list                                         |
+| `/api/staff/`      | staff list                                           |
+| `/api/news/`       | published news list                                  |
+| `/api/impact/`     | published impact list                                |
+| `/api/piscine/`    | next-piscine toggle, date and message                |
+
+Example:
+
+```bash
+curl http://localhost:8000/api/content/
+```
+
 
 ## How the CMS is wired
 
