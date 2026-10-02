@@ -42,15 +42,70 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `DATABASE_URL`         | `postgres://postgres:postgres@localhost:5432/zone01` | PostgreSQL connection URL               |
 | `DB_CONN_MAX_AGE`      | `60`                                                 | Seconds to persist DB connections       |
 | `APP_VERSION`          | `dev`                                                | Version reported by the health endpoint |
+| `API_CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173`   | Frontend origins allowed to call `/api/` |
+| `API_CORS_ALLOW_ALL`   | `false`                                              | Allow every origin to call `/api/`      |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
+
+## Managing site content
+
+Everything below is edited in the Django admin at `/admin/`. Add or delete
+rows directly; the changes appear on the website and the JSON API immediately.
+
+| Admin section              | Fields                                                   |
+| -------------------------- | -------------------------------------------------------- |
+| **Partners**               | name, logo, information, order                           |
+| **Staff**                  | name, role, photo, bio, order                            |
+| **News**                   | title (name), image, information, publish toggle, order  |
+| **Impact**                 | title (name), image, information, report PDF, publish toggle, order |
+| **Next piscine registration** | on/off toggle, next piscine date, optional message    |
+| **Categories**             | name, slug, description (taxonomy for articles)          |
+| **Articles**               | title, slug, category, author, summary, body, cover image, status, publish date |
+
+Each **Impact** row may attach an optional PDF report. Upload one with the file
+picker, select **Clear** to remove it, or pick a different file to replace it.
+The API exposes the download link as `report` (with `report_name`) so the
+frontend can offer a "Download report" action on that impact story.
+
+The **Next piscine registration** row is a singleton: toggle `is_active` on to
+show the alert under the *Apply now* button on the frontend, and off to hide it.
+Set `next_piscine_date` to the date the next piscine starts.
+
+**Categories** and **Articles** form the editorial stream that public content
+pages are generated from. Group articles under a **Category**, then set an
+**Article**'s `status` to move it from *Draft* through *In review* to
+*Published*, and set `published_at` to control when it goes live. Articles are
+not part of the JSON API yet; they back the content pages only.
+
+## Content API
+
+The React frontend reads this read-only JSON API. All endpoints are `GET` and
+CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
+
+| Endpoint           | Returns                                              |
+| ------------------ | ---------------------------------------------------- |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine) |
+| `/api/partners/`   | partner list                                         |
+| `/api/staff/`      | staff list                                           |
+| `/api/news/`       | published news list                                  |
+| `/api/impact/`     | published impact list (includes `report` download URL)|
+| `/api/piscine/`    | next-piscine toggle, date and message                |
+
+Example:
+
+```bash
+curl http://localhost:8000/api/content/
+```
+
 
 ## How the CMS is wired
 
 - **Templates** live in `templates/`. `base.html` extends django CMS's Bootstrap 5
   base and defines the `"Page Content"` placeholder. Templates are selectable per
-  page via `CMS_TEMPLATES` in `config/settings.py`.
+  page via `CMS_TEMPLATES` in `config/settings.py`. See
+  [`templates/README.md`](templates/README.md) for a full guide to the CMS page
+  template.
 - **Pages** are created in the admin and can be arranged into a menu tree.
 - **Plugins** (text, image, card, grid, accordion, etc.) are provided by
   `djangocms-text` and `djangocms-frontend` and are added to placeholders in the
@@ -58,9 +113,11 @@ hostname (the default is `example.com`).
 - **Media** uploads are managed by `django-filer` and served from `media/`.
 - **Versioning** is provided by `djangocms-versioning`, so drafts and published
   versions are tracked separately.
-- **Admin header** is customised in `templates/admin/base_site.html` (brand,
-  logo, and quick links to Pages, Media, Users) and styled by
-  `static/admin/css/zone01_admin.css`.
+- **Admin theming** uses `djangocms-simple-admin-style` on top of Django's
+  built-in admin. The former custom `templates/admin/` overrides and
+  `static/admin/css/zone01_admin.css` theme were removed, so the admin now
+  renders with the default simple-admin style and the branding set in
+  `config/urls.py`.
 
 To add a placeholder, edit `templates/base.html` and use:
 
@@ -109,7 +166,7 @@ back to a sequential scan — this is a property of `pg_trgm`, not of the setup.
 backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
-├── core/                 # health endpoint, admin search and index helpers
+├── core/                 # health endpoint
 ├── templates/            # CMS page templates (base.html, ...)
 ├── static/               # project static assets
 ├── requirements.txt

@@ -1,15 +1,199 @@
-"""Draft schema for editorial content: news, stories, and impact updates.
+"""Site content that editors manage from the Django admin.
 
-Sprint 5 draft: page copy is owned by django CMS, so this app covers the
-time-stamped editorial stream (blog/news/impact stories) and its taxonomy.
-Open for review before the schema is locked.
+Two families of models live in this app:
+
+**Block content** backs each block of the public website and is served to the
+React frontend as JSON under ``/api/``:
+
+* :class:`Partner`      - partner logos shown in the "Our partners" strip.
+* :class:`StaffMember`  - team members and their roles.
+* :class:`NewsUpdate`   - news posts (title, image, information).
+* :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
+* :class:`PiscineRegistration` - the "Apply now" alert banner and its date.
+
+**Editorial stream** (SEO work) covers the time-stamped article/blog stream and
+its taxonomy, which is what the public content pages are generated from:
+
+* :class:`Category` - a taxonomy term used to group articles.
+* :class:`Article`  - a news item, story or impact update with a workflow status.
+
+Both sets are searchable from the Django admin through
+:class:`core.search.TrigramSearchMixin`, backed by per-column GIN/trigram
+indexes declared with :class:`core.indexes.GinTrigramIndex`.
 """
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+from filer.fields.file import FilerFileField
 from filer.fields.image import FilerImageField
 
 from core.indexes import GinTrigramIndex
+
+
+class OrderedContent(models.Model):
+    """Shared behaviour for content that is listed in a fixed order."""
+
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text="Lower numbers appear first on the website.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+        ordering = ["order", "id"]
+
+
+class Partner(OrderedContent):
+    """A partner organisation displayed with its logo."""
+
+    name = models.CharField(max_length=150)
+    logo = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="partner_logos",
+        help_text="Square or wide logo, PNG/SVG preferred.",
+    )
+    information = models.TextField(blank=True, help_text="Short blurb about the partner.")
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "partner"
+        verbose_name_plural = "partners"
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="partner_name_trgm"),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class StaffMember(OrderedContent):
+    """A member of the Zone01 team."""
+
+    name = models.CharField(max_length=150)
+    role = models.CharField(max_length=150, help_text="e.g. Lead Instructor")
+    photo = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="staff_photos",
+        help_text="Portrait photo of the staff member.",
+    )
+    bio = models.TextField(blank=True, help_text="Short biography.")
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "staff member"
+        verbose_name_plural = "staff"
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="staff_name_trgm"),
+            GinTrigramIndex(fields=["role"], name="staff_role_trgm"),
+        ]
+
+    def __str__(self):
+        return f"{self.name} - {self.role}"
+
+
+class NewsUpdate(OrderedContent):
+    """A news post shown on the website."""
+
+    title = models.CharField(max_length=200)
+    image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="news_images",
+    )
+    information = models.TextField(blank=True, help_text="The news story.")
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    published_at = models.DateTimeField(default=timezone.now)
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "news update"
+        verbose_name_plural = "news"
+        ordering = ["-published_at", "order", "id"]
+        indexes = [
+            GinTrigramIndex(fields=["title"], name="news_title_trgm"),
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+class ImpactUpdate(OrderedContent):
+    """An impact story shown on the website."""
+
+    title = models.CharField(max_length=200)
+    image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="impact_images",
+    )
+    report = FilerFileField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="impact_reports",
+        help_text="Optional PDF report visitors can download from this impact story.",
+    )
+    information = models.TextField(blank=True, help_text="The impact story.")
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "impact update"
+        verbose_name_plural = "impact"
+        ordering = ["order", "id"]
+        indexes = [
+            GinTrigramIndex(fields=["title"], name="impact_title_trgm"),
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+class PiscineRegistration(models.Model):
+    """Singleton controlling the next-piscine alert under "Apply now".
+
+    Only one row ever exists (``pk=1``). Editors flip :attr:`is_active` to
+    show/hide the alert and edit :attr:`next_piscine_date`.
+    """
+
+    is_active = models.BooleanField(
+        default=False,
+        help_text="Turn the next-piscine alert on or off.",
+    )
+    next_piscine_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="Date the next piscine starts.",
+    )
+    message = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional custom text. Leave blank for the default message.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "next piscine registration"
+        verbose_name_plural = "next piscine registration"
+
+    def __str__(self):
+        if self.next_piscine_date:
+            return f"Next piscine: {self.next_piscine_date:%d %b %Y}"
+        return "Next piscine"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        """Return the single settings row, creating it on first access."""
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
 
 
 class Category(models.Model):
@@ -75,7 +259,9 @@ class Article(models.Model):
     class Meta:
         ordering = ["-published_at", "-created_at"]
         indexes = [
-            models.Index(fields=["status", "published_at"]),
+            # Named explicitly: the changelist filters on this pair, and a
+            # generated name would change if the field list is ever reordered.
+            models.Index(fields=["status", "published_at"], name="article_status_published_idx"),
             # One GIN/trigram index per column searched in the admin: see
             # core.indexes.GinTrigramIndex for why these are single-column.
             GinTrigramIndex(fields=["title"], name="article_title_trgm"),
