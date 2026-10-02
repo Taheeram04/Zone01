@@ -60,10 +60,10 @@ const itemVariants = {
 
 const WhyOurCampus = () => {
   return (
-    <section className="relative w-full bg-campus-bg py-20 md:py-28 overflow-hidden">
-      <Container className="max-w-[1400px]">
+    <section data-nav-theme="light" className="relative w-full bg-campus-bg py-16 md:py-28 overflow-hidden">
+      <Container>
         {/* Section Heading */}
-        <div className="text-center mb-16 md:mb-20">
+        <div className="text-center mb-12 md:mb-20">
           <KineticHeading
             as="h2"
             text="Why our campus"
@@ -85,7 +85,7 @@ const WhyOurCampus = () => {
               variants={itemVariants}
               whileHover={{ y: -4 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="flex flex-col items-start cursor-default"
+              className="flex flex-col items-center text-center cursor-default"
             >
               {/* Corner bracket icon accent matching HOME.png */}
               <svg
@@ -105,12 +105,16 @@ const WhyOurCampus = () => {
               </svg>
 
               {/* Title with brackets */}
-              <h3 className="font-mono font-medium text-body-m text-primary tracking-wide mb-3">
+              <motion.h3
+                whileHover={{ scale: 1.15 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                className="font-mono font-medium text-body-m text-primary tracking-wide mb-3 text-center cursor-default"
+              >
                 {feature.title}
-              </h3>
+              </motion.h3>
 
               {/* Description */}
-              <p className="font-mono text-body-s text-black-900/80 leading-[1.7] max-w-sm">
+              <p className="w-full text-center font-mono text-body-s text-black-900/80 leading-[1.7]">
                 {feature.description}
               </p>
             </motion.div>
