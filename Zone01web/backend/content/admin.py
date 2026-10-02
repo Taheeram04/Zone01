@@ -70,12 +70,25 @@ class NewsUpdateAdmin(ImagePreviewMixin, admin.ModelAdmin):
 
 @admin.register(ImpactUpdate)
 class ImpactUpdateAdmin(ImagePreviewMixin, admin.ModelAdmin):
-    list_display = ("preview", "title", "is_published", "order", "created_at")
+    list_display = ("preview", "title", "report_link", "is_published", "order", "created_at")
     list_editable = ("is_published", "order")
     list_filter = ("is_published",)
     search_fields = ("title", "information")
     readonly_fields = ("created_at",)
     ordering = ("order", "id")
+
+    @admin.display(description="Report")
+    def report_link(self, obj):
+        if not obj.report:
+            return "-"
+        try:
+            url = obj.report.url
+        except ValueError:
+            return "-"
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">Download</a>',
+            url,
+        )
 
 
 @admin.register(PiscineRegistration)

@@ -1,6 +1,11 @@
-from django.test import TestCase
+import shutil
+import tempfile
+
+from django.core.files.base import ContentFile
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from filer.models import File
 
 from content.models import ImpactUpdate, NewsUpdate, Partner, PiscineRegistration, StaffMember
 
@@ -51,6 +56,7 @@ class ContentApiTests(TestCase):
         self.assertEqual(len(payload["staff"]), 1)
         self.assertEqual(len(payload["news"]), 1)
         self.assertEqual(len(payload["impact"]), 1)
+        self.assertIsNone(payload["impact"][0]["report"])
         self.assertIn("is_active", payload["piscine"])
 
     def test_news_list_hides_unpublished(self):
@@ -75,3 +81,40 @@ class ContentApiTests(TestCase):
         payload = response.json()
         self.assertTrue(payload["is_active"])
         self.assertEqual(payload["next_piscine_date"], "2025-10-06")
+
+
+class ImpactReportTests(TestCase):
+    def setUp(self):
+        self.media_root = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media_root)
+        self.override.enable()
+        self.addCleanup(self.override.disable)
+        self.addCleanup(shutil.rmtree, self.media_root, ignore_errors=True)
+
+    def _make_report(self):
+        return File.objects.create(
+            file=ContentFile(b"%PDF-1.4 test report", name="impact-report.pdf"),
+            original_filename="impact-report.pdf",
+        )
+
+    def test_report_is_exposed_by_the_api(self):
+        report = self._make_report()
+        ImpactUpdate.objects.create(title="1000 graduates", report=report)
+
+        response = self.client.get(reverse("content_api:impact-list"))
+
+        self.assertEqual(response.status_code, 200)
+        item = response.json()["results"][0]
+        self.assertIsNotNone(item["report"])
+        self.assertTrue(item["report"].endswith("impact-report.pdf"))
+        self.assertEqual(item["report_name"], report.name)
+
+    def test_report_can_be_cleared(self):
+        report = self._make_report()
+        impact = ImpactUpdate.objects.create(title="1000 graduates", report=report)
+
+        impact.report = None
+        impact.save()
+
+        response = self.client.get(reverse("content_api:impact-list"))
+        self.assertIsNone(response.json()["results"][0]["report"])

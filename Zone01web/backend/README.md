@@ -58,8 +58,13 @@ rows directly; the changes appear on the website and the JSON API immediately.
 | **Partners**               | name, logo, information, order                           |
 | **Staff**                  | name, role, photo, bio, order                            |
 | **News**                   | title (name), image, information, publish toggle, order  |
-| **Impact**                 | title (name), image, information, publish toggle, order  |
+| **Impact**                 | title (name), image, information, report PDF, publish toggle, order |
 | **Next piscine registration** | on/off toggle, next piscine date, optional message    |
+
+Each **Impact** row may attach an optional PDF report. Upload one with the file
+picker, select **Clear** to remove it, or pick a different file to replace it.
+The API exposes the download link as `report` (with `report_name`) so the
+frontend can offer a "Download report" action on that impact story.
 
 The **Next piscine registration** row is a singleton: toggle `is_active` on to
 show the alert under the *Apply now* button on the frontend, and off to hide it.
@@ -76,7 +81,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
-| `/api/impact/`     | published impact list                                |
+| `/api/impact/`     | published impact list (includes `report` download URL)|
 | `/api/piscine/`    | next-piscine toggle, date and message                |
 
 Example:
@@ -90,7 +95,9 @@ curl http://localhost:8000/api/content/
 
 - **Templates** live in `templates/`. `base.html` extends django CMS's Bootstrap 5
   base and defines the `"Page Content"` placeholder. Templates are selectable per
-  page via `CMS_TEMPLATES` in `config/settings.py`.
+  page via `CMS_TEMPLATES` in `config/settings.py`. See
+  [`templates/README.md`](templates/README.md) for a full guide to the CMS page
+  template.
 - **Pages** are created in the admin and can be arranged into a menu tree.
 - **Plugins** (text, image, card, grid, accordion, etc.) are provided by
   `djangocms-text` and `djangocms-frontend` and are added to placeholders in the
@@ -98,9 +105,11 @@ curl http://localhost:8000/api/content/
 - **Media** uploads are managed by `django-filer` and served from `media/`.
 - **Versioning** is provided by `djangocms-versioning`, so drafts and published
   versions are tracked separately.
-- **Admin header** is customised in `templates/admin/base_site.html` (brand,
-  logo, and quick links to Pages, Media, Users) and styled by
-  `static/admin/css/zone01_admin.css`.
+- **Admin theming** uses `djangocms-simple-admin-style` on top of Django's
+  built-in admin. The former custom `templates/admin/` overrides and
+  `static/admin/css/zone01_admin.css` theme were removed, so the admin now
+  renders with the default simple-admin style and the branding set in
+  `config/urls.py`.
 
 To add a placeholder, edit `templates/base.html` and use:
 
@@ -116,8 +125,8 @@ backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
 ├── core/                 # health endpoint
-├── templates/            # CMS page templates (base.html, ...)
-├── static/               # project static assets
+├── templates/            # CMS page templates (base.html) + README.md guide
+├── static/               # static assets (img/); no project CSS
 ├── requirements.txt
 └── requirements-dev.txt
 ```
