@@ -180,7 +180,12 @@ INTERNAL_IPS = ["127.0.0.1"]
 API_CORS_ALLOW_ALL = env.bool("API_CORS_ALLOW_ALL", default=False)
 API_CORS_ALLOWED_ORIGINS = env.list(
     "API_CORS_ALLOWED_ORIGINS",
-    default=["http://localhost:5173", "http://127.0.0.1:5173"],
+    default=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://www.zone01kisumu.ke",
+        "https://zone01kisumu.ke",
+    ],
 )
 
 CORS_ALLOW_ALL_ORIGINS = API_CORS_ALLOW_ALL
