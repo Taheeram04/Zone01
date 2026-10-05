@@ -1,7 +1,7 @@
 // components/navbar.jsx
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import mainLogo from '../assets/mainlogo.png';
@@ -21,8 +21,14 @@ export default function Navbar() {
   const [navTheme, setNavTheme] = useState('dark');
   const navRef = useRef(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const goToApply = () => {
+    setMenuOpen(false);
+    navigate('/apply');
+  };
 
   // Whenever the user scrolls, work out which themed section is behind the
   // navbar. Sections opt in with `data-nav-theme="dark|light"`.
@@ -134,7 +140,7 @@ export default function Navbar() {
       </li>
     </ul>
 
-    <Button variant="primary" className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
+    <Button variant="primary" onClick={goToApply} className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
       Apply
     </Button>
   </div>
@@ -199,7 +205,7 @@ export default function Navbar() {
                 <Button
                   variant="primary"
                   className="mt-4 w-full rounded-full py-3.5 text-base"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={goToApply}
                 >
                   Apply now
                 </Button>
