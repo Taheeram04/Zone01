@@ -28,7 +28,7 @@ function App() {
           </Layout>
         }
       />
-      {['/about', '/community', '/impact', '/hire', '/donate', '*'].map((path) => (
+      {['/about', '/community', '/impact', '/hire', '*'].map((path) => (
         <Route
           key={path}
           path={path}

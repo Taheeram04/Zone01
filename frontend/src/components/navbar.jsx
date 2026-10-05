@@ -15,6 +15,10 @@ const navLinks = [
   { label: 'Hire Talent', href: '/hire', decorated: false },
 ];
 
+// Hosted Every.org donation flow.
+export const DONATE_URL =
+  'https://www.every.org/lakehub-foundation?donateTo=lakehub-foundation#/donate/card';
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Theme of the section currently sitting behind the navbar: 'dark' | 'light'.
@@ -128,9 +132,12 @@ export default function Navbar() {
         </li>
       ))}
       <li>
-        <Link to="/donate" className="hover:text-primary transition-colors whitespace-nowrap">
+        <a
+          href={DONATE_URL}
+          className="hover:text-primary transition-colors whitespace-nowrap"
+        >
           Donate
-        </Link>
+        </a>
       </li>
     </ul>
 
@@ -186,13 +193,13 @@ export default function Navbar() {
                     </li>
                   ))}
                   <li>
-                    <Link
-                      to="/donate"
+                    <a
+                      href={DONATE_URL}
                       onClick={() => setMenuOpen(false)}
                       className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
                     >
                       Donate
-                    </Link>
+                    </a>
                   </li>
                 </ul>
 
