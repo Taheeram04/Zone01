@@ -181,6 +181,7 @@ const imageWrapperVariants = {
 const WhoCanApply = ({ image = defaultImage, className = '' }) => {
   return (
     <section
+      data-nav-theme="light"
       className={`relative w-full bg-tint-blue overflow-hidden ${className}`}
       aria-labelledby="who-can-apply-title"
     >
@@ -211,20 +212,20 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={textContainerVariants}
-          className="w-full md:w-1/2 pt-14 pb-10 md:py-20 lg:py-24 pl-[clamp(0.5rem,5vw,8rem)] pr-[clamp(0.5rem,5vw,2rem)]"
+          className="w-full md:w-1/2 pt-12 pb-8 md:py-20 lg:py-24 pl-[clamp(1.25rem,5vw,8rem)] pr-[clamp(1.25rem,5vw,2rem)]"
         >
           <div className="max-w-2xl lg:max-w-3xl">
             <KineticHeading
               as="h2"
               id="who-can-apply-title"
-              className="font-sans font-black text-black-900 text-4xl sm:text-5xl md:text-6xl lg:text-[68px] leading-[1.05] tracking-tight mb-8 md:mb-10"
+              className="font-sans font-black text-black-900 text-[30px] md:text-section-headline leading-[1.05] tracking-tight mb-8 md:mb-10"
               text="Who can apply?"
             />
 
             <div className="space-y-6 font-mono font-normal text-black-900 text-body-s sm:text-body-m md:text-[15px] leading-[1.75] tracking-normal">
               <motion.p variants={paragraphVariants}>
                 The zone01 Kisumu digital training is open to anyone over 18 years
-                old.
+                old.{' '}
                 <br className="hidden sm:inline" />
                 No prior programming experience or academic qualifications are
                 required to apply.
@@ -232,10 +233,8 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
 
               <motion.p variants={paragraphVariants}>
                 Diversity and inclusion are key elements of zone01&apos;s mission.
-                We therefore particularly encourage{' '}
-                <br className="hidden xl:inline" />
-                women, refugees, ethnic minorities and people from disadvantaged
-                backgrounds to apply.
+                We therefore particularly encourage&nbsp;women, refugees, ethnic
+                minorities and people from disadvantaged backgrounds to apply.
               </motion.p>
             </div>
           </div>
@@ -247,12 +246,12 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={imageWrapperVariants}
-          className="w-full md:w-1/2 self-stretch flex items-center justify-end px-[clamp(0.5rem,5vw,8rem)] pb-12 md:px-0 md:pb-0"
+          className="w-full md:w-1/2 self-stretch flex items-center justify-end px-[clamp(1.25rem,5vw,8rem)] pb-10 md:px-0 md:pb-0"
         >
           <motion.div
             whileHover={{ scale: 1.015 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="w-full h-full min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px] rounded-3xl md:rounded-r-none md:rounded-l-full overflow-hidden bg-slate-200 shadow-xl"
+            className="w-full h-full min-h-[260px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px] rounded-3xl md:rounded-r-none md:rounded-l-full overflow-hidden bg-slate-200 shadow-xl"
           >
             <motion.img
               src={image}
