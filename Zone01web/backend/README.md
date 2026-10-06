@@ -44,9 +44,44 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `APP_VERSION`          | `dev`                                                | Version reported by the health endpoint |
 | `API_CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173`   | Frontend origins allowed to call `/api/` |
 | `API_CORS_ALLOW_ALL`   | `false`                                              | Allow every origin to call `/api/`      |
+| `CSRF_TRUSTED_ORIGINS` | _(empty)_                                            | Full origins trusted for admin forms, e.g. `https://zone01-kisumu-api.fly.dev` |
+| `BUCKET_NAME`          | _(empty)_                                            | S3/Tigris bucket for uploaded media; empty stores media in `media/` |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | _(empty)_                     | Bucket credentials (set by `fly storage create`) |
+| `AWS_ENDPOINT_URL_S3`  | `https://fly.storage.tigris.dev`                     | S3 endpoint for the bucket              |
+| `AWS_S3_CUSTOM_DOMAIN` | `<BUCKET_NAME>.fly.storage.tigris.dev`               | Host used in public media URLs          |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
+
+## Deploying to Fly.io
+
+The backend (`Zone01web/backend/fly.toml`) and the React frontend
+(`frontend/fly.toml`) deploy as two Fly apps. Static files are served by
+WhiteNoise; uploaded media (filer images, thumbnails, impact PDFs) is stored in
+a public Tigris bucket. If you rename either app, update the hostnames in both
+`fly.toml` files.
+
+One-time setup, from `Zone01web/backend/`:
+
+```bash
+fly launch --no-deploy --copy-config        # create the app from fly.toml
+fly mpg create                              # Postgres (or use any external one)
+fly mpg attach <cluster-id>                 # sets the DATABASE_URL secret
+fly storage create --public                 # Tigris bucket; sets BUCKET_NAME + AWS_* secrets
+fly secrets set DJANGO_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')"
+fly deploy                                  # migrations run as the release command
+fly ssh console -C "python manage.py createsuperuser"
+```
+
+Then from `frontend/`:
+
+```bash
+fly launch --no-deploy --copy-config
+fly deploy                                  # bakes VITE_API_BASE_URL from fly.toml
+```
+
+Finally set the domain in **Admin → Sites**. Later deploys are just
+`fly deploy` in each directory.
 
 ## Managing site content
 

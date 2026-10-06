@@ -14,8 +14,7 @@ RUN adduser --disabled-password --gecos "" app \
     && chown -R app:app /app
 USER app
 
-ENV DJANGO_SECRET_KEY=build-only
-RUN python manage.py collectstatic --noinput
+RUN DJANGO_SECRET_KEY=build-only python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
