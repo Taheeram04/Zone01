@@ -10,21 +10,21 @@ const targetAudience = [
     image: whoIsItFor1,
     title: 'EARLY CAREER STARTERS',
     description:
-      'Not in Education, Employment, or Training. Looking to find work in the fast growing tech sector',
+      'Finished High School or College and looking to build world-class tech skills?',
     alt: 'Early career learner at Zone01 Kisumu',
   },
   {
     image: whoIsItFor2,
-    title: 'CAREER SWITCHER OR RETURNERS',
+    title: 'CAREER SWITCHERS',
     description:
-      'Looking for a mid career refresher returning from an absence',
+      'ooking for a mid career switch into the exciting world of tech?',
     alt: 'Career switcher learner at Zone01 Kisumu',
   },
   {
     image: whoIsItFor3,
     title: 'EXPERIENCED PROFESSIONALS',
     description:
-      'Brings wealth of experience but looking to reskill and keep up with global digital transformation',
+      'Having a wealth of experience but looking to re-skill to keep up with global digital transformation and trends?',
     alt: 'Experienced professional learner at Zone01 Kisumu',
   },
 ];
@@ -61,10 +61,10 @@ const WhoIsItFor = () => {
           <KineticHeading
             as="h2"
             text="Who is it for?"
-            className="font-sans font-black text-black-900 text-[30px] md:text-section-headline leading-tight tracking-tight text-center mb-3"
+            className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-tight tracking-tight text-center mb-3"
           />
           <TypewriterText
-            text="World class education made accessible to all in Kisumu, regardless of experience"
+            text="World class education made accessible to all in Kisumu, regardless of experience and background"
             className="font-mono text-body-s md:text-body-m text-black-900/80 max-w-xl mx-auto leading-relaxed"
             speed={22}
             delay={200}
