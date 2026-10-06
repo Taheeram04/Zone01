@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { KineticHeading, TypewriterText } from './whocanapply.jsx';
 import whoIsItFor1 from '../assets/whoisitfor1.png';
@@ -17,7 +19,7 @@ const targetAudience = [
     image: whoIsItFor2,
     title: 'CAREER SWITCHERS',
     description:
-      'ooking for a mid career switch into the exciting world of tech?',
+      'Looking for a mid career switch into the exciting world of tech?',
     alt: 'Career switcher learner at Zone01 Kisumu',
   },
   {
@@ -53,6 +55,8 @@ const cardVariants = {
 };
 
 const WhoIsItFor = () => {
+  const navigate = useNavigate();
+
   return (
     <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
       <Container>
@@ -65,7 +69,7 @@ const WhoIsItFor = () => {
           />
           <TypewriterText
             text="World class education made accessible to all in Kisumu, regardless of experience and background"
-            className="font-mono text-body-s md:text-body-m text-black-900/80 max-w-xl mx-auto leading-relaxed"
+            className="font-mono text-[15px] sm:text-[16px] md:text-[18px] text-black-900/85 max-w-2xl mx-auto leading-relaxed"
             speed={22}
             delay={200}
           />
@@ -98,17 +102,28 @@ const WhoIsItFor = () => {
               </div>
 
               {/* Category / Title */}
-              <h3 className="w-full text-center font-sans font-bold text-body-m text-primary tracking-wider uppercase mt-5 mb-2.5 md:mt-6 md:mb-3">
+              <h3 className="w-full text-center font-sans font-bold text-[18px] sm:text-[19px] md:text-[21px] text-primary tracking-wider uppercase mt-5 mb-2.5 md:mt-6 md:mb-3">
                 {item.title}
               </h3>
 
               {/* Description */}
-              <p className="w-full text-center font-mono text-body-s text-black-900/80 leading-[1.6]">
+              <p className="w-full text-center font-mono text-[15px] sm:text-[16px] md:text-[17px] text-black-900/85 leading-[1.65] max-w-sm mx-auto">
                 {item.description}
               </p>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Apply CTA Button centered below the cards */}
+        <div className="mt-12 md:mt-16 flex justify-center">
+          <Button
+            variant="primary"
+            onClick={() => navigate('/apply')}
+            className="w-full sm:w-auto px-8 py-3"
+          >
+            Apply now
+          </Button>
+        </div>
       </Container>
     </section>
   );
