@@ -30,6 +30,15 @@ export default function Navbar() {
   const aboutDropdownRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
 
+  // 1. ADD MISSING STATE FOR NAV THEME
+  const [navTheme, setNavTheme] = useState('dark'); 
+
+  // 2. ADD MISSING NAV REF TO PREVENT CRASHES ON SCROLL REFS
+  const navRef = useRef(null); 
+
+  // 3. ADD MISSING NAVIGATE HOOK USED IN goToApply
+  const navigate = useNavigate(); 
+
   const handleMouseEnter = () => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     setAboutDropdownOpen(true);
@@ -139,7 +148,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, [pathname]);
+   }, []);
 
   // Dark backgrounds (and the open mobile menu) need the white logo/labels.
   const useWhiteLogo = menuOpen || navTheme === 'dark';
