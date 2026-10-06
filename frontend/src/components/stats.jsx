@@ -10,17 +10,17 @@ const primaryStat = { value: '$7,200', label: 'Average Annual Income' };
 // Two stacked stat columns shown next to the card.
 const statColumns = [
   [
-    { value: '1,500', label: 'Trained in Go Language' },
-    { value: '250', label: 'Apprentices' },
+    { value: '$2,827', label: 'Highest monthly earnings' },
+    { value: '254', label: 'Apprentices' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '$2,800', label: 'Highest Monthly Earning' },
+    { value: '1,589', label: 'Talents trained in go' },
   ],
 ];
 
 // Featured figure, vertically centred in the right column.
-const featuredStat = { value: '30,000', label: 'Applications' };
+const featuredStat = { value: '30,255', label: 'Applications' };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -40,13 +40,14 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.15,
+    
       delayChildren: 0.1,
     },
   },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 35, scale: 0.96 },
+  hidden: { opacity: 0, y: 35, scale: 0.96 }, 
   visible: {
     opacity: 1,
     y: 0,

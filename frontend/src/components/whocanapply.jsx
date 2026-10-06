@@ -183,7 +183,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
     <section
       data-nav-theme="light"
       className={`relative w-full bg-tint-blue overflow-hidden ${className}`}
-      aria-labelledby="who-can-apply-title"
+      aria-labelledby="who-can-apply?-title"
     >
       {/* Top-left decorative organic circle blob matching design */}
       <motion.div
@@ -218,21 +218,22 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
             <KineticHeading
               as="h2"
               id="who-can-apply-title"
-              className="font-sans font-black text-black-900 text-[30px] md:text-section-headline leading-[1.05] tracking-tight mb-8 md:mb-10"
+              className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-[1.08] tracking-tight mb-8 md:mb-10"
               text="Who can apply?"
             />
 
-            <div className="space-y-6 font-mono font-normal text-black-900 text-body-s sm:text-body-m md:text-[15px] leading-[1.75] tracking-normal">
+            <div className="space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal">
               <motion.p variants={paragraphVariants}>
                 The zone01 Kisumu digital training is open to anyone over 18 years
                 old.{' '}
                 <br className="hidden sm:inline" />
-                No prior programming experience or academic qualifications are
-                required to apply.
+                Zone01 Kisumu welcomes anyone over the age of 18 years.{' '}
+                <span className="font-bold text-primary">No prior programming experience</span> or{' '}
+                <span className="font-bold text-primary">academic qualifications</span> are required to apply.
               </motion.p>
 
               <motion.p variants={paragraphVariants}>
-                Diversity and inclusion are key elements of zone01&apos;s mission.
+                Diversity and inclusion are key elements of zone01 Kisumu&apos;s mission.
                 We therefore particularly encourage{' '}
                 <br className="hidden xl:inline" />
                 women, refugees, ethnic minorities and people from disadvantaged
