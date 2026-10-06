@@ -6,32 +6,32 @@ const campusFeatures = [
   {
     title: '< TUITION-FREE TRAINING >',
     description:
-      'Get trained without paying any tuition fees, no registration fees, no examination fees are required throughout the duration of the course.',
-  },
-  {
-    title: '< JOB GUARANTEE >',
-    description:
-      'Guaranteed job placement by local and global top hiring talent agencies upon fully covering the self-paced learning content.',
+      'We do not charge any tuition fees, registration fees or examination fees throughout the duration of training.',
   },
   {
     title: '< STUDY STIPEND >',
     description:
-      'During the 1-year training period, our talent get monthly stipend among other benefits to support them in fully focusing on their learning journey.',
-  },
-  {
-    title: '< PARTNERS CLUB >',
-    description:
-      'Connect and join a network of more than 100,000 digital peer to peer alumni globally that provide a supportive ecosystem for peer-to-peer learning and collaboration.',
+      'During the training period, we support our talent with paid monthly stipend among other benefits to support them in fully focusing on their learning journey.',
   },
   {
     title: '< HIGH MARKET VALUE >',
     description:
-      'Hired by top tech companies, with a high average starting salary of 30% above market level with similar qualifications.',
+      'Our talent are hired by top tech companies,with ahigh average starting salary of 30%above market level with similar qualifications.',
   },
   {
-    title: '< SUPERIOR TALENT >',
+    title: '< HOLISTIC TALENT DEVELOPMENT >',
     description:
-      'Fully adaptable and equipped with hard and soft skills to work collaboratively in a fast-moving tech environment',
+      'We support our talent as whole people by nurturing their mental,physical,emotional and professional growth.',
+  },
+  {
+    title: '< PRESTIGIOUS ALUMNI CLUB >',
+    description:
+      'Join a network of more then 100,000 digital peer to peer alumni globally that provide a supportive eco-system for peer to peer learning and collaboration.',
+  },
+  {
+    title: '< JOB ALIGNMENT >',
+    description:
+      'We support our talent to secure roles both locally and internationally with our partners,upon fully completing the training. Our talent are hired by top tech companies, with a high average starting salary of 30% above market rates.',
   },
 ];
 
@@ -66,7 +66,7 @@ const WhyOurCampus = () => {
         <div className="text-center mb-16 md:mb-20">
           <KineticHeading
             as="h2"
-            text="Why our campus"
+            text="Why Zone01 Kisumu?"
             className="font-sans font-black text-black-900 text-[30px] md:text-section-headline leading-tight tracking-tight text-center"
           />
         </div>

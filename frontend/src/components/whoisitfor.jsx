@@ -10,21 +10,21 @@ const targetAudience = [
     image: whoIsItFor1,
     title: 'EARLY CAREER STARTERS',
     description:
-      'Not in Education, Employment, or Training. Looking to find work in the fast growing tech sector',
+      'Finished highschool or college and looking to build world-class tech skills?',
     alt: 'Early career learner at Zone01 Kisumu',
   },
   {
     image: whoIsItFor2,
-    title: 'CAREER SWITCHER OR RETURNERS',
+    title: 'CAREER SWITCHERS',
     description:
-      'Looking for a mid career refresher returning from an absence',
+      'Looking for a mid career switch into the exciting world of tech returning from an absence',
     alt: 'Career switcher learner at Zone01 Kisumu',
   },
   {
     image: whoIsItFor3,
     title: 'EXPERIENCED PROFESSIONALS',
     description:
-      'Brings wealth of experience but looking to reskill and keep up with global digital transformation',
+      'Having wealth of experience but looking to reskill and keep up with global digital transformation and trends?',
     alt: 'Experienced professional learner at Zone01 Kisumu',
   },
 ];
