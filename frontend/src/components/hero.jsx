@@ -335,6 +335,18 @@ const Hero = () => {
 
       {/* Live Frameless White Piscine Countdown floating above WhatsApp chatbot */}
       <PiscineCountdown />
+
+      {/* WhatsApp floating button with hover spring animation */}
+      <motion.a
+        data-magnetic
+        href="#"
+        aria-label="Chat on WhatsApp"
+        whileHover={{ scale: 1.1, rotate: 6 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      >
+        
+      </motion.a>
     </section>
   );
 };
