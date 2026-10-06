@@ -28,7 +28,7 @@ const OurModelSection = ({ heading = 'Our Model Works' }) => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="text-center font-sans font-black uppercase leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,4rem)]"
+          className="text-center font-sans font-black leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,4rem)]"
         >
           {heading}
         </motion.h2>
