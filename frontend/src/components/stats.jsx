@@ -5,22 +5,22 @@ import { Container } from './layout.jsx';
 import { KineticHeading } from './whocanapply.jsx';
 
 // Headline figure kept in the white card.
-const primaryStat = { value: '$7,200', label: 'Average Annual Income' };
+const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
 
 // Two stacked stat columns shown next to the card.
 const statColumns = [
   [
-    { value: '1,500', label: 'Trained in Go Language' },
-    { value: '250', label: 'Apprentices' },
+    { value: '32,253', label: 'Highest Monthly Earning' },
+    { value: '257', label: 'Apprentices' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '$2,800', label: 'Highest Monthly Earning' },
+    { value: '$1,576', label: 'Apprentices trained in go' },
   ],
 ];
 
 // Featured figure, vertically centred in the right column.
-const featuredStat = { value: '30,000', label: 'Applications' };
+const featuredStat = { value: '30,057', label: 'Applications' };
 
 const containerVariants = {
   hidden: { opacity: 0 },
