@@ -128,7 +128,14 @@ export default function Navbar() {
         </li>
       ))}
       <li>
-        <Link to="/donate" className="hover:text-primary transition-colors whitespace-nowrap">
+        <Link
+          to="/donate"
+          className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full border text-body-s font-medium transition-all duration-300 whitespace-nowrap ${
+            useWhiteLogo
+              ? 'border-white/80 text-white hover:bg-white hover:text-secondary hover:border-white'
+              : 'border-primary text-primary hover:bg-primary hover:text-white'
+          }`}
+        >
           Donate
         </Link>
       </li>
@@ -185,11 +192,11 @@ export default function Navbar() {
                       </Link>
                     </li>
                   ))}
-                  <li>
+                  <li className="pt-2">
                     <Link
                       to="/donate"
                       onClick={() => setMenuOpen(false)}
-                      className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
+                      className="flex min-h-[44px] items-center justify-center rounded-full border border-white/80 text-white hover:bg-white hover:text-black-900 active:bg-white/20 transition-colors text-center font-medium"
                     >
                       Donate
                     </Link>

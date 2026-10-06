@@ -251,7 +251,7 @@ const Hero = () => {
         className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           mixBlendMode: 'screen',
-          opacity: 0.5,
+          opacity: 0.18,
           transform: `translate(${parallax.x * 24}px, ${parallax.y * 24}px)`,
           transition: 'transform 0.2s ease-out',
         }}
@@ -260,7 +260,7 @@ const Hero = () => {
           className="absolute inset-[-5%]"
           style={{
             backgroundImage:
-              'linear-gradient(to right, rgba(0,157,255,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,157,255,0.35) 1px, transparent 1px)',
+              'linear-gradient(to right, rgba(0,157,255,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,157,255,0.18) 1px, transparent 1px)',
             backgroundSize: `${100 / GRID_COLS}% ${100 / GRID_ROWS}%`,
           }}
         />
