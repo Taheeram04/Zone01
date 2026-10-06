@@ -56,24 +56,77 @@ hostname (the default is `example.com`).
 ## Deploying to Fly.io
 
 The backend (`Zone01web/backend/fly.toml`) and the React frontend
-(`frontend/fly.toml`) deploy as two Fly apps. Static files are served by
-WhiteNoise; uploaded media (filer images, thumbnails, impact PDFs) is stored in
-a public Tigris bucket. If you rename either app, update the hostnames in both
-`fly.toml` files.
+(`frontend/fly.toml`) deploy as two Fly apps, backed by a third app running
+**unmanaged Fly Postgres** (`fly postgres`, not Managed Postgres / `fly mpg`).
+Static files are served by WhiteNoise; uploaded media (filer images,
+thumbnails, impact PDFs) is stored in a public Tigris bucket. If you rename
+either app, update the hostnames in both `fly.toml` files.
 
-One-time setup, from `Zone01web/backend/`:
+| Fly app             | What it runs                    | Config                       |
+| ------------------- | ------------------------------- | ---------------------------- |
+| `zone01-kisumu-api` | Django CMS + JSON API           | `Zone01web/backend/fly.toml` |
+| `zone01-kisumu-web` | React bundle served by nginx    | `frontend/fly.toml`          |
+| `zone01-kisumu-db`  | Unmanaged Postgres (one volume) | created by `fly postgres create` |
+
+### Prerequisites
+
+Install [flyctl](https://fly.io/docs/flyctl/install/) and sign in with
+`fly auth login`. All three apps must be in the same Fly organization so the
+API can reach the database over the private network.
+
+### 1. Create the backend app
+
+From `Zone01web/backend/`:
 
 ```bash
-fly launch --no-deploy --copy-config        # create the app from fly.toml
-fly mpg create                              # Postgres (or use any external one)
-fly mpg attach <cluster-id>                 # sets the DATABASE_URL secret
+fly launch --no-deploy --copy-config        # creates zone01-kisumu-api from fly.toml
+```
+
+### 2. Create the Postgres cluster
+
+```bash
+fly postgres create \
+  --name zone01-kisumu-db \
+  --region jnb \
+  --initial-cluster-size 1 \
+  --vm-size shared-cpu-1x \
+  --volume-size 1
+```
+
+Answer **No** if asked to scale to zero; the API cannot start while the
+database is asleep. Save the superuser password printed at the end — Fly does
+not show it again. Use `--initial-cluster-size 3` for a highly available
+cluster (primary plus two replicas).
+
+### 3. Attach it to the backend
+
+```bash
+fly postgres attach zone01-kisumu-db --app zone01-kisumu-api
+```
+
+This creates a `zone01_kisumu_api` database and user on the cluster and sets
+the `DATABASE_URL` secret on the API app, e.g.
+`postgres://zone01_kisumu_api:<password>@zone01-kisumu-db.flycast:5432/zone01_kisumu_api?sslmode=disable`.
+Traffic stays on Fly's private network, so no public IP is needed on the
+database.
+
+### 4. Media bucket and secrets
+
+```bash
 fly storage create --public                 # Tigris bucket; sets BUCKET_NAME + AWS_* secrets
 fly secrets set DJANGO_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')"
+```
+
+### 5. Deploy the backend
+
+```bash
 fly deploy                                  # migrations run as the release command
 fly ssh console -C "python manage.py createsuperuser"
 ```
 
-Then from `frontend/`:
+### 6. Deploy the frontend
+
+From `frontend/`:
 
 ```bash
 fly launch --no-deploy --copy-config
@@ -82,6 +135,38 @@ fly deploy                                  # bakes VITE_API_BASE_URL from fly.t
 
 Finally set the domain in **Admin → Sites**. Later deploys are just
 `fly deploy` in each directory.
+
+### Operating the database
+
+Unmanaged Postgres is an ordinary Fly app: **you** are responsible for
+backups, version upgrades, scaling and recovery. Useful commands:
+
+```bash
+fly postgres connect -a zone01-kisumu-db               # psql shell as postgres
+fly status -a zone01-kisumu-db                         # machine and role (primary/replica)
+fly volumes list -a zone01-kisumu-db                   # data volume(s)
+fly volumes snapshots list <volume-id>                 # daily snapshots (kept 5 days by default)
+fly machine restart -a zone01-kisumu-db                # restart the cluster
+```
+
+Take your own logical backups as well, since volume snapshots are short-lived
+and tied to the volume:
+
+```bash
+fly proxy 15432:5432 -a zone01-kisumu-db               # in one terminal
+pg_dump "postgres://postgres:<superuser-password>@localhost:15432/zone01_kisumu_api" \
+  -Fc -f zone01-$(date +%F).dump                       # in another
+```
+
+Restore with `pg_restore -d <url> --clean --no-owner zone01-YYYY-MM-DD.dump`
+through the same proxy. To recover from a volume snapshot, create a new
+cluster with `fly postgres create --snapshot-id <snapshot-id>` and re-run
+`fly postgres attach` against it (detach the old one first with
+`fly postgres detach zone01-kisumu-db --app zone01-kisumu-api`).
+
+To grow the disk, run `fly volumes extend <volume-id> --size <GB>`; to give
+the database more memory, `fly machine update <machine-id> --vm-memory 1024
+-a zone01-kisumu-db`.
 
 ## Managing site content
 
