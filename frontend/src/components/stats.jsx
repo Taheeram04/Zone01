@@ -119,18 +119,7 @@ const Stats = () => {
 
   return (
     <section ref={sectionRef} className="relative bg-primary overflow-hidden py-16 md:py-24">
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.2 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.2, ease: 'easeOut' }}
-        className="absolute left-0 top-0 h-full w-full md:w-1/2 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+
 
       <Container className="relative z-10">
         <motion.div
