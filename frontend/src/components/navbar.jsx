@@ -1,10 +1,11 @@
 // components/navbar.jsx
 import { useState, useRef, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import logo from '../assets/mainlogo.png';
+import mainLogo from '../assets/mainlogo.png';
+import whiteLogo from '../assets/whitelogo.png';
 
 const navLinks = [
   { label: 'Home', href: '/', decorated: false },
@@ -98,13 +99,97 @@ export default function Navbar() {
     }
   };
 
+  const goToApply = () => {
+    setMenuOpen(false);
+    navigate('/apply');
+  };
+
+  // Whenever the user scrolls, work out which themed section is behind the
+  // navbar. Sections opt in with `data-nav-theme="dark|light"`.
+  useEffect(() => {
+    let raf = null;
+
+    const update = () => {
+      raf = null;
+      const nav = navRef.current;
+      const sampleY = nav ? nav.getBoundingClientRect().height * 0.5 : 36;
+      const sections = document.querySelectorAll('[data-nav-theme]');
+
+      let found = null;
+      sections.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= sampleY && rect.bottom > sampleY) {
+          found = el.getAttribute('data-nav-theme') === 'light' ? 'light' : 'dark';
+        }
+      });
+
+      if (found) setNavTheme((prev) => (prev === found ? prev : found));
+    };
+
+    const onScroll = () => {
+      if (raf == null) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    return () => {
+      if (raf != null) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [pathname]);
+
+  // Dark backgrounds (and the open mobile menu) need the white logo/labels.
+  const useWhiteLogo = menuOpen || navTheme === 'dark';
+
+  // Lock page scroll while the mobile menu is open, and let Escape close it.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+
+    // If the viewport grows back to desktop, drop the mobile menu so the
+    // page scroll is never left locked.
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [menuOpen]);
+
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-40 bg-black-900/20 backdrop-blur-sm">
+      <nav
+        ref={navRef}
+        className={`fixed top-0 left-0 w-full z-40 transition-colors duration-300 ${
+          useWhiteLogo
+            ? 'bg-black-900/25 backdrop-blur-sm'
+            : 'bg-white/75 backdrop-blur-md shadow-[0_1px_2px_rgba(9,44,62,0.08)]'
+        }`}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <Container>
-         <div className="flex justify-between items-center py-4">
-  <Link to="/" className="flex items-center">
-   <img src={logo} alt="Zone01 Kisumu" className="h-8 md:h-10" />
+         <div className="relative z-50 flex justify-between items-center py-4">
+  <Link to="/" className="flex items-center" aria-label="Zone01 Kisumu home">
+   <img
+     src={useWhiteLogo ? whiteLogo : mainLogo}
+     alt="Zone01 Kisumu"
+     className="h-8 md:h-10 transition-opacity duration-300"
+   />
   </Link>
 
   {/* Links + Apply button grouped together, pushed to the right */}
@@ -182,24 +267,33 @@ export default function Navbar() {
         );
       })}
       <li>
-        <button onClick={() => setShowDonateModal(true)} className="hover:text-primary transition-colors whitespace-nowrap">
+        <Link to="/donate" className="hover:text-primary transition-colors whitespace-nowrap">
           Donate
-        </button>
+        </Link>
       </li>
     </ul>
 
-    <Button variant="primary" className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
+    <Button variant="primary" onClick={goToApply} className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
       Apply
     </Button>
   </div>
 
-  <div className="md:hidden z-50" onClick={toggleMenu}>
+  <button
+    type="button"
+    className={`md:hidden z-50 -mr-2 p-2 rounded-lg transition-colors ${
+      useWhiteLogo ? 'text-white active:bg-white/10' : 'text-black-900 active:bg-black-900/10'
+    }`}
+    onClick={toggleMenu}
+    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+    aria-expanded={menuOpen}
+    aria-controls="mobile-menu"
+  >
     {menuOpen ? (
-      <X className="text-white h-7 w-7 cursor-pointer" />
+      <X className="h-7 w-7" />
     ) : (
-      <Menu className="text-white h-7 w-7 cursor-pointer" />
+      <Menu className="h-7 w-7" />
     )}
-  </div>
+  </button>
 </div>
 
           {menuOpen && (
@@ -281,16 +375,6 @@ export default function Navbar() {
           )}
         </Container>
       </nav>
-
-      {showDonateModal && (
-        <div className="fixed inset-0 z-50 bg-black-900/50 flex items-center justify-center" onClick={() => setShowDonateModal(false)}>
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-h3 font-bold mb-4">Support Zone01 Kisumu</h2>
-            <p className="text-body-m text-black-900/70 mb-6">Donation page coming soon.</p>
-            <Button variant="outline" onClick={() => setShowDonateModal(false)}>Close</Button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
