@@ -12,5 +12,6 @@ urlpatterns = [
     path("staff/", api.staff_list, name="staff-list"),
     path("news/", api.news_list, name="news-list"),
     path("impact/", api.impact_list, name="impact-list"),
+    path("links/", api.link_list, name="link-list"),
     path("piscine/", api.piscine_detail, name="piscine-detail"),
 ]

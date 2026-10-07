@@ -4,10 +4,12 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import mainLogo from '../assets/mainlogo.png';
 import whiteLogo from '../assets/whitelogo.png';
 
-const navLinks = [
+// Fallback header links, shown until the CMS responds and if the API is unreachable.
+const FALLBACK_LINKS = [
   { label: 'Home', href: '/', decorated: false },
   { label: 'About Us', href: '/about', decorated: true },
   { label: 'Community', href: '/community', decorated: true },
@@ -15,12 +17,51 @@ const navLinks = [
   { label: 'Hire Talent', href: '/hire', decorated: false },
 ];
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
+// Map the CMS /api/links/ payload onto the shape the navbar renders.
+const normaliseLinks = (rows) =>
+  rows.map((row) => ({
+    label: row.label,
+    href: row.url,
+    decorated: Boolean(row.show_chevron),
+    external: row.external ?? /^(https?:)?\/\//.test(row.url || ''),
+    newTab: Boolean(row.open_in_new_tab),
+  }));
+
+// Hosted Every.org donation flow.
+export const DONATE_URL =
+  'https://www.every.org/lakehub-foundation?donateTo=lakehub-foundation#/donate/card';
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Theme of the section currently sitting behind the navbar: 'dark' | 'light'.
   const [navTheme, setNavTheme] = useState('dark');
   const navRef = useRef(null);
   const { pathname } = useLocation();
+
+  // Header links are managed in the Django CMS; keep the fallback until it answers.
+  const [links, setLinks] = useState(FALLBACK_LINKS);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const load = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/links/`, { signal: controller.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const rows = Array.isArray(data.results) ? data.results : [];
+        if (rows.length) setLinks(normaliseLinks(rows));
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        // Keep the fallback links when the API can't be reached.
+      }
+    };
+
+    load();
+    return () => controller.abort();
+  }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -119,22 +160,43 @@ export default function Navbar() {
         useWhiteLogo ? 'text-white' : 'text-black-900'
       }`}
     >
-      {navLinks.map((link) => (
-        <li key={link.href}>
-          <Link to={link.href} className="flex items-center gap-1 hover:text-primary transition-colors whitespace-nowrap">
-            {link.label}
-            {link.decorated && <ChevronDown className="w-3 h-3" />}
-          </Link>
+      {links.map((link) => (
+        <li key={`${link.href}-${link.label}`}>
+          {link.external ? (
+            <a
+              href={link.href}
+              target={link.newTab ? '_blank' : undefined}
+              rel={link.newTab ? 'noopener noreferrer' : undefined}
+              className="flex items-center gap-1 hover:text-primary transition-colors whitespace-nowrap"
+            >
+              {link.label}
+              {link.decorated && <ChevronDown className="w-3 h-3" />}
+            </a>
+          ) : (
+            <Link to={link.href} className="flex items-center gap-1 hover:text-primary transition-colors whitespace-nowrap">
+              {link.label}
+              {link.decorated && <ChevronDown className="w-3 h-3" />}
+            </Link>
+          )}
         </li>
       ))}
       <li>
-        <Link to="/donate" className="hover:text-primary transition-colors whitespace-nowrap">
+        <a
+          href={DONATE_URL}
+          className="hover:text-primary transition-colors whitespace-nowrap"
+        >
           Donate
-        </Link>
+        </a>
       </li>
     </ul>
 
-    <Button variant="primary" className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
+    <Button
+      variant="primary"
+      href={APPLICATION_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap"
+    >
       Apply
     </Button>
   </div>
@@ -173,33 +235,49 @@ export default function Navbar() {
                 className="md:hidden relative z-50 mx-2 mb-3 max-h-[calc(100svh_-_7rem)] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-black-900/95 backdrop-blur-md px-4 py-4 shadow-2xl animate-menu-in"
               >
                 <ul className="flex flex-col font-sans font-medium text-base text-white divide-y divide-white/10">
-                  {navLinks.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        to={link.href}
-                        className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {link.label}
-                        {link.decorated && <ChevronDown className="w-4 h-4 opacity-60" />}
-                      </Link>
+                  {links.map((link) => (
+                    <li key={`${link.href}-${link.label}`}>
+                      {link.external ? (
+                        <a
+                          href={link.href}
+                          target={link.newTab ? '_blank' : undefined}
+                          rel={link.newTab ? 'noopener noreferrer' : undefined}
+                          className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          {link.label}
+                          {link.decorated && <ChevronDown className="w-4 h-4 opacity-60" />}
+                        </a>
+                      ) : (
+                        <Link
+                          to={link.href}
+                          className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          {link.label}
+                          {link.decorated && <ChevronDown className="w-4 h-4 opacity-60" />}
+                        </Link>
+                      )}
                     </li>
                   ))}
                   <li>
-                    <Link
-                      to="/donate"
+                    <a
+                      href={DONATE_URL}
                       onClick={() => setMenuOpen(false)}
                       className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
                     >
                       Donate
-                    </Link>
+                    </a>
                   </li>
                 </ul>
 
                 <Button
                   variant="primary"
-                  className="mt-4 w-full rounded-full py-3.5 text-base"
+                  href={APPLICATION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
+                  className="mt-4 w-full rounded-full py-3.5 text-base"
                 >
                   Apply now
                 </Button>

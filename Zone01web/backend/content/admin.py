@@ -12,6 +12,7 @@ from content.models import (
     NewsUpdate,
     Partner,
     PiscineRegistration,
+    SiteLink,
     StaffMember,
 )
 
@@ -89,6 +90,16 @@ class ImpactUpdateAdmin(ImagePreviewMixin, admin.ModelAdmin):
             '<a href="{}" target="_blank" rel="noopener">Download</a>',
             url,
         )
+
+
+@admin.register(SiteLink)
+class SiteLinkAdmin(admin.ModelAdmin):
+    list_display = ("label", "url", "order", "is_active", "open_in_new_tab", "show_chevron")
+    list_editable = ("order", "is_active")
+    list_filter = ("is_active", "open_in_new_tab")
+    search_fields = ("label", "url")
+    readonly_fields = ("created_at",)
+    ordering = ("order", "id")
 
 
 @admin.register(PiscineRegistration)

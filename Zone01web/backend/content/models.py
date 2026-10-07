@@ -134,6 +134,41 @@ class ImpactUpdate(OrderedContent):
         return self.title
 
 
+class SiteLink(OrderedContent):
+    """A navigation link rendered in the website header.
+
+    Editors add, reorder and hide header links from the admin. :attr:`url` may
+    be an internal path (``/about``) or a full external URL (``https://...``).
+    """
+
+    label = models.CharField(max_length=100)
+    url = models.CharField(
+        max_length=500,
+        help_text="Internal path (e.g. /about) or a full external URL (https://...).",
+    )
+    is_active = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    open_in_new_tab = models.BooleanField(
+        default=False,
+        help_text="Open this link in a new tab.",
+    )
+    show_chevron = models.BooleanField(
+        default=False,
+        help_text="Show a small dropdown chevron next to the label.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "site link"
+        verbose_name_plural = "site links"
+
+    def __str__(self):
+        return self.label
+
+    @property
+    def is_external(self):
+        """True when the link points off-site, so the frontend can use an ``<a>``."""
+        return self.url.startswith(("http://", "https://", "//"))
+
+
 class PiscineRegistration(models.Model):
     """Singleton controlling the next-piscine countdown in the hero.
 

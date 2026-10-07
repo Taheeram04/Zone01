@@ -11,13 +11,21 @@ Endpoints (all GET):
 * ``/api/staff/``
 * ``/api/news/``
 * ``/api/impact/``
+* ``/api/links/``
 * ``/api/piscine/``
 """
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from content.models import ImpactUpdate, NewsUpdate, Partner, PiscineRegistration, StaffMember
+from content.models import (
+    ImpactUpdate,
+    NewsUpdate,
+    Partner,
+    PiscineRegistration,
+    SiteLink,
+    StaffMember,
+)
 
 
 def _media_url(request, media):
@@ -75,6 +83,18 @@ def serialize_impact(request, item):
     }
 
 
+def serialize_link(link):
+    return {
+        "id": link.id,
+        "label": link.label,
+        "url": link.url,
+        "external": link.is_external,
+        "open_in_new_tab": link.open_in_new_tab,
+        "show_chevron": link.show_chevron,
+        "order": link.order,
+    }
+
+
 def serialize_piscine(piscine):
     starts_at = piscine.starts_at
     return {
@@ -116,6 +136,12 @@ def impact_list(request):
 
 
 @require_GET
+def link_list(request):
+    links = SiteLink.objects.filter(is_active=True)
+    return JsonResponse({"results": [serialize_link(link) for link in links]})
+
+
+@require_GET
 def piscine_detail(request):
     return JsonResponse(serialize_piscine(PiscineRegistration.get_solo()))
 
@@ -133,6 +159,7 @@ def content_index(request):
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
             ],
+            "links": [serialize_link(link) for link in SiteLink.objects.filter(is_active=True)],
             "piscine": serialize_piscine(PiscineRegistration.get_solo()),
         }
     )
