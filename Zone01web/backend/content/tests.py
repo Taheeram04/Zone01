@@ -18,6 +18,7 @@ from content.models import (
     PageSection,
     Partner,
     PiscineRegistration,
+    SiteLink,
     StaffMember,
 )
 
@@ -247,3 +248,30 @@ class PageApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("pages", response.json())
+
+
+class SiteLinkApiTests(TestCase):
+    def setUp(self):
+        # The seed migration ships the default header links; start clean.
+        SiteLink.objects.all().delete()
+
+    def test_link_list_hides_inactive(self):
+        SiteLink.objects.create(label="Home", url="/", order=0)
+        SiteLink.objects.create(label="Hidden", url="/hidden", is_active=False, order=1)
+
+        response = self.client.get(reverse("content_api:link-list"))
+
+        self.assertEqual(response.status_code, 200)
+        labels = [item["label"] for item in response.json()["results"]]
+        self.assertEqual(labels, ["Home"])
+
+    def test_link_external_flag_and_order(self):
+        SiteLink.objects.create(label="Docs", url="https://example.com", order=2)
+        SiteLink.objects.create(label="About", url="/about", order=1)
+
+        response = self.client.get(reverse("content_api:content-index"))
+        links = response.json()["links"]
+
+        self.assertEqual([link["label"] for link in links], ["About", "Docs"])
+        self.assertFalse(links[0]["external"])
+        self.assertTrue(links[1]["external"])
