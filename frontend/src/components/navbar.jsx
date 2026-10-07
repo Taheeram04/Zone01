@@ -279,7 +279,14 @@ export default function Navbar() {
                   );
                 })}
                 <li>
-                  <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
+                  <a
+                    href={DONATE_URL}
+                    className={`inline-flex items-center justify-center px-5 py-2 rounded-full border text-body-s font-medium bg-transparent transition-all duration-300 whitespace-nowrap ${
+                      useWhiteLogo
+                        ? 'border-white text-white hover:bg-white hover:text-black-900'
+                        : 'border-primary text-primary hover:bg-primary hover:text-white'
+                    }`}
+                  >
                     Donate
                   </a>
                 </li>
@@ -393,8 +400,12 @@ export default function Navbar() {
                       </li>
                     );
                   })}
-                  <li>
-                    <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="block min-h-[48px] leading-[48px] px-3 -mx-1 text-white hover:text-primary">
+                  <li className="pt-2">
+                    <a
+                      href={DONATE_URL}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex min-h-[44px] items-center justify-center rounded-full border border-white text-white hover:bg-white hover:text-black-900 active:bg-white/20 transition-colors text-center font-medium"
+                    >
                       Donate
                     </a>
                   </li>
