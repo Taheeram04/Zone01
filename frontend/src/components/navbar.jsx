@@ -1,7 +1,7 @@
 // components/navbar.jsx
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import mainLogo from '../assets/mainlogo.png';
@@ -15,12 +15,79 @@ const navLinks = [
   { label: 'Hire Talent', href: '/hire', decorated: false },
 ];
 
+const aboutDropdownItems = [
+  { label: 'Know Us', href: '/about#know-us' },
+  { label: 'Our Model', href: '/about#our-model' },
+  { label: 'How to Apply', href: '/about#how-to-apply' },
+  { label: 'Careers', href: '/about#careers' },
+];
+
+// Hosted Every.org donation flow.
+export const DONATE_URL =
+  'https://www.every.org/lakehub-foundation?donateTo=lakehub-foundation#/donate/card';
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Theme of the section currently sitting behind the navbar: 'dark' | 'light'.
-  const [navTheme, setNavTheme] = useState('dark');
-  const navRef = useRef(null);
-  const { pathname } = useLocation();
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const aboutDropdownRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
+
+  // 1. ADD MISSING STATE FOR NAV THEME
+  const [navTheme, setNavTheme] = useState('dark'); 
+
+  // 2. ADD MISSING NAV REF TO PREVENT CRASHES ON SCROLL REFS
+  const navRef = useRef(null); 
+
+  // 3. ADD MISSING NAVIGATE HOOK USED IN goToApply
+  const navigate = useNavigate(); 
+
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setAboutDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setAboutDropdownOpen(false);
+    }, 200);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => {
+      if (prev) {
+        setMobileAboutOpen(false);
+      }
+      return !prev;
+    });
+  };
+
+  // Close dropdown on click outside or Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (aboutDropdownRef.current && !aboutDropdownRef.current.contains(event.target)) {
+        setAboutDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setAboutDropdownOpen(false);
+      }
+    };
+
+    if (aboutDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -59,7 +126,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, [pathname]);
+   }, []);
 
   // Dark backgrounds (and the open mobile menu) need the white logo/labels.
   const useWhiteLogo = menuOpen || navTheme === 'dark';
@@ -128,16 +195,9 @@ export default function Navbar() {
         </li>
       ))}
       <li>
-        <Link
-          to="/donate"
-          className={`inline-flex items-center justify-center !px-6 !py-2 rounded-full border text-body-s font-mono font-medium transition-all duration-300 whitespace-nowrap ${
-            useWhiteLogo
-              ? 'border-white/80 text-white hover:bg-white hover:text-secondary hover:border-white'
-              : 'border-primary text-primary hover:bg-primary hover:text-white'
-          }`}
-        >
+        <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
           Donate
-        </Link>
+        </a>
       </li>
     </ul>
 
@@ -191,27 +251,20 @@ export default function Navbar() {
                         {link.decorated && <ChevronDown className="w-4 h-4 opacity-60" />}
                       </Link>
                     </li>
-                  ))}
-                  <li className="pt-2">
-                    <Link
-                      to="/donate"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex w-full items-center justify-center rounded-full border border-white/80 py-3.5 text-base font-mono font-medium text-white hover:bg-white hover:text-black-900 active:bg-white/20 transition-all text-center"
-                    >
-                      Donate
-                    </Link>
-                  </li>
-                </ul>
-
-                <Button
-                  variant="primary"
-                  className="mt-4 w-full rounded-full py-3.5 text-base"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Apply now
-                </Button>
-              </div>
-            </>
+                  );
+                })}
+                <li>
+                  <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="hover:text-primary">
+                    Donate
+                  </a>
+                </li>
+                <li>
+                  <Button variant="primary" className="w-full rounded-full text-body-s">
+                    Apply
+                  </Button>
+                </li>
+              </ul>
+            </div>
           )}
         </Container>
       </nav>

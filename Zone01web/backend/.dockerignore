@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+staticfiles/
+media/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.git
+fly.toml
