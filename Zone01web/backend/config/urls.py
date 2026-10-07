@@ -7,17 +7,19 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.i18n import JavaScriptCatalog
 
-from core.views import health
+from core.views import frontend_status, health
 
 admin.site.site_header = "Zone01 CMS"
 admin.site.site_title = "Zone01 CMS"
 admin.site.index_title = "Content dashboard"
+admin.site.index_template = "admin/frontend_status_index.html"
 
 urlpatterns = [
     path("healthz", health, name="health"),
     path("api/", include("content.urls")),
 ] + i18n_patterns(
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
+    path("admin/frontend-status/", frontend_status, name="frontend-status"),
     path("admin/", admin.site.urls),
     path("filer/", include("filer.urls")),
     path("", include("cms.urls")),
