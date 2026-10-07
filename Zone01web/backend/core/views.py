@@ -9,7 +9,7 @@ from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.db.utils import OperationalError
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
@@ -96,3 +96,26 @@ def frontend_status(request):
         "checked_at": timezone.now(),
     }
     return render(request, "admin/frontend_status.html", context)
+
+
+def spa(request, path=""):
+    """Serve the built React app's ``index.html`` for client-side routes.
+
+    The SPA owns every public path; Django keeps ``/api/``, ``/admin/`` and
+    ``/healthz``. Assets are referenced as ``/static/...`` and served by the
+    staticfiles app (development) or WhiteNoise (production). When the bundle
+    has not been built yet, a clear 404 tells the developer what to run.
+    """
+    try:
+        html = settings.FRONTEND_INDEX.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise Http404(
+            "Frontend build not found. Run `make frontend` (or build the "
+            "frontend with VITE_BASE=/static/) and try again."
+        ) from None
+    return HttpResponse(html, content_type="text/html")
+
+
+def api_not_found(request):
+    """JSON 404 for unknown ``/api/`` paths, instead of falling through to the SPA."""
+    return JsonResponse({"detail": "Not found"}, status=404)

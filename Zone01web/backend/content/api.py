@@ -11,6 +11,7 @@ Endpoints (all GET):
 * ``/api/staff/``
 * ``/api/news/``
 * ``/api/impact/``
+* ``/api/links/``
 * ``/api/piscine/``
 * ``/api/pages/``            - published pages with their sections
 * ``/api/pages/<slug>/``     - a single page by slug (e.g. about-us)
@@ -26,6 +27,7 @@ from content.models import (
     Page,
     Partner,
     PiscineRegistration,
+    SiteLink,
     StaffMember,
 )
 
@@ -82,6 +84,18 @@ def serialize_impact(request, item):
         "report": report_url,
         "report_name": item.report.name if report_url and item.report else None,
         "order": item.order,
+    }
+
+
+def serialize_link(link):
+    return {
+        "id": link.id,
+        "label": link.label,
+        "url": link.url,
+        "external": link.is_external,
+        "open_in_new_tab": link.open_in_new_tab,
+        "show_chevron": link.show_chevron,
+        "order": link.order,
     }
 
 
@@ -155,6 +169,12 @@ def impact_list(request):
 
 
 @require_GET
+def link_list(request):
+    links = SiteLink.objects.filter(is_active=True)
+    return JsonResponse({"results": [serialize_link(link) for link in links]})
+
+
+@require_GET
 def piscine_detail(request):
     return JsonResponse(serialize_piscine(PiscineRegistration.get_solo()))
 
@@ -188,6 +208,7 @@ def content_index(request):
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
             ],
+            "links": [serialize_link(link) for link in SiteLink.objects.filter(is_active=True)],
             "piscine": serialize_piscine(PiscineRegistration.get_solo()),
             "pages": [
                 serialize_page(request, p)
