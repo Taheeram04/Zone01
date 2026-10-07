@@ -18,19 +18,19 @@ import './how-to-apply.css';
 
 const STEPS = [
   {
-    label: 'Step 1',
+    label: 'Application',
     text: 'Play the 95-minute online-cognitive games to uncover your potential. You have three attempts to play the games successfully.',
   },
   {
-    label: 'Step 2',
+    label: 'Piscine',
     text: "We invite the successful applicants for the 4-week intense in-person selection process we call The 'Piscine'. Once selected, you will join the next Zone01 Kisumu cohort.",
   },
   {
-    label: 'Step 3',
+    label: 'Cohort',
     text: 'Become an apprentice and complete the one year in-person training at our campus. Our peer-to-peer learning experience will transform you into a highly skilled full-stack engineer.',
   },
   {
-    label: 'Step 4',
+    label: 'Full-stack engineer',
     text: 'Become an AI-ready Talent. We will put you on a path to guaranteed employment with our partner companies.',
   },
 ];

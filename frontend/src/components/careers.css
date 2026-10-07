@@ -32,6 +32,7 @@
   color: #3f4f66;
   line-height: 1.7;
   font-size: clamp(0.78rem, 1.5vw, 0.98rem);
+  text-align: center;
 }
 
 /* --- 3D stage ------------------------------------------------------------- */

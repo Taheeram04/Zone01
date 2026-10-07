@@ -1,8 +1,8 @@
 // components/careers.jsx
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Search, Sparkles, ArrowRight, Infinity as InfinityIcon } from 'lucide-react';
 import { FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
+import { APPLICATION_URL } from '../constants.js';
 import aiPortrait from '../assets/AI.png';
 import aiRobot from '../assets/ai-robot.png';
 import aiDuo from '../assets/ai-duo.png';
@@ -104,10 +104,11 @@ const Careers = () => {
     <section id="careers" data-nav-theme="light" aria-labelledby="careers-title" className="careers">
       <div className="careers__head">
         <h2 id="careers-title" className="careers__title">
-          Career Paths.
+          Career Paths
         </h2>
         <p className="careers__subtitle">
-          What is your true passion?
+          What is your true passion? Pursue a career path of your choice and become an expert through real world experience.
+
         </p>
       </div>
 
@@ -224,10 +225,15 @@ const Careers = () => {
               </>
             )}
 
-            <Link to="/apply" className="careers__cta">
+            <a
+              href={APPLICATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="careers__cta"
+            >
               Start Today
               <ArrowRight size={16} strokeWidth={2.5} />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
