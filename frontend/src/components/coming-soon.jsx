@@ -4,9 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import mascotUpper from '../assets/mascot-upper.png';
-import mascotLegLeft from '../assets/mascot-leg-left.png';
-import mascotLegRight from '../assets/mascot-leg-right.png';
+import maintenanceMascot from '../assets/Cartoon2.avif';
 
 const PAGE_TITLES = {
   '/about': 'About Us',
@@ -24,7 +22,7 @@ const getTitle = (pathname) => {
 
 /*
  * Loop timeline (total 5.5s):
- *   enter (1.0s) -> show / says "Coming Soon!" (3.0s) -> run away with the words (1.5s)
+ *   enter (1.0s) -> show / says "Under Maintenance" (3.0s) -> run away with the words (1.5s)
  */
 const PHASE_MS = { enter: 1000, show: 3000, run: 1500 };
 
@@ -51,31 +49,13 @@ const wordsVariants = {
 };
 
 /**
- * The mascot is split into separate body parts (upper body, left leg, right
- * leg). Each leg swings around its hip on a walk cycle so the kid takes real
- * alternating steps instead of sliding rigidly like a puppet.
- *
- * Leg pivot points are percentages of the sprite canvas (296 x 556).
+ * The mascot is a single illustrated character (Cartoon2). It keeps a subtle
+ * bob and sway so the page still feels alive while parked on the maintenance
+ * screen, and it slides with the stage during the enter/run phases.
  */
-const LEFT_HIP = '34% 72%';
-const RIGHT_HIP = '66% 72%';
-
 const Mascot = ({ running, still }) => {
   const stride = running ? 0.46 : 1.5;
-  const lift = running ? 11 : 5;
-  const swing = running ? 7 : 3;
   const times = [0, 0.25, 0.5, 0.75, 1];
-
-  // left and right legs are half a cycle out of phase
-  const legLeft = {
-    y: [0, -lift, 0, 0, 0],
-    rotate: [-swing, 0, swing, 0, -swing],
-  };
-  const legRight = {
-    y: [0, 0, 0, -lift, 0],
-    rotate: [swing, 0, -swing, 0, swing],
-  };
-  const legTransition = { duration: stride, repeat: Infinity, ease: 'easeInOut', times };
 
   const body = {
     y: [0, -3, 0, -3, 0],
@@ -105,32 +85,9 @@ const Mascot = ({ running, still }) => {
         transition={still ? { duration: 0 } : { duration: stride, repeat: Infinity, ease: 'easeInOut', times }}
       />
 
-      {/* Legs sit behind the upper body */}
       <motion.img
-        src={mascotLegLeft}
-        alt=""
-        aria-hidden="true"
-        draggable="false"
-        className="absolute inset-0 h-full w-full select-none"
-        style={{ transformOrigin: LEFT_HIP }}
-        animate={still ? { y: 0, rotate: 0 } : legLeft}
-        transition={still ? { duration: 0 } : legTransition}
-      />
-      <motion.img
-        src={mascotLegRight}
-        alt=""
-        aria-hidden="true"
-        draggable="false"
-        className="absolute inset-0 h-full w-full select-none"
-        style={{ transformOrigin: RIGHT_HIP }}
-        animate={still ? { y: 0, rotate: 0 } : legRight}
-        transition={still ? { duration: 0 } : legTransition}
-      />
-
-      {/* Upper body on top, defining the box size */}
-      <motion.img
-        src={mascotUpper}
-        alt="Cartoon mascot saying the page is coming soon"
+        src={maintenanceMascot}
+        alt="Cartoon mascot on the tools, showing the page is under maintenance"
         draggable="false"
         className="relative block h-40 w-auto select-none drop-shadow-[0_12px_16px_rgba(9,44,62,0.2)] sm:h-60 md:h-72"
         animate={still ? { y: 0, rotate: 0 } : body}
@@ -158,7 +115,7 @@ const ComingSoon = () => {
   const running = phase !== 'show';
 
   return (
-    <section data-nav-theme="light" className="relative w-full min-h-[100svh] bg-tint-blue overflow-hidden flex flex-col">
+    <section data-nav-theme="light" className="relative w-full min-h-[100svh] bg-campus-bg overflow-hidden flex flex-col">
       {/* Soft decorative blobs */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full bg-blob-blue/60 sm:h-80 sm:w-80" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-blob-blue/50 sm:h-80 sm:w-80" aria-hidden="true" />
@@ -185,10 +142,10 @@ const ComingSoon = () => {
             >
               <div className="relative rounded-3xl rounded-bl-none border-2 border-primary/15 bg-white px-4 py-3 shadow-xl sm:px-8 sm:py-6">
                 <span className="block font-sans text-lg font-black tracking-tight text-primary sm:text-4xl">
-                  Coming Soon!
+                  Under Maintenance
                 </span>
                 <span className="mt-1 hidden font-mono text-body-s text-black-900/60 sm:block">
-                  we are still cooking this page
+                  we are patching things up
                 </span>
                 {/* Speech tail */}
                 <span className="absolute -bottom-3 left-6 h-5 w-5 rotate-45 border-b-2 border-l-2 border-primary/15 bg-white" />
@@ -199,8 +156,8 @@ const ComingSoon = () => {
 
         <Container className="text-center">
           <p className="mx-auto mt-4 max-w-md font-mono text-sm md:text-body-m text-black-900/70 leading-relaxed">
-            Our mascot is keeping this spot warm. The <span className="font-semibold text-black-900">{title}</span> page
-            is on its way — check back soon.
+            Our mascot is on the tools. The <span className="font-semibold text-black-900">{title}</span> page
+            is under maintenance, check back soon.
           </p>
 
           <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
