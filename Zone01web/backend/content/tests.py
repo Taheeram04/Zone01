@@ -2,13 +2,15 @@ import shutil
 import tempfile
 from datetime import timedelta
 
+from django.contrib import admin
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from filer.models import File
 
+from content.admin import PiscineRegistrationAdmin
 from content.models import (
     Article,
     Category,
@@ -52,6 +54,52 @@ class ContentModelTests(TestCase):
         second = PiscineRegistration.get_solo()
         self.assertEqual(first.pk, second.pk)
         self.assertEqual(PiscineRegistration.objects.count(), 1)
+
+    def test_piscine_save_upserts_into_the_singleton(self):
+        PiscineRegistration.get_solo()
+
+        replacement = PiscineRegistration(
+            next_piscine_date=timezone.localdate() + timedelta(days=21),
+            is_active=True,
+        )
+        replacement.save()
+
+        self.assertEqual(PiscineRegistration.objects.count(), 1)
+        stored = PiscineRegistration.objects.get()
+        self.assertEqual(stored.pk, 1)
+        self.assertEqual(stored.next_piscine_date, replacement.next_piscine_date)
+        self.assertTrue(stored.is_active)
+
+
+class PiscineAdminTests(TestCase):
+    def setUp(self):
+        # The singleton row exists, which used to hide the admin "Add" button.
+        PiscineRegistration.get_solo()
+
+    def test_admin_can_always_add_the_next_piscine(self):
+        model_admin = PiscineRegistrationAdmin(PiscineRegistration, admin.site)
+        request = RequestFactory().get("/admin/content/piscineregistration/add/")
+
+        self.assertTrue(PiscineRegistration.objects.exists())
+        self.assertTrue(model_admin.has_add_permission(request))
+        # Still a singleton: no deleting.
+        self.assertFalse(model_admin.has_delete_permission(request))
+
+    def test_add_form_is_prefilled_from_the_current_row(self):
+        current = PiscineRegistration.get_solo()
+        current.next_piscine_date = timezone.localdate() + timedelta(days=7)
+        current.message = "Piscine #7"
+        current.is_active = True
+        current.save()
+
+        model_admin = PiscineRegistrationAdmin(PiscineRegistration, admin.site)
+        initial = model_admin.get_changeform_initial_data(
+            RequestFactory().get("/admin/content/piscineregistration/add/")
+        )
+
+        self.assertEqual(initial["next_piscine_date"], current.next_piscine_date)
+        self.assertEqual(initial["message"], "Piscine #7")
+        self.assertTrue(initial["is_active"])
 
 
 class ContentApiTests(TestCase):

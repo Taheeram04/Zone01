@@ -232,6 +232,11 @@ class PiscineRegistration(models.Model):
 
     def save(self, *args, **kwargs):
         self.pk = 1
+        # The row is a singleton pinned to pk=1. A plain "Add" from the admin
+        # would try to INSERT another pk=1 row and clash, so replace the
+        # existing row instead (upsert).
+        if not kwargs.get("force_insert") and type(self).objects.filter(pk=1).exists():
+            kwargs["force_update"] = True
         super().save(*args, **kwargs)
 
     @property
