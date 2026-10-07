@@ -54,8 +54,8 @@ const cardVariants = {
 
 const WhoIsItFor = () => {
   return (
-    <section className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
-      <Container className="max-w-[1400px]">
+    <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
+      <Container>
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <KineticHeading
@@ -77,7 +77,7 @@ const WhoIsItFor = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10"
+          className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 lg:gap-16 justify-items-center"
         >
           {targetAudience.map((item) => (
             <motion.div
@@ -85,10 +85,10 @@ const WhoIsItFor = () => {
               variants={cardVariants}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="flex flex-col group cursor-default"
+              className="flex flex-col items-center text-center group cursor-default w-full"
             >
               {/* Image Frame with Aspect Ratio matching design */}
-              <div className="relative w-full aspect-[4/4.3] rounded-2xl overflow-hidden bg-slate-100 shadow-sm">
+              <div className="relative w-full aspect-[4/3.5] sm:aspect-[4/4.3] rounded-2xl overflow-hidden bg-slate-100 shadow-sm">
                 <motion.img
                   src={item.image}
                   alt={item.alt}
@@ -98,12 +98,12 @@ const WhoIsItFor = () => {
               </div>
 
               {/* Category / Title */}
-              <h3 className="font-sans font-bold text-body-m text-primary tracking-wider uppercase mt-6 mb-3">
+              <h3 className="w-full text-center font-sans font-bold text-body-m text-primary tracking-wider uppercase mt-5 mb-2.5 md:mt-6 md:mb-3">
                 {item.title}
               </h3>
 
               {/* Description */}
-              <p className="font-mono text-body-s text-black-900/80 leading-[1.6] max-w-xs">
+              <p className="w-full text-center font-mono text-body-s text-black-900/80 leading-[1.6]">
                 {item.description}
               </p>
             </motion.div>

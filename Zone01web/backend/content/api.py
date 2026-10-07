@@ -76,11 +76,16 @@ def serialize_impact(request, item):
 
 
 def serialize_piscine(piscine):
+    starts_at = piscine.starts_at
     return {
-        "is_active": piscine.is_active,
+        # Auto-expires: false once the start moment has passed, even if the
+        # admin toggle is still on.
+        "is_active": piscine.is_live,
         "next_piscine_date": piscine.next_piscine_date.isoformat()
         if piscine.next_piscine_date
         else None,
+        "starts_at": starts_at.isoformat() if starts_at else None,
+        "label": piscine.message or "Next Piscine",
         "message": piscine.message,
         "updated_at": piscine.updated_at.isoformat() if piscine.updated_at else None,
     }

@@ -22,6 +22,9 @@ Both sets are searchable from the Django admin through
 indexes declared with :class:`core.indexes.GinTrigramIndex`.
 """
 
+import datetime
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -29,6 +32,10 @@ from filer.fields.file import FilerFileField
 from filer.fields.image import FilerImageField
 
 from core.indexes import GinTrigramIndex
+
+# Next-piscine alerts always start at 09:00 Kisumu time (EAT).
+PISCINE_TIMEZONE = ZoneInfo("Africa/Nairobi")
+PISCINE_START_TIME = datetime.time(9, 0)
 
 
 class OrderedContent(models.Model):
@@ -154,10 +161,11 @@ class ImpactUpdate(OrderedContent):
 
 
 class PiscineRegistration(models.Model):
-    """Singleton controlling the next-piscine alert under "Apply now".
+    """Singleton controlling the next-piscine countdown in the hero.
 
-    Only one row ever exists (``pk=1``). Editors flip :attr:`is_active` to
-    show/hide the alert and edit :attr:`next_piscine_date`.
+    Only one row ever exists (``pk=1``). Editors toggle :attr:`is_active` on to
+    show the countdown and set :attr:`next_piscine_date`; the alert switches
+    itself off automatically at 09:00 EAT on that date.
     """
 
     is_active = models.BooleanField(
@@ -189,10 +197,32 @@ class PiscineRegistration(models.Model):
         self.pk = 1
         super().save(*args, **kwargs)
 
+    @property
+    def starts_at(self):
+        """Timezone-aware start moment (09:00 EAT on :attr:`next_piscine_date`)."""
+        if not self.next_piscine_date:
+            return None
+        naive = datetime.datetime.combine(self.next_piscine_date, PISCINE_START_TIME)
+        return timezone.make_aware(naive, PISCINE_TIMEZONE)
+
+    @property
+    def is_live(self):
+        """True only while the toggle is on and the start moment is still ahead."""
+        starts = self.starts_at
+        return bool(self.is_active and starts and starts > timezone.now())
+
     @classmethod
     def get_solo(cls):
-        """Return the single settings row, creating it on first access."""
+        """Return the single settings row, creating it on first access.
+
+        Also lazily flips the toggle off once the start time has passed, so the
+        alert switches itself off on D-day and must be re-activated for the next
+        piscine.
+        """
         obj, _ = cls.objects.get_or_create(pk=1)
+        if obj.is_active and obj.starts_at and obj.starts_at <= timezone.now():
+            obj.is_active = False
+            obj.save(update_fields=["is_active", "updated_at"])
         return obj
 
 
