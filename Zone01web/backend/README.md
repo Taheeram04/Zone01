@@ -44,6 +44,8 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `APP_VERSION`          | `dev`                                                | Version reported by the health endpoint |
 | `API_CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173`   | Frontend origins allowed to call `/api/` |
 | `API_CORS_ALLOW_ALL`   | `false`                                              | Allow every origin to call `/api/`      |
+| `FRONTEND_URL`         | `http://localhost:5173`                              | Public URL of the React frontend        |
+| `FRONTEND_HEALTH_TIMEOUT` | `5`                                                | Seconds before a frontend check times out |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
@@ -60,6 +62,7 @@ rows directly; the changes appear on the website and the JSON API immediately.
 | **News**                   | title (name), image, information, publish toggle, order  |
 | **Impact**                 | title (name), image, information, report PDF, publish toggle, order |
 | **Next piscine registration** | on/off toggle, next piscine date, optional message    |
+| **Frontend pages**         | label, path, active toggle, order (see below)            |
 
 Each **Impact** row may attach an optional PDF report. Upload one with the file
 picker, select **Clear** to remove it, or pick a different file to replace it.
@@ -69,6 +72,15 @@ frontend can offer a "Download report" action on that impact story.
 The **Next piscine registration** row is a singleton: toggle `is_active` on to
 show the alert under the *Apply now* button on the frontend, and off to hide it.
 Set `next_piscine_date` to the date the next piscine starts.
+
+## Monitoring the frontend
+
+Set `FRONTEND_URL` to the hosted React app, then open **Admin → Frontend
+status** (also linked from a module on the admin dashboard). The page checks the
+frontend root plus every active **Frontend pages** row and reports UP/DOWN,
+HTTP status and latency for each. Use **Manage pages** to add or remove the
+paths that get checked (`/about`, `/community`, `/register`, ...); each path is
+joined onto `FRONTEND_URL`. The checks run server-side and are staff-only.
 
 ## Content API
 
@@ -124,7 +136,7 @@ To add a placeholder, edit `templates/base.html` and use:
 backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
-├── core/                 # health endpoint
+├── core/                 # health endpoint + frontend status board
 ├── templates/            # CMS page templates (base.html) + README.md guide
 ├── static/               # static assets (img/); no project CSS
 ├── requirements.txt

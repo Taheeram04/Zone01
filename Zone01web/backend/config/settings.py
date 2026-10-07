@@ -183,6 +183,11 @@ API_CORS_ALLOWED_ORIGINS = env.list(
     default=["http://localhost:5173", "http://127.0.0.1:5173"],
 )
 
+# Hosted frontend shown on the admin "Frontend status" page. Set this to the
+# public URL of the React app so editors can check it is up from the dashboard.
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
+FRONTEND_HEALTH_TIMEOUT = env.float("FRONTEND_HEALTH_TIMEOUT", default=5.0)
+
 CORS_ALLOW_ALL_ORIGINS = API_CORS_ALLOW_ALL
 CORS_ALLOWED_ORIGINS = API_CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = True
