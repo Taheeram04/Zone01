@@ -148,6 +148,20 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# ---------------------------------------------------------------------------
+# React SPA served by Django
+# ---------------------------------------------------------------------------
+# `make frontend` builds the React app with Vite's base set to `/static/` and
+# copies the bundle here, so its hashed assets are collected alongside the other
+# static files and `index.html` is served for client-side routes by
+# `core.views.spa` (see `config/urls.py`). This lets one Django service host the
+# whole product: the SPA at `/`, the JSON API at `/api/` and the admin at
+# `/admin/`.
+FRONTEND_DIST = Path(env("FRONTEND_DIST", default=str(BASE_DIR / "frontend_dist")))
+FRONTEND_INDEX = FRONTEND_DIST / "index.html"
+if FRONTEND_DIST.is_dir():
+    STATICFILES_DIRS.append(FRONTEND_DIST)
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
