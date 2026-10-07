@@ -66,7 +66,7 @@ const WhyOurCampus = () => {
         <div className="text-center mb-12 md:mb-20">
           <KineticHeading
             as="h2"
-            text="Why our campus"
+            text="Why Zone01 Kisumu"
             className="font-sans font-black text-black-900 text-[30px] md:text-section-headline leading-tight tracking-tight text-center"
           />
         </div>

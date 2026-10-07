@@ -8,6 +8,8 @@ from django.db import models
 from django.utils import timezone
 from filer.fields.image import FilerImageField
 
+from core.indexes import GinTrigramIndex
+
 
 class Event(models.Model):
     """A public Zone01 event such as a bootcamp, open day, or workshop."""
@@ -49,6 +51,13 @@ class Event(models.Model):
         ordering = ["-start_at"]
         indexes = [
             models.Index(fields=["status", "start_at"]),
+            # One GIN/trigram index per column searched in the admin: see
+            # core.indexes.GinTrigramIndex for why these are single-column.
+            GinTrigramIndex(fields=["title"], name="event_title_trgm"),
+            GinTrigramIndex(fields=["summary"], name="event_summary_trgm"),
+            GinTrigramIndex(fields=["description"], name="event_description_trgm"),
+            GinTrigramIndex(fields=["location_name"], name="event_location_name_trgm"),
+            GinTrigramIndex(fields=["slug"], name="event_slug_trgm"),
         ]
 
     def __str__(self):
@@ -90,6 +99,13 @@ class EventRegistration(models.Model):
                 fields=["event", "email"],
                 name="unique_event_registration_email",
             ),
+        ]
+        # One GIN/trigram index per column searched in the admin: see
+        # core.indexes.GinTrigramIndex for why these are single-column.
+        indexes = [
+            GinTrigramIndex(fields=["full_name"], name="eventreg_full_name_trgm"),
+            GinTrigramIndex(fields=["email"], name="eventreg_email_trgm"),
+            GinTrigramIndex(fields=["phone"], name="eventreg_phone_trgm"),
         ]
 
     def __str__(self):

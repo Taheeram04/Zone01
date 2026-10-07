@@ -7,6 +7,8 @@ the public "Apply" flow and the internal review workflow.
 
 from django.db import models
 
+from core.indexes import GinTrigramIndex
+
 
 class Applicant(models.Model):
     """A person applying to a Zone01 programme."""
@@ -62,6 +64,16 @@ class Applicant(models.Model):
         indexes = [
             models.Index(fields=["status"]),
             models.Index(fields=["county"]),
+            # One GIN/trigram index per column searched in the admin: the admin
+            # ORs the term across every search field, which PostgreSQL can only
+            # serve from indexes when each column is indexed individually.
+            GinTrigramIndex(fields=["first_name"], name="applicant_first_name_trgm"),
+            GinTrigramIndex(fields=["last_name"], name="applicant_last_name_trgm"),
+            GinTrigramIndex(fields=["email"], name="applicant_email_trgm"),
+            GinTrigramIndex(fields=["phone"], name="applicant_phone_trgm"),
+            GinTrigramIndex(fields=["county"], name="applicant_county_trgm"),
+            GinTrigramIndex(fields=["current_occupation"], name="applicant_occupation_trgm"),
+            GinTrigramIndex(fields=["motivation"], name="applicant_motivation_trgm"),
         ]
 
     def __str__(self):

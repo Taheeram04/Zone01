@@ -183,7 +183,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
     <section
       data-nav-theme="light"
       className={`relative w-full bg-tint-blue overflow-hidden ${className}`}
-      aria-labelledby="who-can-apply-title"
+      aria-labelledby="who-can-apply?-title"
     >
       {/* Top-left decorative organic circle blob matching design */}
       <motion.div
@@ -233,10 +233,8 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
 
               <motion.p variants={paragraphVariants}>
                 Diversity and inclusion are key elements of zone01&apos;s mission.
-                We therefore particularly encourage{' '}
-                <br className="hidden xl:inline" />
-                women, refugees, ethnic minorities and people from disadvantaged
-                backgrounds to apply.
+                We therefore particularly encourage&nbsp;women, refugees, ethnic
+                minorities and people from disadvantaged backgrounds to apply.
               </motion.p>
             </div>
           </div>
