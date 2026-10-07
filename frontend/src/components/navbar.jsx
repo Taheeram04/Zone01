@@ -1,7 +1,7 @@
 // components/navbar.jsx
 import { useState, useRef, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import mainLogo from '../assets/mainlogo.png';
@@ -22,9 +22,12 @@ const aboutDropdownItems = [
   { label: 'Careers', href: '/about#careers' },
 ];
 
+// Hosted Every.org donation flow.
+export const DONATE_URL =
+  'https://www.every.org/lakehub-foundation?donateTo=lakehub-foundation#/donate/card';
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showDonateModal, setShowDonateModal] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
   const aboutDropdownRef = useRef(null);
@@ -276,9 +279,9 @@ export default function Navbar() {
         );
       })}
       <li>
-        <Link to="/donate" className="hover:text-primary transition-colors whitespace-nowrap">
+        <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
           Donate
-        </Link>
+        </a>
       </li>
     </ul>
 
@@ -370,9 +373,9 @@ export default function Navbar() {
                   );
                 })}
                 <li>
-                  <button onClick={() => { setShowDonateModal(true); setMenuOpen(false); }} className="hover:text-primary">
+                  <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="hover:text-primary">
                     Donate
-                  </button>
+                  </a>
                 </li>
                 <li>
                   <Button variant="primary" className="w-full rounded-full text-body-s">
