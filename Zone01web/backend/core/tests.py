@@ -1,5 +1,8 @@
+import shutil
+import tempfile
 from functools import reduce
 from operator import and_, or_
+from pathlib import Path
 from unittest import skipIf, skipUnless
 from unittest.mock import patch
 from urllib.error import URLError
@@ -10,7 +13,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from applicants.admin import ApplicantAdmin
@@ -246,3 +249,35 @@ class FrontendStatusTests(TestCase):
         for page in response.context["pages"]:
             self.assertFalse(page["reachable"])
             self.assertIn("connection refused", page["error"])
+
+
+class SpaServingTests(TestCase):
+    def _built_index(self):
+        directory = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        index = Path(directory) / "index.html"
+        index.write_text('<div id="root">spa</div>', encoding="utf-8")
+        return index
+
+    def test_serves_index_for_root_and_client_routes(self):
+        with override_settings(FRONTEND_INDEX=self._built_index()):
+            root = self.client.get("/")
+            deep = self.client.get("/about")
+
+        self.assertEqual(root.status_code, 200)
+        self.assertEqual(root["Content-Type"], "text/html")
+        self.assertContains(root, 'id="root"')
+        self.assertEqual(deep.status_code, 200)
+        self.assertContains(deep, 'id="root"')
+
+    def test_missing_build_returns_404(self):
+        with override_settings(FRONTEND_INDEX=Path("/nonexistent/index.html")):
+            response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_unknown_api_path_returns_json_404(self):
+        response = self.client.get("/api/does-not-exist/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "Not found")

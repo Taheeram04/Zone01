@@ -12,6 +12,9 @@ const apiProxy = {
 }
 
 export default defineConfig({
+  // When Django serves the SPA it collects the bundle as static files, so the
+  // assets must be requested under /static/. `make frontend` sets VITE_BASE.
+  base: process.env.VITE_BASE || '/',
   plugins: [react(), tailwindcss()],
   server: { proxy: apiProxy },
   preview: { proxy: apiProxy },

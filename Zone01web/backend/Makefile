@@ -3,7 +3,7 @@ PYTHON := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 MANAGE := $(PYTHON) manage.py
 
-.PHONY: help venv install migrate makemigrations run test lint fmt check superuser static clean
+.PHONY: help venv install migrate makemigrations run test lint fmt check superuser static clean frontend
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -43,6 +43,13 @@ superuser: ## Create an admin user for the CMS
 static: ## Collect static files
 	$(MANAGE) collectstatic --noinput
 
+frontend: ## Build the React SPA and copy it into the backend for Django to serve
+	cd ../../frontend && npm install --no-audit --no-fund
+	cd ../../frontend && VITE_BASE=/static/ npm run build
+	rm -rf frontend_dist
+	cp -r ../../frontend/dist frontend_dist
+	$(MANAGE) collectstatic --noinput
+
 clean: ## Remove local caches
-	rm -rf $(VENV) .ruff_cache staticfiles media
+	rm -rf $(VENV) .ruff_cache staticfiles media frontend_dist
 	find . -type d -name __pycache__ -exec rm -rf {} +
