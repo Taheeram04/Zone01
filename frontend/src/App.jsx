@@ -11,7 +11,6 @@ import KnowUs from './components/know-us.jsx';
 import OurModelSection from './components/our-model-section.jsx';
 import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
-import Apply from './pages/Apply.jsx';
 import Register from './pages/Register.jsx';
 
 const Home = () => (
@@ -35,9 +34,6 @@ function App() {
           </Layout>
         }
       />
-      {/* Standalone dark login / onboarding page */}
-      <Route path="/apply" element={<Apply />} />
-
       {/* Standalone dark registration page */}
       <Route path="/register" element={<Register />} />
 

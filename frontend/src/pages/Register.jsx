@@ -4,9 +4,9 @@ import { APPLICATION_URL } from '../constants.js';
 
 /**
  * Register
- * Standalone dark-mode registration page for the 01Edu platform. Mirrors the
- * login page (/apply) layout: onboarding copy on the left, the sign-up form on
- * the right, over the abstract contour background.
+ * Standalone dark-mode registration page for the 01Edu platform: onboarding
+ * copy on the left, the sign-up form on the right, over the abstract contour
+ * background.
  */
 const Register = () => {
   const [email, setEmail] = useState('');
