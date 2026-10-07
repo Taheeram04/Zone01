@@ -1,21 +1,25 @@
-# Fly.io config for the React frontend (static bundle served by nginx).
-app = "zone01-kisumu-web"
-primary_region = "jnb"
+# fly.toml app configuration file generated for zone01-kisumu-web on 2026-10-07T00:34:26+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'zone01-kisumu-web'
+primary_region = 'jnb'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
   [build.args]
-    VITE_API_BASE_URL = "https://zone01-kisumu-api.fly.dev"
+    VITE_API_BASE_URL = 'https://zone01-kisumu-api.fly.dev'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
 
 [[vm]]
-  memory = "256mb"
-  cpu_kind = "shared"
+  memory = '512mb'
   cpus = 1
+  memory_mb = 512
