@@ -10,12 +10,12 @@ const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
 // Two stacked stat columns shown next to the card.
 const statColumns = [
   [
-    { value: '32,253', label: 'Highest Monthly Earning' },
+    { value: '$2,553', label: 'Highest Monthly Earning' },
     { value: '257', label: 'Apprentices' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '$1,576', label: 'Apprentices trained in go' },
+    { value: '1,576', label: 'Apprentices trained in go' },
   ],
 ];
 
