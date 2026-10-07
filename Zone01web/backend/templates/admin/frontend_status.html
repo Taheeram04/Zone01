@@ -1,0 +1,59 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% translate "Frontend status" %}</h1>
+
+<div class="module" style="max-width: 960px; padding: 16px 20px;">
+  <p>
+    <strong>{% translate "Frontend:" %}</strong>
+    <a href="{{ frontend_url }}" target="_blank" rel="noopener">{{ frontend_url }}</a>
+  </p>
+  <p>
+    <strong>{% translate "Summary:" %}</strong>
+    {{ up_count }}/{{ total }} {% translate "pages reachable" %}
+    &middot; {% translate "timeout" %} {{ timeout }}s
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+    <thead>
+      <tr style="text-align: left; border-bottom: 1px solid #ccc;">
+        <th style="padding: 6px 8px;">{% translate "Page" %}</th>
+        <th style="padding: 6px 8px;">{% translate "Status" %}</th>
+        <th style="padding: 6px 8px;">{% translate "HTTP" %}</th>
+        <th style="padding: 6px 8px;">{% translate "Time" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for page in pages %}
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 6px 8px;">
+            <a href="{{ page.url }}" target="_blank" rel="noopener">{{ page.label }}</a>
+            <br /><small style="color: #666;">{{ page.url }}</small>
+          </td>
+          <td style="padding: 6px 8px;">
+            {% if page.reachable %}
+              <span style="color: #0a7a0a; font-weight: 600;">{% translate "UP" %}</span>
+            {% else %}
+              <span style="color: #c00; font-weight: 600;">{% translate "DOWN" %}</span>
+            {% endif %}
+            {% if page.error %}<br /><small><code>{{ page.error }}</code></small>{% endif %}
+          </td>
+          <td style="padding: 6px 8px;">
+            {% if page.status_code %}{{ page.status_code }}{% else %}-{% endif %}
+          </td>
+          <td style="padding: 6px 8px;">{{ page.latency_ms }} ms</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="color: #666;"><small>{% translate "Checked:" %} {{ checked_at }}</small></p>
+
+  <p style="margin-top: 16px;">
+    <a class="button" href="{% url 'frontend-status' %}">{% translate "Re-check" %}</a>
+    <a class="button" href="{% url 'admin:core_frontendpage_changelist' %}">{% translate "Manage pages" %}</a>
+    <a class="button" href="{% url 'admin:index' %}">{% translate "Back to dashboard" %}</a>
+  </p>
+</div>
+{% endblock %}
