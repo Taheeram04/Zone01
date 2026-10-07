@@ -13,4 +13,6 @@ urlpatterns = [
     path("news/", api.news_list, name="news-list"),
     path("impact/", api.impact_list, name="impact-list"),
     path("piscine/", api.piscine_detail, name="piscine-detail"),
+    path("pages/", api.page_list, name="page-list"),
+    path("pages/<slug:slug>/", api.page_detail, name="page-detail"),
 ]

@@ -1,0 +1,312 @@
+/* ==========================================================================
+   How to Apply — organic, scroll-driven onboarding timeline
+   A single smooth wavy SVG path carries a growing Pac-Man; step cards
+   alternate sides and reveal as the traveller reaches each milestone.
+   ========================================================================== */
+
+.hta {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem);
+  overflow: hidden;
+}
+
+.hta__inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 3rem);
+}
+
+/* --- Heading -------------------------------------------------------------- */
+
+.hta__head {
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.hta__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  font-size: clamp(2.25rem, 5.5vw, 4rem);
+}
+
+.hta__lead {
+  margin: 0.9rem auto 0;
+  max-width: 34rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 1.5vw, 0.95rem);
+  line-height: 1.7;
+  color: #475569;
+}
+
+/* --- Stage ---------------------------------------------------------------- */
+
+.hta__stage {
+  position: relative;
+  width: 100%;
+  height: 900px;
+}
+
+@media (min-width: 640px) {
+  .hta__stage {
+    height: 1000px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hta__stage {
+    height: 1100px;
+  }
+}
+
+/* --- Wave path ------------------------------------------------------------ */
+
+.hta-wave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 1;
+}
+
+.hta-wave__base {
+  fill: none;
+  stroke: #cbd8ea;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 2 13;
+}
+
+.hta-wave__trail {
+  fill: none;
+  stroke: #0063f9;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 2 13;
+}
+
+/* --- Pac-Man -------------------------------------------------------------- */
+
+.hta-pac {
+  filter: drop-shadow(0 8px 16px rgba(0, 99, 249, 0.35));
+  will-change: transform, opacity;
+  transition: opacity 260ms ease;
+}
+
+.hta-pac__body {
+  fill: #0063f9;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.hta-pac__eye {
+  fill: #ffffff;
+}
+
+.hta-pac__pupil {
+  fill: #0b1f3a;
+}
+
+/* --- Step cards ----------------------------------------------------------- */
+
+.hta-step {
+  position: absolute;
+  z-index: 2;
+  width: 42%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translateY(-50%);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.hta-step--right {
+  right: 0;
+}
+
+.hta-step--left {
+  left: 0;
+}
+
+@media (min-width: 640px) {
+  .hta-step {
+    width: 34%;
+  }
+}
+
+.hta-step__card {
+  position: relative;
+  padding: clamp(0.9rem, 2.2vw, 1.5rem);
+  border: 1.5px solid #dbe7f5;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.4);
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+
+.hta-step:hover .hta-step__card {
+  border-color: #0063f9;
+}
+
+.hta-step__index {
+  position: absolute;
+  top: clamp(-0.7rem, -1.4vw, -0.9rem);
+  left: clamp(0.9rem, 2.2vw, 1.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: #0063f9;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+  letter-spacing: 0.05em;
+}
+
+.hta-step__label {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #0063f9;
+  font-size: clamp(0.68rem, 1.3vw, 0.85rem);
+}
+
+.hta-step__text {
+  margin: 0;
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  color: #334155;
+  font-size: clamp(0.72rem, 1.15vw, 0.92rem);
+}
+
+/* --- Waypoint callouts ---------------------------------------------------- */
+
+.hta-waypoint {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-width: 15rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1vw, 0.74rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748b;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  pointer-events: none;
+}
+
+.hta-waypoint.is-visible {
+  opacity: 1;
+}
+
+.hta-waypoint--right {
+  transform: translate(18px, -50%);
+  text-align: left;
+  align-items: flex-start;
+}
+
+.hta-waypoint--left {
+  transform: translate(calc(-100% - 18px), -50%);
+  text-align: right;
+  align-items: flex-end;
+}
+
+.hta-waypoint__line {
+  white-space: nowrap;
+}
+
+/* Hide the callouts on phones where the step cards fill the width. */
+@media (max-width: 639px) {
+  .hta-waypoint {
+    display: none;
+  }
+}
+
+/* --- Celebration (confetti at the end of the wave) ------------------------ */
+
+.hta-celebration {
+  position: absolute;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.hta-celebration__ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 3px solid #0063f9;
+  border-radius: 50%;
+  opacity: 0;
+  animation: hta-ring 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes hta-ring {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(5);
+  }
+}
+
+.hta-confetti {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 2px;
+  background: var(--c, #0063f9);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: hta-confetti-burst 1200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes hta-confetti-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px)))
+      rotate(var(--rot, 0deg)) scale(1);
+  }
+}
+
+/* --- Reduced motion ------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hta-pac {
+    filter: none;
+  }
+
+  .hta-celebration {
+    display: none;
+  }
+}

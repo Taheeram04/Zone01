@@ -1,8 +1,8 @@
 """Django admin configuration for site content.
 
 Each model gets a compact, image-aware admin so editors can add and delete
-partners, staff, news and impact updates without touching code. The editorial
-stream models (:class:`~content.models.Category` and
+partners, staff, news, impact updates and frontend pages without touching code.
+The editorial stream models (:class:`~content.models.Category` and
 :class:`~content.models.Article`) use :class:`core.search.TrigramSearchMixin` so
 their searches run against the GIN/trigram indexes on the model.
 """
@@ -15,6 +15,8 @@ from content.models import (
     Category,
     ImpactUpdate,
     NewsUpdate,
+    Page,
+    PageSection,
     Partner,
     PiscineRegistration,
     StaffMember,
@@ -154,3 +156,37 @@ class ArticleAdmin(TrigramSearchMixin, admin.ModelAdmin):
     list_select_related = ("category", "author")
     # Skip the extra COUNT(*) over the whole table on every changelist load.
     show_full_result_count = False
+
+
+class PageSectionInline(admin.StackedInline):
+    """Edit a page's ordered sections right on the page form."""
+
+    model = PageSection
+    extra = 1
+    fields = (
+        "order",
+        "heading",
+        "subheading",
+        "body",
+        "image",
+        "cta_label",
+        "cta_url",
+    )
+    ordering = ("order", "id")
+    show_change_link = True
+
+
+@admin.register(Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "is_published", "section_count", "order", "updated_at")
+    list_editable = ("is_published", "order")
+    list_filter = ("is_published",)
+    search_fields = ("title", "slug", "subtitle", "meta_description")
+    readonly_fields = ("updated_at",)
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (PageSectionInline,)
+    ordering = ("order", "title")
+
+    @admin.display(description="Sections")
+    def section_count(self, obj):
+        return obj.sections.count()

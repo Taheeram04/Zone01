@@ -42,11 +42,38 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `DATABASE_URL`         | `postgres://postgres:postgres@localhost:5432/zone01` | PostgreSQL connection URL               |
 | `DB_CONN_MAX_AGE`      | `60`                                                 | Seconds to persist DB connections       |
 | `APP_VERSION`          | `dev`                                                | Version reported by the health endpoint |
-| `API_CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173`   | Frontend origins allowed to call `/api/` |
+| `API_CORS_ALLOWED_ORIGINS` | localhost + `www.zone01kisumu.ke` origins        | Frontend origins allowed to call `/api/` |
 | `API_CORS_ALLOW_ALL`   | `false`                                              | Allow every origin to call `/api/`      |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
+
+### Hosting on the public domain
+
+The site is served from `https://www.zone01kisumu.ke`, with page URLs like
+`https://www.zone01kisumu.ke/about-us`. For that deployment:
+
+- **Backend** — add the domain to `DJANGO_ALLOWED_HOSTS` and (if the frontend is
+  served from the same origin) to `API_CORS_ALLOWED_ORIGINS`:
+
+  ```bash
+  DJANGO_ALLOWED_HOSTS=www.zone01kisumu.ke,zone01kisumu.ke,localhost,127.0.0.1
+  API_CORS_ALLOWED_ORIGINS=https://www.zone01kisumu.ke,https://zone01kisumu.ke
+  ```
+
+  The default `API_CORS_ALLOWED_ORIGINS` already includes both domain variants,
+  so same-domain deployments work without extra config.
+
+- **Frontend** — point the React app at the API and let it handle the page
+  routes. With the API on the same domain this is:
+
+  ```bash
+  VITE_API_URL=https://www.zone01kisumu.ke
+  ```
+
+  The frontend router maps `/` → `home`, `/about-us` → `about-us`,
+  `/community`, `/our-impact`, `/hire-talent` and `/donate` to the matching
+  page slug.
 
 ## Managing site content
 
@@ -59,9 +86,22 @@ rows directly; the changes appear on the website and the JSON API immediately.
 | **Staff**                  | name, role, photo, bio, order                            |
 | **News**                   | title (name), image, information, publish toggle, order  |
 | **Impact**                 | title (name), image, information, report PDF, publish toggle, order |
+| **Pages**                  | title, slug, subtitle, hero image, SEO fields, publish toggle, order |
+| **Page sections**          | heading, subheading, body, image, CTA label/URL, order (inline on the page) |
 | **Next piscine registration** | on/off toggle, next piscine date, optional message    |
 | **Categories**             | name, slug, description (taxonomy for articles)          |
 | **Articles**               | title, slug, category, author, summary, body, cover image, status, publish date |
+
+### Managing frontend pages
+
+The **Pages** section is how the frontend's page content is managed. Each row is
+one page — `home`, `about-us`, `community`, `our-impact`, `hire-talent`,
+`donate` are created automatically — and its copy is built from any number of
+**page sections** edited inline on the same form. Reorder sections with the
+`order` field and toggle `is_published` to hide a page from the API.
+
+Add a new page by creating a row with a new `slug`; the frontend can then render
+it from `/api/pages/<slug>/`. No code change is needed to manage the copy.
 
 Each **Impact** row may attach an optional PDF report. Upload one with the file
 picker, select **Clear** to remove it, or pick a different file to replace it.
@@ -85,12 +125,14 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 
 | Endpoint           | Returns                                              |
 | ------------------ | ---------------------------------------------------- |
-| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine) |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages) |
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
 | `/api/impact/`     | published impact list (includes `report` download URL)|
 | `/api/piscine/`    | next-piscine toggle, date and message                |
+| `/api/pages/`      | published pages with their sections                  |
+| `/api/pages/<slug>/` | a single page by slug, e.g. `/api/pages/about-us/` |
 
 Example:
 
