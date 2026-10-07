@@ -1,6 +1,9 @@
 """Site content that editors manage from the Django admin.
 
-Each model backs one block of the public website:
+Two families of models live in this app:
+
+**Block content** backs each block of the public website and is served to the
+React frontend as JSON under ``/api/``:
 
 * :class:`Partner`      - partner logos shown in the "Our partners" strip.
 * :class:`StaffMember`  - team members and their roles.
@@ -10,17 +13,27 @@ Each model backs one block of the public website:
 * :class:`Page` + :class:`PageSection` - editable content for a frontend page
   (home, about-us, community, ...), built from ordered reusable sections.
 
-The same data is exposed as JSON under ``/api/`` so the React frontend can
-consume it, whether it runs locally or on a hosted domain.
+**Editorial stream** (SEO work) covers the time-stamped article/blog stream and
+its taxonomy, which is what the public content pages are generated from:
+
+* :class:`Category` - a taxonomy term used to group articles.
+* :class:`Article`  - a news item, story or impact update with a workflow status.
+
+Both sets are searchable from the Django admin through
+:class:`core.search.TrigramSearchMixin`, backed by per-column GIN/trigram
+indexes declared with :class:`core.indexes.GinTrigramIndex`.
 """
 
 import datetime
 from zoneinfo import ZoneInfo
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from filer.fields.file import FilerFileField
 from filer.fields.image import FilerImageField
+
+from core.indexes import GinTrigramIndex
 
 # Next-piscine alerts always start at 09:00 Kisumu time (EAT).
 PISCINE_TIMEZONE = ZoneInfo("Africa/Nairobi")
@@ -57,6 +70,9 @@ class Partner(OrderedContent):
     class Meta(OrderedContent.Meta):
         verbose_name = "partner"
         verbose_name_plural = "partners"
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="partner_name_trgm"),
+        ]
 
     def __str__(self):
         return self.name
@@ -79,6 +95,10 @@ class StaffMember(OrderedContent):
     class Meta(OrderedContent.Meta):
         verbose_name = "staff member"
         verbose_name_plural = "staff"
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="staff_name_trgm"),
+            GinTrigramIndex(fields=["role"], name="staff_role_trgm"),
+        ]
 
     def __str__(self):
         return f"{self.name} - {self.role}"
@@ -102,6 +122,9 @@ class NewsUpdate(OrderedContent):
         verbose_name = "news update"
         verbose_name_plural = "news"
         ordering = ["-published_at", "order", "id"]
+        indexes = [
+            GinTrigramIndex(fields=["title"], name="news_title_trgm"),
+        ]
 
     def __str__(self):
         return self.title
@@ -131,6 +154,9 @@ class ImpactUpdate(OrderedContent):
         verbose_name = "impact update"
         verbose_name_plural = "impact"
         ordering = ["order", "id"]
+        indexes = [
+            GinTrigramIndex(fields=["title"], name="impact_title_trgm"),
+        ]
 
     def __str__(self):
         return self.title
@@ -200,6 +226,84 @@ class PiscineRegistration(models.Model):
             obj.is_active = False
             obj.save(update_fields=["is_active", "updated_at"])
         return obj
+
+
+class Category(models.Model):
+    """A taxonomy term for grouping articles."""
+
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = "categories"
+        # One GIN/trigram index per column searched in the admin: see
+        # core.indexes.GinTrigramIndex for why these are single-column.
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="category_name_trgm"),
+            GinTrigramIndex(fields=["slug"], name="category_slug_trgm"),
+            GinTrigramIndex(fields=["description"], name="category_description_trgm"),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class Article(models.Model):
+    """A news item, story, or impact update."""
+
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        IN_REVIEW = "in_review", "In review"
+        PUBLISHED = "published", "Published"
+        ARCHIVED = "archived", "Archived"
+
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    category = models.ForeignKey(
+        Category,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="articles",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="articles",
+    )
+    summary = models.CharField(max_length=300, blank=True)
+    body = models.TextField(blank=True)
+    cover_image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="article_covers",
+    )
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at", "-created_at"]
+        indexes = [
+            # Named explicitly: the changelist filters on this pair, and a
+            # generated name would change if the field list is ever reordered.
+            models.Index(fields=["status", "published_at"], name="article_status_published_idx"),
+            # One GIN/trigram index per column searched in the admin: see
+            # core.indexes.GinTrigramIndex for why these are single-column.
+            GinTrigramIndex(fields=["title"], name="article_title_trgm"),
+            GinTrigramIndex(fields=["summary"], name="article_summary_trgm"),
+            GinTrigramIndex(fields=["body"], name="article_body_trgm"),
+            GinTrigramIndex(fields=["slug"], name="article_slug_trgm"),
+        ]
+
+    def __str__(self):
+        return self.title
 
 
 class Page(OrderedContent):
