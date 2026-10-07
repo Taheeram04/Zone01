@@ -1,17 +1,24 @@
 from functools import reduce
 from operator import and_, or_
 from unittest import skipIf, skipUnless
+from unittest.mock import patch
+from urllib.error import URLError
 
+from cms.utils.permissions import set_current_user
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from applicants.admin import ApplicantAdmin
 from applicants.models import Applicant
 from core.indexes import GinTrigramIndex
+from core.models import FrontendPage
 from core.search import RANK_ANNOTATION, TrigramSearchMixin
+from core.views import build_page_url
 
 postgres_only = skipUnless(connection.vendor == "postgresql", "PostgreSQL only")
 other_backend_only = skipIf(connection.vendor == "postgresql", "non-PostgreSQL only")
@@ -23,6 +30,22 @@ def resolve_search_field(model, search_field):
     for part in parts[:-1]:
         model = model._meta.get_field(part).related_model
     return model, parts[-1]
+
+
+class FakeResponse:
+    """Minimal stand-in for the context manager ``urlopen`` returns."""
+
+    def __init__(self, status=200):
+        self.status = status
+
+    def read(self, *_args):
+        return b""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        return False
 
 
 class HealthEndpointTests(TestCase):
@@ -166,3 +189,60 @@ class TrigramRankingTests(TestCase):
         queryset = self.changelist({"q": "od"})
 
         self.assertNotIn(RANK_ANNOTATION, queryset.query.annotations)
+
+
+class BuildPageUrlTests(TestCase):
+    def test_joins_paths_without_doubling_slashes(self):
+        self.assertEqual(build_page_url("https://x.test/", "/about"), "https://x.test/about")
+        self.assertEqual(build_page_url("https://x.test", "about"), "https://x.test/about")
+        self.assertEqual(build_page_url("https://x.test", "/"), "https://x.test/")
+
+
+class FrontendStatusTests(TestCase):
+    def setUp(self):
+        # CurrentUserMiddleware stores the user in a thread local that outlives
+        # the request, so clear any leftover before creating a new user (the
+        # django CMS post_save signal would otherwise reference a rolled-back
+        # creator row).
+        set_current_user(None)
+        # The seed migration ships default pages; start from a clean slate.
+        FrontendPage.objects.all().delete()
+        self.staff = get_user_model().objects.create_user(
+            username="staff", password="pw", is_staff=True
+        )
+        FrontendPage.objects.create(label="About Us", path="/about", order=1)
+        FrontendPage.objects.create(label="Hidden", path="/hidden", is_active=False, order=2)
+
+    def tearDown(self):
+        set_current_user(None)
+
+    def test_requires_staff_login(self):
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.status_code, 302)
+
+    @patch("core.views.urlopen")
+    def test_lists_root_and_active_pages_only(self, mock_urlopen):
+        mock_urlopen.return_value = FakeResponse(200)
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.status_code, 200)
+        labels = [page["label"] for page in response.context["pages"]]
+        self.assertEqual(labels, ["Home", "About Us"])
+        self.assertEqual(response.context["up_count"], 2)
+        self.assertTrue(response.context["all_up"])
+
+    @patch("core.views.urlopen")
+    def test_reports_down_pages(self, mock_urlopen):
+        mock_urlopen.side_effect = URLError("connection refused")
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.context["up_count"], 0)
+        self.assertFalse(response.context["all_up"])
+        for page in response.context["pages"]:
+            self.assertFalse(page["reachable"])
+            self.assertIn("connection refused", page["error"])

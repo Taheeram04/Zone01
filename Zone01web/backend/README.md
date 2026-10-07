@@ -49,6 +49,8 @@ Configuration is read from the environment and may be seeded from `.env`.
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | _(empty)_                     | Bucket credentials (set by `fly storage create`) |
 | `AWS_ENDPOINT_URL_S3`  | `https://fly.storage.tigris.dev`                     | S3 endpoint for the bucket              |
 | `AWS_S3_CUSTOM_DOMAIN` | `<BUCKET_NAME>.fly.storage.tigris.dev`               | Host used in public media URLs          |
+| `FRONTEND_URL`         | `http://localhost:5173`                              | Public URL of the React frontend        |
+| `FRONTEND_HEALTH_TIMEOUT` | `5`                                                | Seconds before a frontend check times out |
 
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
@@ -211,6 +213,7 @@ rows directly; the changes appear on the website and the JSON API immediately.
 | **Next piscine registration** | on/off toggle, next piscine date, optional message    |
 | **Categories**             | name, slug, description (taxonomy for articles)          |
 | **Articles**               | title, slug, category, author, summary, body, cover image, status, publish date |
+| **Frontend pages**         | label, path, active toggle, order (see below)            |
 
 ### Managing frontend pages
 
@@ -237,6 +240,16 @@ pages are generated from. Group articles under a **Category**, then set an
 **Article**'s `status` to move it from *Draft* through *In review* to
 *Published*, and set `published_at` to control when it goes live. Articles are
 not part of the JSON API yet; they back the content pages only.
+
+## Monitoring the frontend
+
+Set `FRONTEND_URL` to the hosted React app, then open **Admin → Frontend
+status** (also linked from a module on the admin dashboard). The page checks the
+frontend root plus every active **Frontend pages** row — the monitor list, which
+is separate from the CMS **Pages** — and reports UP/DOWN, HTTP status and
+latency for each. Use **Manage pages** to add or remove the paths that get
+checked (`/about`, `/community`, `/register`, ...); each path is joined onto
+`FRONTEND_URL`. The checks run server-side and are staff-only.
 
 ## Content API
 
@@ -328,7 +341,7 @@ back to a sequential scan — this is a property of `pg_trgm`, not of the setup.
 backend/
 ├── manage.py
 ├── config/               # settings, URLs, WSGI/ASGI
-├── core/                 # health endpoint
+├── core/                 # health endpoint + frontend status board
 ├── templates/            # CMS page templates (base.html, ...)
 ├── static/               # project static assets
 ├── requirements.txt
