@@ -337,7 +337,7 @@ const HowToApply = () => {
   }, []);
 
   return (
-    <section data-nav-theme="light" aria-labelledby="how-to-apply-title" className="hta">
+    <section id="how-to-apply" data-nav-theme="light" aria-labelledby="how-to-apply-title" className="hta">
       <div className="hta__inner">
         <header className="hta__head">
           <h2 id="how-to-apply-title" className="hta__title">
