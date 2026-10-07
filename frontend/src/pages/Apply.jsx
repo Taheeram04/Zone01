@@ -1,15 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { Contours, DotMatrixLogo, OnboardingSteps } from '../components/dark-shell.jsx';
 
-/**
- * Register
- * Standalone dark-mode registration page for the 01Edu platform. Mirrors the
- * login page (/apply) layout: onboarding copy on the left, the sign-up form on
- * the right, over the abstract contour background.
- */
-const Register = () => {
-  const [email, setEmail] = useState('');
+const Apply = () => {
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#121212] font-mono text-white">
@@ -50,46 +45,70 @@ const Register = () => {
             </p>
           </div>
 
-          {/* Right column — registration form */}
+          {/* Right column — login form */}
           <form onSubmit={(e) => e.preventDefault()} className="w-full">
             <h2 className="mb-10 text-xl font-semibold text-violet-400 sm:text-2xl">
-              Create an account and get started on the online games
+              Log in to resume your works
             </h2>
 
             <div className="mb-8">
-              <label
-                htmlFor="email"
-                className="mb-2 block text-xs uppercase tracking-[0.2em] text-neutral-500"
-              >
-                Email
-              </label>
               <input
-                id="email"
-                type="email"
-                name="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                type="text"
+                name="identifier"
+                autoComplete="username"
+                placeholder="Email or username"
                 className="w-full border-0 border-b border-neutral-600 bg-transparent pb-3 text-base text-white placeholder:text-neutral-500 focus:border-violet-400 focus:outline-none focus:ring-0"
               />
             </div>
 
+            <div className="mb-3">
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  autoComplete="current-password"
+                  placeholder="Password"
+                  className="w-full border-0 border-b border-neutral-600 bg-transparent pb-3 pr-8 text-base text-white placeholder:text-neutral-500 focus:border-violet-400 focus:outline-none focus:ring-0"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-0 top-0 text-white/80 transition-colors hover:text-white"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" strokeWidth={1.5} />
+                  ) : (
+                    <Eye className="h-4 w-4" strokeWidth={1.5} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-10 text-right text-sm text-neutral-500">
+              Forgot password?{' '}
+              <a
+                href="#"
+                className="underline underline-offset-4 transition-colors hover:text-neutral-300"
+              >
+                Click here!
+              </a>
+            </div>
+
             <button
               type="submit"
-              className="w-full bg-violet-500 py-4 font-mono text-base font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-violet-400"
+              className="w-full bg-violet-500 py-4 font-mono text-base tracking-[0.15em] text-white transition-colors hover:bg-violet-400"
             >
-              Register
+              LOGIN
             </button>
 
             <p className="mt-4 text-right text-sm text-white">
-              Already have an account?{' '}
+              New here? Join the fun!{' '}
               <Link
-                to="/apply"
+                to="/register"
                 className="text-violet-400 underline underline-offset-4 transition-colors hover:text-violet-300"
               >
-                LOGIN HERE!
+                REGISTER NOW!
               </Link>
             </p>
           </form>
@@ -99,4 +118,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Apply;

@@ -13,14 +13,18 @@ Endpoints (all GET):
 * ``/api/impact/``
 * ``/api/links/``
 * ``/api/piscine/``
+* ``/api/pages/``            - published pages with their sections
+* ``/api/pages/<slug>/``     - a single page by slug (e.g. about-us)
 """
 
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 
 from content.models import (
     ImpactUpdate,
     NewsUpdate,
+    Page,
     Partner,
     PiscineRegistration,
     SiteLink,
@@ -95,6 +99,35 @@ def serialize_link(link):
     }
 
 
+def serialize_page_section(request, section):
+    return {
+        "id": section.id,
+        "heading": section.heading,
+        "subheading": section.subheading,
+        "body": section.body,
+        "image": _media_url(request, section.image),
+        "cta_label": section.cta_label,
+        "cta_url": section.cta_url,
+        "order": section.order,
+    }
+
+
+def serialize_page(request, page):
+    return {
+        "id": page.id,
+        "slug": page.slug,
+        "title": page.title,
+        "subtitle": page.subtitle,
+        "hero_image": _media_url(request, page.hero_image),
+        "meta_title": page.meta_title or page.title,
+        "meta_description": page.meta_description,
+        "url": page.get_absolute_url(),
+        "updated_at": page.updated_at.isoformat() if page.updated_at else None,
+        "order": page.order,
+        "sections": [serialize_page_section(request, s) for s in page.sections.all()],
+    }
+
+
 def serialize_piscine(piscine):
     starts_at = piscine.starts_at
     return {
@@ -147,6 +180,22 @@ def piscine_detail(request):
 
 
 @require_GET
+def page_list(request):
+    pages = Page.objects.filter(is_published=True).prefetch_related("sections")
+    return JsonResponse({"results": [serialize_page(request, p) for p in pages]})
+
+
+@require_GET
+def page_detail(request, slug):
+    page = get_object_or_404(
+        Page.objects.prefetch_related("sections"),
+        slug=slug,
+        is_published=True,
+    )
+    return JsonResponse(serialize_page(request, page))
+
+
+@require_GET
 def content_index(request):
     """Everything the frontend needs, in a single request."""
     return JsonResponse(
@@ -161,5 +210,9 @@ def content_index(request):
             ],
             "links": [serialize_link(link) for link in SiteLink.objects.filter(is_active=True)],
             "piscine": serialize_piscine(PiscineRegistration.get_solo()),
+            "pages": [
+                serialize_page(request, p)
+                for p in Page.objects.filter(is_published=True).prefetch_related("sections")
+            ],
         }
     )

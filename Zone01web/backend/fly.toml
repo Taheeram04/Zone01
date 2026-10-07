@@ -1,0 +1,35 @@
+# Fly.io config for the Django CMS backend.
+# See the "Deploying to Fly.io" section in README.md for the one-time setup.
+app = "zone01-kisumu-api"
+primary_region = "jnb"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  release_command = "python manage.py migrate --noinput"
+
+[env]
+  DJANGO_DEBUG = "false"
+  DJANGO_ALLOWED_HOSTS = "zone01-kisumu-api.fly.dev"
+  CSRF_TRUSTED_ORIGINS = "https://zone01-kisumu-api.fly.dev"
+  API_CORS_ALLOWED_ORIGINS = "https://zone01-kisumu-web.fly.dev"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/healthz"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

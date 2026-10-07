@@ -17,6 +17,7 @@ const ABOUT_PARAGRAPHS = [
 
 const KnowUs = () => (
   <section
+    id="know-us"
     data-nav-theme="light"
     aria-labelledby="know-us-title"
     className="relative w-full overflow-hidden bg-white pb-8 pt-8 sm:pb-10 sm:pt-10 md:pb-12 md:pt-12 lg:pb-14 lg:pt-14"

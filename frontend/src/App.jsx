@@ -9,10 +9,11 @@ import ComingSoon from './components/coming-soon.jsx';
 import AboutHero from './components/about-hero.jsx';
 import KnowUs from './components/know-us.jsx';
 import OurModelSection from './components/our-model-section.jsx';
-import Community from './components/community.jsx';
-import OurStaff from './components/our-staff.jsx';
 import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
+import Community from './components/community.jsx';
+import OurStaff from './components/our-staff.jsx';
+import Apply from './pages/Apply.jsx';
 import Register from './pages/Register.jsx';
 
 const Home = () => (
@@ -36,10 +37,13 @@ function App() {
           </Layout>
         }
       />
+      {/* Standalone dark login / onboarding page */}
+      <Route path="/apply" element={<Apply />} />
+
       {/* Standalone dark registration page */}
       <Route path="/register" element={<Register />} />
 
-      {/* About Us — team-photo hero with the blue gradient wash */}
+      {/* About Us — hero, Know Us, Our Model Works, How to Apply, Careers */}
       <Route
         path="/about"
         element={
@@ -64,7 +68,7 @@ function App() {
         }
       />
 
-      {['/impact', '/hire', '*'].map((path) => (
+      {['/impact', '/hire', '/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}

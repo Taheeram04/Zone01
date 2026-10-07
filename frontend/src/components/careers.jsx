@@ -101,13 +101,14 @@ const Careers = () => {
   const branch = BRANCHES[active];
 
   return (
-    <section data-nav-theme="light" aria-labelledby="careers-title" className="careers">
+    <section id="careers" data-nav-theme="light" aria-labelledby="careers-title" className="careers">
       <div className="careers__head">
         <h2 id="careers-title" className="careers__title">
           Career Paths
         </h2>
         <p className="careers__subtitle">
           What is your true passion? Pursue a career path of your choice and become an expert through real world experience.
+
         </p>
       </div>
 

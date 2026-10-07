@@ -3,12 +3,24 @@ import tempfile
 from datetime import timedelta
 
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from filer.models import File
 
-from content.models import ImpactUpdate, NewsUpdate, Partner, PiscineRegistration, StaffMember
+from content.models import (
+    Article,
+    Category,
+    ImpactUpdate,
+    NewsUpdate,
+    Page,
+    PageSection,
+    Partner,
+    PiscineRegistration,
+    SiteLink,
+    StaffMember,
+)
 
 
 class ContentModelTests(TestCase):
@@ -136,3 +148,130 @@ class ImpactReportTests(TestCase):
 
         response = self.client.get(reverse("content_api:impact-list"))
         self.assertIsNone(response.json()["results"][0]["report"])
+
+
+class CategoryModelTests(TestCase):
+    def test_str_is_the_name(self):
+        self.assertEqual(str(Category.objects.create(name="News", slug="news")), "News")
+
+    def test_slug_is_unique(self):
+        Category.objects.create(name="News", slug="news")
+
+        with self.assertRaises(IntegrityError):
+            Category.objects.create(name="News again", slug="news")
+
+
+class ArticleModelTests(TestCase):
+    def test_category_relation(self):
+        category = Category.objects.create(name="News", slug="news")
+        article = Article.objects.create(title="Hello", slug="hello", category=category)
+
+        self.assertEqual(article.category, category)
+        self.assertIn(article, category.articles.all())
+        self.assertEqual(article.status, Article.Status.DRAFT)
+
+    def test_defaults(self):
+        article = Article.objects.create(title="Hello", slug="hello")
+
+        self.assertIsNone(article.category)
+        self.assertIsNone(article.author)
+        self.assertIsNone(article.published_at)
+        self.assertEqual(article.status, Article.Status.DRAFT)
+
+    def test_ordering_prefers_newest_published(self):
+        older = Article.objects.create(
+            title="Older",
+            slug="older",
+            status=Article.Status.PUBLISHED,
+            published_at=timezone.now() - timezone.timedelta(days=30),
+        )
+        newer = Article.objects.create(
+            title="Newer",
+            slug="newer",
+            status=Article.Status.PUBLISHED,
+            published_at=timezone.now(),
+        )
+
+        self.assertEqual(list(Article.objects.all()), [newer, older])
+
+    def test_category_is_kept_when_deleted(self):
+        category = Category.objects.create(name="News", slug="news")
+        article = Article.objects.create(title="Hello", slug="hello", category=category)
+
+        category.delete()
+        article.refresh_from_db()
+
+        self.assertIsNone(article.category)
+
+
+class PageApiTests(TestCase):
+    def setUp(self):
+        Page.objects.all().delete()
+
+    def test_page_slug_and_absolute_url(self):
+        home = Page.objects.create(slug="home", title="Home")
+        about = Page.objects.create(slug="about-us", title="About Us")
+        self.assertEqual(home.get_absolute_url(), "/")
+        self.assertEqual(about.get_absolute_url(), "/about-us")
+
+    def test_page_list_hides_unpublished(self):
+        Page.objects.create(slug="about-us", title="About Us", is_published=True)
+        Page.objects.create(slug="community", title="Community", is_published=False)
+
+        response = self.client.get(reverse("content_api:page-list"))
+
+        self.assertEqual(response.status_code, 200)
+        slugs = [page["slug"] for page in response.json()["results"]]
+        self.assertEqual(slugs, ["about-us"])
+
+    def test_page_detail_returns_sections_in_order(self):
+        page = Page.objects.create(slug="our-impact", title="Our Impact")
+        PageSection.objects.create(page=page, heading="Second", order=2)
+        PageSection.objects.create(page=page, heading="First", order=1)
+
+        response = self.client.get(reverse("content_api:page-detail", args=["our-impact"]))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["slug"], "our-impact")
+        self.assertEqual(payload["url"], "/our-impact")
+        self.assertEqual([s["heading"] for s in payload["sections"]], ["First", "Second"])
+
+    def test_page_detail_unknown_slug_returns_404(self):
+        response = self.client.get(reverse("content_api:page-detail", args=["nope"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_content_index_includes_pages(self):
+        Page.objects.create(slug="home", title="Home")
+
+        response = self.client.get(reverse("content_api:content-index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("pages", response.json())
+
+
+class SiteLinkApiTests(TestCase):
+    def setUp(self):
+        # The seed migration ships the default header links; start clean.
+        SiteLink.objects.all().delete()
+
+    def test_link_list_hides_inactive(self):
+        SiteLink.objects.create(label="Home", url="/", order=0)
+        SiteLink.objects.create(label="Hidden", url="/hidden", is_active=False, order=1)
+
+        response = self.client.get(reverse("content_api:link-list"))
+
+        self.assertEqual(response.status_code, 200)
+        labels = [item["label"] for item in response.json()["results"]]
+        self.assertEqual(labels, ["Home"])
+
+    def test_link_external_flag_and_order(self):
+        SiteLink.objects.create(label="Docs", url="https://example.com", order=2)
+        SiteLink.objects.create(label="About", url="/about", order=1)
+
+        response = self.client.get(reverse("content_api:content-index"))
+        links = response.json()["links"]
+
+        self.assertEqual([link["label"] for link in links], ["About", "Docs"])
+        self.assertFalse(links[0]["external"])
+        self.assertTrue(links[1]["external"])

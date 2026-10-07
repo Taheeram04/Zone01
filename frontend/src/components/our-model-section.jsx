@@ -17,6 +17,7 @@ const OurModelSection = ({ heading = 'Our Model Works' }) => {
 
   return (
     <section
+      id="our-model"
       data-nav-theme="light"
       aria-label="Our Model Works steps"
       className="relative w-full overflow-hidden bg-white pb-16 pt-4 sm:pb-20 sm:pt-5 md:pb-24 md:pt-6 lg:pb-28 lg:pt-8"

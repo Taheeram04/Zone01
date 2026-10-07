@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import { APPLICATION_URL } from '../constants.js';
 import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
 import heroImg1 from '../assets/001.jpeg';
@@ -252,7 +251,7 @@ const Hero = () => {
         className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           mixBlendMode: 'screen',
-          opacity: 0.5,
+          opacity: 0.18,
           transform: `translate(${parallax.x * 24}px, ${parallax.y * 24}px)`,
           transition: 'transform 0.2s ease-out',
         }}
@@ -261,7 +260,7 @@ const Hero = () => {
           className="absolute inset-[-5%]"
           style={{
             backgroundImage:
-              'linear-gradient(to right, rgba(0,157,255,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,157,255,0.35) 1px, transparent 1px)',
+              'linear-gradient(to right, rgba(0,157,255,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,157,255,0.18) 1px, transparent 1px)',
             backgroundSize: `${100 / GRID_COLS}% ${100 / GRID_ROWS}%`,
           }}
         />
@@ -292,8 +291,7 @@ const Hero = () => {
       />
 
       <Container className="relative z-10 pb-20 sm:pb-12 md:pb-14 lg:pb-16 pt-20 sm:pt-24 md:pt-28">
-        {/* Full-width so the two headline sentences each stay on one line when maximised */}
-        <div className="w-full">
+        <div className="max-w-4xl">
           <KineticHeading
             as="h1"
             text={"Talent is everywhere.\nOpportunity is not."}
@@ -308,8 +306,8 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="font-mono text-white/90 text-sm sm:text-base lg:text-[17px] mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed"
           >
-            We identify <span className="font-semibold text-white">top-potential</span> talent, overlooked
-            by traditional systems, and transform them into{' '}
+            We identify <span className="font-semibold text-white">top-potential</span> talent — overlooked
+            by traditional systems — and transform them into{' '}
             <span className="font-semibold text-white">high-income, AI-ready software engineers</span> at scale
           </motion.p>
 
@@ -322,9 +320,7 @@ const Hero = () => {
             <Button
               data-magnetic
               variant="primary"
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => navigate('/apply')}
               className="w-full sm:w-auto"
             >
               Apply now
