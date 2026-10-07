@@ -31,7 +31,7 @@ const campusFeatures = [
   {
     title: '< JOB ALIGNMENT >',
     description:
-      'We support our talent to secure roles locally and internationally with our partners upon fully completing the training. Our talent are hired by top tech companies, with a high average starting salary of 30% above market rates.',
+      'We support our talent to secure roles locally and internationally with our partners upon fully completing the training.',
   },
 ];
 

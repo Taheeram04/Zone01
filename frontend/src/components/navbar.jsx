@@ -15,81 +15,27 @@ const navLinks = [
   { label: 'Hire Talent', href: '/hire', decorated: false },
 ];
 
-const aboutDropdownItems = [
-  { label: 'Know Us', href: '/about#know-us' },
-  { label: 'Our Model', href: '/about#our-model' },
-  { label: 'How to Apply', href: '/about#how-to-apply' },
-  { label: 'Careers', href: '/about#careers' },
-];
-
 // Hosted Every.org donation flow.
 export const DONATE_URL =
   'https://www.every.org/lakehub-foundation?donateTo=lakehub-foundation#/donate/card';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
-  const aboutDropdownRef = useRef(null);
-  const hoverTimeoutRef = useRef(null);
 
-  // 1. ADD MISSING STATE FOR NAV THEME
-  const [navTheme, setNavTheme] = useState('dark'); 
+  // Navbar flips between dark and light as sections scroll behind it.
+  const [navTheme, setNavTheme] = useState('dark');
 
-  // 2. ADD MISSING NAV REF TO PREVENT CRASHES ON SCROLL REFS
-  const navRef = useRef(null); 
+  // Ref to the nav element so we can sample which section sits behind it.
+  const navRef = useRef(null);
 
-  // 3. ADD MISSING NAVIGATE HOOK USED IN goToApply
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setAboutDropdownOpen(true);
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
+
+  const goToApply = () => {
+    setMenuOpen(false);
+    navigate('/apply');
   };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setAboutDropdownOpen(false);
-    }, 200);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
-
-  const toggleMenu = () => {
-    setMenuOpen((prev) => {
-      if (prev) {
-        setMobileAboutOpen(false);
-      }
-      return !prev;
-    });
-  };
-
-  // Close dropdown on click outside or Escape
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (aboutDropdownRef.current && !aboutDropdownRef.current.contains(event.target)) {
-        setAboutDropdownOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        setAboutDropdownOpen(false);
-      }
-    };
-
-    if (aboutDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
-  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   // Whenever the user scrolls, work out which themed section is behind the
   // navbar. Sections opt in with `data-nav-theme="dark|light"`.
@@ -126,7 +72,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-   }, []);
+  }, []);
 
   // Dark backgrounds (and the open mobile menu) need the white logo/labels.
   const useWhiteLogo = menuOpen || navTheme === 'dark';
@@ -170,59 +116,63 @@ export default function Navbar() {
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <Container>
-         <div className="relative z-50 flex justify-between items-center py-4">
-  <Link to="/" className="flex items-center" aria-label="Zone01 Kisumu home">
-   <img
-     src={useWhiteLogo ? whiteLogo : mainLogo}
-     alt="Zone01 Kisumu"
-     className="h-8 md:h-10 transition-opacity duration-300"
-   />
-  </Link>
+          <div className="relative z-50 flex justify-between items-center py-4">
+            <Link to="/" className="flex items-center" aria-label="Zone01 Kisumu home">
+              <img
+                src={useWhiteLogo ? whiteLogo : mainLogo}
+                alt="Zone01 Kisumu"
+                className="h-8 md:h-10 transition-opacity duration-300"
+              />
+            </Link>
 
-  {/* Links + Apply button grouped together, pushed to the right */}
-  <div className="hidden md:flex items-center gap-8">
-    <ul
-      className={`flex items-center space-x-6 lg:space-x-8 font-sans font-medium text-body-s transition-colors duration-300 ${
-        useWhiteLogo ? 'text-white' : 'text-black-900'
-      }`}
-    >
-      {navLinks.map((link) => (
-        <li key={link.href}>
-          <Link to={link.href} className="flex items-center gap-1 hover:text-primary transition-colors whitespace-nowrap">
-            {link.label}
-            {link.decorated && <ChevronDown className="w-3 h-3" />}
-          </Link>
-        </li>
-      ))}
-      <li>
-        <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
-          Donate
-        </a>
-      </li>
-    </ul>
+            {/* Links + Apply button grouped together, pushed to the right */}
+            <div className="hidden md:flex items-center gap-8">
+              <ul
+                className={`flex items-center space-x-6 lg:space-x-8 font-sans font-medium text-body-s transition-colors duration-300 ${
+                  useWhiteLogo ? 'text-white' : 'text-black-900'
+                }`}
+              >
+                {navLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link to={link.href} className="flex items-center gap-1 hover:text-primary transition-colors whitespace-nowrap">
+                      {link.label}
+                      {link.decorated && <ChevronDown className="w-3 h-3" />}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
+                    Donate
+                  </a>
+                </li>
+              </ul>
 
-    <Button variant="primary" className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap">
-      Apply
-    </Button>
-  </div>
+              <Button
+                variant="primary"
+                onClick={goToApply}
+                className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap"
+              >
+                Apply
+              </Button>
+            </div>
 
-  <button
-    type="button"
-    className={`md:hidden z-50 -mr-2 p-2 rounded-lg transition-colors ${
-      useWhiteLogo ? 'text-white active:bg-white/10' : 'text-black-900 active:bg-black-900/10'
-    }`}
-    onClick={toggleMenu}
-    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-    aria-expanded={menuOpen}
-    aria-controls="mobile-menu"
-  >
-    {menuOpen ? (
-      <X className="h-7 w-7" />
-    ) : (
-      <Menu className="h-7 w-7" />
-    )}
-  </button>
-</div>
+            <button
+              type="button"
+              className={`md:hidden z-50 -mr-2 p-2 rounded-lg transition-colors ${
+                useWhiteLogo ? 'text-white active:bg-white/10' : 'text-black-900 active:bg-black-900/10'
+              }`}
+              onClick={toggleMenu}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+            >
+              {menuOpen ? (
+                <X className="h-7 w-7" />
+              ) : (
+                <Menu className="h-7 w-7" />
+              )}
+            </button>
+          </div>
 
           {menuOpen && (
             <>
@@ -251,20 +201,20 @@ export default function Navbar() {
                         {link.decorated && <ChevronDown className="w-4 h-4 opacity-60" />}
                       </Link>
                     </li>
-                  );
-                })}
-                <li>
-                  <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="hover:text-primary">
-                    Donate
-                  </a>
-                </li>
-                <li>
-                  <Button variant="primary" className="w-full rounded-full text-body-s">
-                    Apply
-                  </Button>
-                </li>
-              </ul>
-            </div>
+                  ))}
+                  <li>
+                    <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="hover:text-primary">
+                      Donate
+                    </a>
+                  </li>
+                  <li>
+                    <Button variant="primary" onClick={goToApply} className="w-full rounded-full text-body-s">
+                      Apply
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+            </>
           )}
         </Container>
       </nav>

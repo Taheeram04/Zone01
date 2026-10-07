@@ -28,14 +28,13 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.15,
-    
       delayChildren: 0.1,
     },
   },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 35, scale: 0.96 }, 
+  hidden: { opacity: 0, y: 35, scale: 0.96 },
   visible: {
     opacity: 1,
     y: 0,
@@ -207,12 +206,12 @@ const Stats = () => {
           </div>
 
           <motion.p
-            variants={fadeUp}
+            variants={statItemVariants}
             className="font-mono text-body-s text-white/70 text-center mt-10 sm:mt-14"
           >
-            As of August 2026 . Period covered: Program inception 2024 .{' '}
+            As of August 2026. Period covered: Program inception 2024.{' '}
             <a
-              href="#"
+              href="/impact"
               className="underline hover:text-accent transition-colors duration-200 inline-block hover:scale-105"
             >
               Explore our Impact
