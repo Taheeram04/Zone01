@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Contours, DotMatrixLogo, OnboardingSteps } from '../components/dark-shell.jsx';
+import { APPLICATION_URL } from '../constants.js';
 
 /**
  * Register
@@ -85,12 +85,14 @@ const Register = () => {
 
             <p className="mt-4 text-right text-sm text-white">
               Already have an account?{' '}
-              <Link
-                to="/apply"
+              <a
+                href={APPLICATION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-violet-400 underline underline-offset-4 transition-colors hover:text-violet-300"
               >
                 LOGIN HERE!
-              </Link>
+              </a>
             </p>
           </form>
         </div>

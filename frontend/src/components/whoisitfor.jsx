@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { KineticHeading, TypewriterText } from './whocanapply.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import whoIsItFor1 from '../assets/whoisitfor1.png';
 import whoIsItFor2 from '../assets/whoisitfor2.png';
 import whoIsItFor3 from '../assets/whoisitfor3.JPG';
@@ -55,8 +55,6 @@ const cardVariants = {
 };
 
 const WhoIsItFor = () => {
-  const navigate = useNavigate();
-
   return (
     <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
       <Container>
@@ -118,7 +116,9 @@ const WhoIsItFor = () => {
         <div className="mt-12 md:mt-16 flex justify-center">
           <Button
             variant="primary"
-            onClick={() => navigate('/apply')}
+            href={APPLICATION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-3"
           >
             Apply now
