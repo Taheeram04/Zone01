@@ -317,7 +317,12 @@ const Hero = () => {
             transition={{ duration: 0.7, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4"
           >
-            <Button data-magnetic variant="primary" className="w-full sm:w-auto">
+            <Button
+              data-magnetic
+              variant="primary"
+              onClick={() => navigate('/apply')}
+              className="w-full sm:w-auto"
+            >
               Apply now
             </Button>
             <Button
