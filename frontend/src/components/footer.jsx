@@ -102,7 +102,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="w-full bg-[#0063F9] text-white">
+    <footer className="w-full bg-[#0063F9] text-white pb-[env(safe-area-inset-bottom)]">
       <div className="w-full max-w-[1920px] mx-auto px-5 sm:px-8 md:px-10 xl:px-[53px] pt-8 sm:pt-10 xl:pt-[60px]">
         {/* Top Horizontal Divider */}
         <div className="w-full border-t border-white" />
@@ -169,7 +169,7 @@ const Footer = () => {
           <div className="w-full lg:w-auto flex-1 flex justify-start lg:justify-center pt-2 sm:pt-4 lg:pt-[54px] xl:pt-[62px]">
             <nav
               aria-label="Footer Navigation"
-              className="grid grid-cols-3 gap-6 sm:gap-10 md:gap-14 lg:gap-8 xl:gap-[70px] w-full max-w-[580px]"
+              className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 sm:gap-x-10 md:gap-x-14 lg:gap-x-8 xl:gap-x-[70px] w-full max-w-[580px]"
             >
               {navColumns.map((col) => (
                 <div
@@ -232,11 +232,11 @@ const Footer = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email address"
                 aria-label="Your email address"
-                className="w-full min-w-0 bg-transparent pl-4 sm:pl-6 xl:pl-7 pr-2 text-[14px] sm:text-[16px] xl:text-[17px] text-[#0063F9] placeholder:text-[#0063F9]/80 font-sans font-medium focus:outline-none"
+                className="w-full min-w-0 bg-transparent pl-3 sm:pl-6 xl:pl-7 pr-2 text-[14px] sm:text-[16px] xl:text-[17px] text-[#0063F9] placeholder:text-[#0063F9]/80 font-sans font-medium focus:outline-none"
               />
               <button
                 type="submit"
-                className="shrink-0 h-[44px] sm:h-[50px] xl:h-[56px] px-4 sm:px-6 xl:px-8 rounded-full bg-[#0063F9] text-white font-sans font-medium text-[13px] sm:text-[15px] xl:text-[17px] border-[2px] xl:border-[2.5px] border-white whitespace-nowrap hover:bg-[#0052d4] transition-colors cursor-pointer flex items-center justify-center"
+                className="shrink-0 h-[44px] sm:h-[50px] xl:h-[56px] px-3 sm:px-6 xl:px-8 rounded-full bg-[#0063F9] text-white font-sans font-medium text-[13px] sm:text-[15px] xl:text-[17px] border-[2px] xl:border-[2.5px] border-white whitespace-nowrap hover:bg-[#0052d4] transition-colors cursor-pointer flex items-center justify-center"
               >
                 {isSubscribed ? 'Subscribed!' : 'Get Started'}
               </button>
