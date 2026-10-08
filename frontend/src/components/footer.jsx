@@ -148,7 +148,7 @@ const Footer = () => {
                 />
               </svg>
               <div className="text-[14px] sm:text-[16px] xl:text-[20px] font-sans font-normal text-white leading-snug sm:leading-[1.35]">
-                <p>Zone01 Kisumu, Lake Basin Mall</p>
+                <p>Lake Basin Mall, Mamboleo Junction</p>
                 <p>Kisumu-Vihiga Road. Kisumu, Kenya</p>
               </div>
             </div>
@@ -160,7 +160,7 @@ const Footer = () => {
                 href="tel:+254748902779"
                 className="text-[15px] sm:text-[17px] xl:text-[20px] font-sans font-normal text-white hover:underline transition-all"
               >
-                +254 748902779
+                +254 748 902 779
               </a>
             </div>
           </div>
@@ -194,9 +194,6 @@ const Footer = () => {
           {/* Right Column: Social Media Links & Newsletter */}
           <div className="flex flex-col items-start w-full lg:w-auto lg:max-w-[466px] shrink-0 pt-2 sm:pt-4 lg:pt-[54px] xl:pt-[62px]">
             {/* Socials Heading */}
-            <h3 className="text-[16px] sm:text-[18px] xl:text-[22px] font-sans font-bold text-white uppercase tracking-wider mb-3 sm:mb-4 xl:mb-[20px]">
-              OUR SOCIALS
-            </h3>
 
             {/* Social Icons (6 icons including TikTok placed last) */}
             <div className="flex items-center flex-wrap gap-2.5 sm:gap-3 xl:gap-[18px]">
@@ -220,7 +217,7 @@ const Footer = () => {
 
             {/* Newsletter Heading */}
             <h3 className="mt-6 sm:mt-8 xl:mt-[38px] text-[17px] sm:text-[20px] xl:text-[24px] font-sans font-bold text-white mb-3 sm:mb-4 xl:mb-[20px]">
-              Subscribe to our newsletter
+              Join our community
             </h3>
 
             {/* Newsletter Form */}
@@ -253,7 +250,7 @@ const Footer = () => {
         {/* Bottom Row: Centered Copyright */}
         <div className="py-6 sm:py-7 xl:py-[28px] text-center">
           <p className="text-[13px] sm:text-[15px] xl:text-[19px] font-sans font-normal text-white tracking-[0.01em]">
-            Copyright@2026 Zone01 Kisumu, Lake Basin Mall
+            Copyright @2026 Zone01 Kisumu, Lake Basin Mall
           </p>
         </div>
       </div>
