@@ -323,7 +323,7 @@ const Hero = () => {
               onClick={() => navigate('/apply')}
               className="w-full sm:w-auto"
             >
-              Apply now
+              Apply Now
             </Button>
             <Button
               data-magnetic
