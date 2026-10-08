@@ -40,9 +40,9 @@ const Community = () => {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-sans font-black uppercase leading-[1.04] tracking-tight text-white text-[clamp(2rem,7vw,5rem)]"
+            className="font-sans font-black leading-[1.04] tracking-tight text-white text-[clamp(2rem,7vw,5rem)]"
           >
-            Our Partners
+            The community behind the impact
           </motion.h1>
         </div>
       </Container>
