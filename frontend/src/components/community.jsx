@@ -1,13 +1,13 @@
 // components/community.jsx
 import { motion } from 'framer-motion';
 import { Container } from './layout.jsx';
-import partnersPhoto from '../assets/our partners.webp';
+import communityHeroImg from '../assets/community-hero.webp';
 
 /**
  * Community — "Our Partners" hero.
- * Full-bleed partners group photograph with a deep blue wash and the
- * "OUR PARTNERS" statement centred on top. Mirrors the About hero so the two
- * pages share the same visual language.
+ * Full-bleed group photograph with a deep blue wash and the "OUR PARTNERS"
+ * statement centred on top. Mirrors the About hero so the two pages share the
+ * same visual language.
  */
 const Community = () => {
   return (
@@ -18,8 +18,8 @@ const Community = () => {
     >
       {/* Background layer — the partners group photograph, sharp and full-bleed */}
       <img
-        src={partnersPhoto}
-        alt="Zone01 Kisumu partners and team gathered on stage"
+        src={communityHeroImg}
+        alt="Zone01 Kisumu team and visitors gathered on stage"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
@@ -40,9 +40,9 @@ const Community = () => {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-sans font-black uppercase leading-[1.04] tracking-tight text-white text-[clamp(2rem,7vw,5rem)]"
+            className="font-sans font-black leading-[1.04] tracking-tight text-white text-[clamp(2rem,7vw,5rem)]"
           >
-            Our Partners
+            The community behind the impact
           </motion.h1>
         </div>
       </Container>

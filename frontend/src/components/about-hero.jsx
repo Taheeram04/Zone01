@@ -35,7 +35,7 @@ const AboutHero = () => {
 
       {/* Text layer — centred */}
       <Container className="relative z-10 py-28 sm:py-32">
-        <div className="mx-auto max-w-6xl text-center">
+        <div className="mx-auto max-w-6xl translate-y-6 text-center sm:translate-y-10">
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}

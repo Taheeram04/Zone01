@@ -7,19 +7,19 @@ import { EASE } from './orbit-showcase.config.js';
 import { STEPS } from './our-model.data.js';
 
 /*
- * "Our Model Works" section — the five-stage list (left) kept in sync with the
- * OrbitShowcase platter (right), followed by the blue mission band.
+ * "How Our Model Works" section — the five-stage list (left) kept in sync with
+ * the OrbitShowcase platter (right), followed by the blue mission band.
  *
  * Embedded inline on the About page, directly below "Know Us".
  */
-const OurModelSection = ({ heading = 'Our Model Works' }) => {
+const OurModelSection = ({ heading = 'How Our Model Works' }) => {
   const { active, goTo } = useSequence(STEPS.length);
 
   return (
     <section
       id="our-model"
       data-nav-theme="light"
-      aria-label="Our Model Works steps"
+      aria-label="How Our Model Works steps"
       className="relative w-full overflow-hidden bg-white pb-16 pt-4 sm:pb-20 sm:pt-5 md:pb-24 md:pt-6 lg:pb-28 lg:pt-8"
     >
       <Container className="relative">

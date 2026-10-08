@@ -26,6 +26,7 @@ from content.models import (
     NewsUpdate,
     Page,
     Partner,
+    PiscineDate,
     PiscineRegistration,
     SiteLink,
     StaffMember,
@@ -128,18 +129,30 @@ def serialize_page(request, page):
     }
 
 
-def serialize_piscine(piscine):
-    starts_at = piscine.starts_at
+def serialize_piscine_date(piscine_date):
+    starts_at = piscine_date.starts_at
     return {
-        # Auto-expires: false once the start moment has passed, even if the
-        # admin toggle is still on.
-        "is_active": piscine.is_live,
-        "next_piscine_date": piscine.next_piscine_date.isoformat()
-        if piscine.next_piscine_date
-        else None,
+        "id": piscine_date.id,
+        "date": piscine_date.date.isoformat(),
+        "starts_at": starts_at.isoformat() if starts_at else None,
+        "label": piscine_date.label or None,
+    }
+
+
+def serialize_piscine(piscine):
+    # Resolve the date list once: the banner always targets the soonest
+    # upcoming date, and rolls on to the following one automatically.
+    upcoming = PiscineDate.upcoming()
+    next_date = upcoming[0] if upcoming else None
+    starts_at = next_date.starts_at if next_date else None
+    return {
+        # False only when the master toggle is off or no upcoming dates remain.
+        "is_active": piscine.is_active and next_date is not None,
+        "next_piscine_date": next_date.date.isoformat() if next_date else None,
         "starts_at": starts_at.isoformat() if starts_at else None,
         "label": piscine.message or "Next Piscine",
         "message": piscine.message,
+        "dates": [serialize_piscine_date(d) for d in upcoming],
         "updated_at": piscine.updated_at.isoformat() if piscine.updated_at else None,
     }
 
