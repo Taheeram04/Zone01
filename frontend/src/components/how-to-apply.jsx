@@ -22,11 +22,11 @@ const STEPS = [
     text: 'Play the 95-minute online-cognitive games to uncover your potential. You have three attempts to play the games successfully.',
   },
   {
-    label: 'Piscine',
+    label: 'The Piscine',
     text: "We invite the successful applicants for the 4-week intense in-person selection process we call The 'Piscine'. Once selected, you will join the next Zone01 Kisumu cohort.",
   },
   {
-    label: 'Cohort',
+    label: 'The Cohort',
     text: 'Become an apprentice and complete the one year in-person training at our campus. Our peer-to-peer learning experience will transform you into a highly skilled full-stack engineer.',
   },
   {
@@ -344,7 +344,7 @@ const HowToApply = () => {
             How to Apply
           </h2>
           <p className="hta__lead">
-            Follow the path — four steps from potential to placement.
+            Follow these four steps to turn your potential into job placement
           </p>
         </header>
 

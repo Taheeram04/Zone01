@@ -9,7 +9,8 @@ React frontend as JSON under ``/api/``:
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
-* :class:`PiscineRegistration` - the "Apply now" alert banner and its date.
+* :class:`PiscineDate`    - scheduled piscine start dates (one row per date).
+* :class:`PiscineRegistration` - the "Apply now" alert banner configuration.
 * :class:`Page` + :class:`PageSection` - editable content for a frontend page
   (home, about-us, community, ...), built from ordered reusable sections.
 
@@ -197,22 +198,75 @@ class SiteLink(OrderedContent):
         return self.url.startswith(("http://", "https://", "//"))
 
 
-class PiscineRegistration(models.Model):
-    """Singleton controlling the next-piscine countdown in the hero.
+class PiscineDate(models.Model):
+    """One scheduled piscine start date.
 
-    Only one row ever exists (``pk=1``). Editors toggle :attr:`is_active` on to
-    show the countdown and set :attr:`next_piscine_date`; the alert switches
-    itself off automatically at 09:00 EAT on that date.
+    Editors add a row per date for the year (or years) ahead. Each date starts
+    at 09:00 Kisumu time (EAT). The website always targets the soonest upcoming
+    active row, so the countdown rolls on to the next date automatically once a
+    piscine begins -- no manual re-activation needed.
+    """
+
+    date = models.DateField(
+        help_text="Date this piscine starts (09:00 EAT).",
+    )
+    label = models.CharField(
+        max_length=120,
+        blank=True,
+        help_text="Optional label for this date. Leave blank for the default.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this date from the website.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["date", "id"]
+        verbose_name = "piscine date"
+        verbose_name_plural = "piscine dates"
+
+    def __str__(self):
+        if self.label:
+            return f"{self.date:%d %b %Y} - {self.label}"
+        return f"{self.date:%d %b %Y}"
+
+    @property
+    def starts_at(self):
+        """Timezone-aware start moment (09:00 EAT on :attr:`date`)."""
+        naive = datetime.datetime.combine(self.date, PISCINE_START_TIME)
+        return timezone.make_aware(naive, PISCINE_TIMEZONE)
+
+    @property
+    def is_upcoming(self):
+        """True while this date's 09:00 EAT start is still ahead."""
+        return self.starts_at > timezone.now()
+
+    @classmethod
+    def upcoming(cls):
+        """Active dates whose start is still ahead, soonest first."""
+        now = timezone.now()
+        return [obj for obj in cls.objects.filter(is_active=True) if obj.starts_at > now]
+
+    @classmethod
+    def next_upcoming(cls):
+        """The soonest upcoming active date, or ``None`` when there are none."""
+        return next(iter(cls.upcoming()), None)
+
+
+class PiscineRegistration(models.Model):
+    """Singleton holding the next-piscine banner configuration.
+
+    Only one row ever exists (``pk=1``). This model holds the master
+    :attr:`is_active` switch and an optional custom :attr:`message`; the actual
+    dates live in :class:`PiscineDate`. The banner targets the soonest upcoming
+    date and advances to the following one automatically, so it never needs to
+    be re-enabled between piscines.
     """
 
     is_active = models.BooleanField(
         default=False,
         help_text="Turn the next-piscine alert on or off.",
-    )
-    next_piscine_date = models.DateField(
-        null=True,
-        blank=True,
-        help_text="Date the next piscine starts.",
     )
     message = models.CharField(
         max_length=255,
@@ -226,8 +280,9 @@ class PiscineRegistration(models.Model):
         verbose_name_plural = "next piscine registration"
 
     def __str__(self):
-        if self.next_piscine_date:
-            return f"Next piscine: {self.next_piscine_date:%d %b %Y}"
+        next_date = self.next_date
+        if next_date:
+            return f"Next piscine: {next_date.date:%d %b %Y}"
         return "Next piscine"
 
     def save(self, *args, **kwargs):
@@ -240,31 +295,36 @@ class PiscineRegistration(models.Model):
         super().save(*args, **kwargs)
 
     @property
+    def next_date(self):
+        """The soonest upcoming :class:`PiscineDate`, or ``None``."""
+        return PiscineDate.next_upcoming()
+
+    @property
+    def next_piscine_date(self):
+        """Date of the next upcoming piscine, or ``None``."""
+        next_date = self.next_date
+        return next_date.date if next_date else None
+
+    @property
     def starts_at(self):
-        """Timezone-aware start moment (09:00 EAT on :attr:`next_piscine_date`)."""
-        if not self.next_piscine_date:
-            return None
-        naive = datetime.datetime.combine(self.next_piscine_date, PISCINE_START_TIME)
-        return timezone.make_aware(naive, PISCINE_TIMEZONE)
+        """Timezone-aware start moment of the next upcoming piscine."""
+        next_date = self.next_date
+        return next_date.starts_at if next_date else None
 
     @property
     def is_live(self):
-        """True only while the toggle is on and the start moment is still ahead."""
-        starts = self.starts_at
-        return bool(self.is_active and starts and starts > timezone.now())
+        """True while the toggle is on and an upcoming piscine date exists.
+
+        The date itself auto-advances (see :meth:`PiscineDate.next_upcoming`),
+        so this only turns off when the master switch is off or no future dates
+        remain.
+        """
+        return bool(self.is_active and self.next_date is not None)
 
     @classmethod
     def get_solo(cls):
-        """Return the single settings row, creating it on first access.
-
-        Also lazily flips the toggle off once the start time has passed, so the
-        alert switches itself off on D-day and must be re-activated for the next
-        piscine.
-        """
+        """Return the single settings row, creating it on first access."""
         obj, _ = cls.objects.get_or_create(pk=1)
-        if obj.is_active and obj.starts_at and obj.starts_at <= timezone.now():
-            obj.is_active = False
-            obj.save(update_fields=["is_active", "updated_at"])
         return obj
 
 
