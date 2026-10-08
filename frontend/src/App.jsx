@@ -11,6 +11,8 @@ import KnowUs from './components/know-us.jsx';
 import OurModelSection from './components/our-model-section.jsx';
 import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
+import Community from './components/community.jsx';
+import OurStaff from './components/our-staff.jsx';
 import Apply from './pages/Apply.jsx';
 import Register from './pages/Register.jsx';
 
@@ -55,7 +57,18 @@ function App() {
         }
       />
 
-      {['/community', '/impact', '/hire', '/donate', '*'].map((path) => (
+      {/* Community — partners hero + 3D glowing staff carousel */}
+      <Route
+        path="/community"
+        element={
+          <Layout>
+            <Community />
+            <OurStaff />
+          </Layout>
+        }
+      />
+
+      {['/impact', '/hire', '/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}

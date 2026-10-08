@@ -4,6 +4,7 @@ const Button = ({
   variant = 'primary',
   disabled = false,
   className = '',
+  href,
   ...props
 }) => {
   const variantStyles = {
@@ -21,9 +22,7 @@ const Button = ({
       : 'bg-white border border-primary text-primary hover:bg-primary hover:text-white',
   };
 
-  return (
-    <button
-      className={`
+  const classes = `
         ${variantStyles[variant] || variantStyles.primary}
         ${className}
         font-mono font-medium
@@ -33,7 +32,19 @@ const Button = ({
         transition-all duration-200
         disabled:cursor-not-allowed
         focus:outline-none focus:ring-2 focus:ring-primary/50
-      `.replace(/\s+/g, ' ').trim()}
+      `.replace(/\s+/g, ' ').trim();
+
+  if (href) {
+    return (
+      <a href={href} className={classes} onClick={onClick} {...props}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      className={classes}
       onClick={!disabled ? onClick : undefined}
       disabled={disabled}
       {...props}
