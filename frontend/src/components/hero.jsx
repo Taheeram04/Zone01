@@ -5,6 +5,7 @@ import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import heroImg1 from '../assets/001.jpeg';
 import heroImg2 from '../assets/002.jpeg';
 import heroImg3 from '../assets/003.jpeg';
@@ -320,7 +321,9 @@ const Hero = () => {
             <Button
               data-magnetic
               variant="primary"
-              onClick={() => navigate('/apply')}
+              href={APPLICATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto"
             >
               Apply now

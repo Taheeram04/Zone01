@@ -1,5 +1,5 @@
 // Shared dark-mode visuals for the standalone 01Edu platform pages
-// (login at /apply, registration at /register).
+// (registration at /register).
 
 // Deterministic abstract topographic contour lines flowing across the canvas.
 const CONTOUR_PATHS = Array.from({ length: 16 }, (_, i) => {

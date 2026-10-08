@@ -13,7 +13,6 @@ import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
-import Apply from './pages/Apply.jsx';
 import Register from './pages/Register.jsx';
 
 const Home = () => (
@@ -37,9 +36,6 @@ function App() {
           </Layout>
         }
       />
-      {/* Standalone dark login / onboarding page */}
-      <Route path="/apply" element={<Apply />} />
-
       {/* Standalone dark registration page */}
       <Route path="/register" element={<Register />} />
 
