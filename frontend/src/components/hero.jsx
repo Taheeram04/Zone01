@@ -326,7 +326,7 @@ const Hero = () => {
               rel="noopener noreferrer"
               className="w-full sm:w-auto"
             >
-              Apply now
+              Apply Now
             </Button>
             <Button
               data-magnetic

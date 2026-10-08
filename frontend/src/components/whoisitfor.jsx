@@ -121,7 +121,7 @@ const WhoIsItFor = () => {
             rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-3"
           >
-            Apply now
+            Apply Now
           </Button>
         </div>
       </Container>
