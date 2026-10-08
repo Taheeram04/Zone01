@@ -1,9 +1,10 @@
 // components/navbar.jsx
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import mainLogo from '../assets/mainlogo.png';
 import whiteLogo from '../assets/whitelogo.png';
 
@@ -39,18 +40,11 @@ export default function Navbar() {
   // Ref to the nav element so we can sample which section sits behind it.
   const navRef = useRef(null);
 
-  const navigate = useNavigate();
-
   const toggleMenu = () => {
     setMenuOpen((prev) => {
       if (prev) setMobileAboutOpen(false);
       return !prev;
     });
-  };
-
-  const goToApply = () => {
-    setMenuOpen(false);
-    navigate('/apply');
   };
 
   const handleMouseEnter = () => {
@@ -279,7 +273,14 @@ export default function Navbar() {
                   );
                 })}
                 <li>
-                  <a href={DONATE_URL} className="hover:text-primary transition-colors whitespace-nowrap">
+                  <a
+                    href={DONATE_URL}
+                    className={`inline-flex items-center justify-center px-5 py-2 rounded-full border text-body-s font-medium bg-transparent transition-all duration-300 whitespace-nowrap ${
+                      useWhiteLogo
+                        ? 'border-white text-white hover:bg-white hover:text-black-900'
+                        : 'border-primary text-primary hover:bg-primary hover:text-white'
+                    }`}
+                  >
                     Donate
                   </a>
                 </li>
@@ -287,7 +288,9 @@ export default function Navbar() {
 
               <Button
                 variant="primary"
-                onClick={goToApply}
+                href={APPLICATION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="!px-6 !py-2 rounded-full text-body-s whitespace-nowrap"
               >
                 Apply
@@ -393,13 +396,24 @@ export default function Navbar() {
                       </li>
                     );
                   })}
-                  <li>
-                    <a href={DONATE_URL} onClick={() => setMenuOpen(false)} className="block min-h-[48px] leading-[48px] px-3 -mx-1 text-white hover:text-primary">
+                  <li className="pt-2">
+                    <a
+                      href={DONATE_URL}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex min-h-[44px] items-center justify-center rounded-full border border-white text-white hover:bg-white hover:text-black-900 active:bg-white/20 transition-colors text-center font-medium"
+                    >
                       Donate
                     </a>
                   </li>
                   <li className="pt-3">
-                    <Button variant="primary" onClick={goToApply} className="w-full rounded-full text-body-s">
+                    <Button
+                      variant="primary"
+                      href={APPLICATION_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full rounded-full text-body-s"
+                    >
                       Apply
                     </Button>
                   </li>

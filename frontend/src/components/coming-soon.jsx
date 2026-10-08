@@ -164,9 +164,11 @@ const ComingSoon = () => {
             <Button variant="primary" className="w-full sm:w-auto" onClick={() => navigate('/')}>
               Back to home
             </Button>
-            <Button variant="outline" className="w-full sm:w-auto" onClick={() => navigate('/community')}>
-              Explore the community
-            </Button>
+            {pathname !== '/community' && (
+              <Button variant="outline" className="w-full sm:w-auto" onClick={() => navigate('/community')}>
+                Explore the community
+              </Button>
+            )}
           </div>
         </Container>
       </div>

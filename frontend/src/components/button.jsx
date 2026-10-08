@@ -34,7 +34,9 @@ const Button = ({
         focus:outline-none focus:ring-2 focus:ring-primary/50
       `.replace(/\s+/g, ' ').trim();
 
-  if (href) {
+  // When an href is supplied the Button acts as a link, so the browser can
+  // navigate (including to external portals such as learn.zone01kisumu.ke).
+  if (href && !disabled) {
     return (
       <a href={href} className={classes} onClick={onClick} {...props}>
         {children}

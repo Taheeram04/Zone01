@@ -5,6 +5,7 @@ import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import heroImg1 from '../assets/001.jpeg';
 import heroImg2 from '../assets/002.jpeg';
 import heroImg3 from '../assets/003.jpeg';
@@ -291,7 +292,7 @@ const Hero = () => {
       />
 
       <Container className="relative z-10 pb-20 sm:pb-12 md:pb-14 lg:pb-16 pt-20 sm:pt-24 md:pt-28">
-        <div className="max-w-4xl">
+        <div className="w-full">
           <KineticHeading
             as="h1"
             text={"Talent is everywhere.\nOpportunity is not."}
@@ -306,8 +307,8 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="font-mono text-white/90 text-sm sm:text-base lg:text-[17px] mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed"
           >
-            We identify <span className="font-semibold text-white">top-potential</span> talent — overlooked
-            by traditional systems — and transform them into{' '}
+            We identify <span className="font-semibold text-white">top-potential</span> talent, overlooked
+            by traditional systems, and transform them into{' '}
             <span className="font-semibold text-white">high-income, AI-ready software engineers</span> at scale
           </motion.p>
 
@@ -320,7 +321,9 @@ const Hero = () => {
             <Button
               data-magnetic
               variant="primary"
-              onClick={() => navigate('/apply')}
+              href={APPLICATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto"
             >
               Apply now
