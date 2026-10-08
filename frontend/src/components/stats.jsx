@@ -15,7 +15,7 @@ const statColumns = [
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '1,576', label: 'Apprentices trained in go' },
+    { value: '1,576', label: 'Apprentices trained in Golang' },
   ],
 ];
 
