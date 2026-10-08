@@ -16,6 +16,12 @@ export default defineConfig({
   // assets must be requested under /static/. `make frontend` sets VITE_BASE.
   base: process.env.VITE_BASE || '/',
   plugins: [react(), tailwindcss()],
+  build: {
+    // The single main bundle (React + framer-motion + lucide) is ~500 kB
+    // minified. Raise the warning threshold so deploy logs (Render/Fly) stay
+    // clean. Split into vendor chunks instead if the bundle grows much more.
+    chunkSizeWarningLimit: 1000,
+  },
   server: { proxy: apiProxy },
   preview: { proxy: apiProxy },
 })
