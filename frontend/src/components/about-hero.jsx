@@ -1,7 +1,7 @@
 // components/about-hero.jsx
 import { motion } from 'framer-motion';
 import { Container } from './layout.jsx';
-import aboutUs from '../assets/about us.JPG';
+import aboutHeroImg from '../assets/US Embassy at Zone001.jpg';
 
 /**
  * AboutHero
@@ -18,8 +18,8 @@ const AboutHero = () => {
     >
       {/* Background layer — the team photograph, sharp and full-bleed */}
       <img
-        src={aboutUs}
-        alt="The Zone01 Kisumu team gathered at the campus"
+        src={aboutHeroImg}
+        alt="The Zone01 Kisumu community gathered with US Embassy visitors at the campus"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
 

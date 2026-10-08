@@ -24,6 +24,9 @@ frontend_dist/
 coverage.xml
 htmlcov/
 
+# Database backups
+backups/
+
 # Editor
 .idea/
 .vscode/
