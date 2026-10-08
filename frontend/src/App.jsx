@@ -11,6 +11,8 @@ import KnowUs from './components/know-us.jsx';
 import OurModelSection from './components/our-model-section.jsx';
 import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
+import Community from './components/community.jsx';
+import OurStaff from './components/our-staff.jsx';
 import Register from './pages/Register.jsx';
 
 const Home = () => (
@@ -51,12 +53,13 @@ function App() {
         }
       />
 
-      {/* Community — temporarily replaced by the "Under Maintenance" mascot */}
+      {/* Community — partners hero + 3D glowing staff carousel */}
       <Route
         path="/community"
         element={
           <Layout>
-            <ComingSoon />
+            <Community />
+            <OurStaff />
           </Layout>
         }
       />
