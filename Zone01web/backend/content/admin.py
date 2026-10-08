@@ -18,6 +18,7 @@ from content.models import (
     Page,
     PageSection,
     Partner,
+    PiscineDate,
     PiscineRegistration,
     SiteLink,
     StaffMember,
@@ -116,32 +117,56 @@ class SiteLinkAdmin(admin.ModelAdmin):
     ordering = ("order", "id")
 
 
+@admin.register(PiscineDate)
+class PiscineDateAdmin(admin.ModelAdmin):
+    """Manage the list of scheduled piscine dates.
+
+    Editors add one row per date; the website always uses the soonest upcoming
+    active date and advances to the next one automatically.
+    """
+
+    list_display = ("date", "label", "is_active", "upcoming", "created_at")
+    list_editable = ("label", "is_active")
+    list_filter = ("is_active",)
+    date_hierarchy = "date"
+    ordering = ("date", "id")
+    readonly_fields = ("created_at",)
+    search_fields = ("label",)
+
+    @admin.display(boolean=True, description="Upcoming")
+    def upcoming(self, obj):
+        return obj.is_upcoming
+
+
 @admin.register(PiscineRegistration)
 class PiscineRegistrationAdmin(admin.ModelAdmin):
-    list_display = ("is_active", "live", "next_piscine_date", "updated_at")
-    list_display_links = ("next_piscine_date",)
+    list_display = ("is_active", "live", "next_date", "updated_at")
+    list_display_links = ("next_date",)
     # Flip the countdown on/off straight from the list.
     list_editable = ("is_active",)
     readonly_fields = ("updated_at",)
 
+    @admin.display(description="Next date")
+    def next_date(self, obj):
+        return obj.next_piscine_date or "-"
+
     @admin.display(boolean=True, description="Live now")
     def live(self, obj):
-        # True while the toggle is on and the 09:00 EAT start is still ahead.
+        # True while the toggle is on and an upcoming piscine date exists.
         return obj.is_live
 
     def has_add_permission(self, request):
-        # Keep a single settings row, but let editors schedule the next piscine:
-        # the add form upserts pk=1 (see PiscineRegistration.save).
+        # Keep a single settings row, but let editors edit the banner: the add
+        # form upserts pk=1 (see PiscineRegistration.save).
         return True
 
     def get_changeform_initial_data(self, request):
-        # Prefill the add form from the current row so scheduling the next
-        # piscine starts from the existing date/message instead of blanks.
+        # Prefill the add form from the current row so editing the banner starts
+        # from the existing values instead of blanks.
         initial = super().get_changeform_initial_data(request)
         current = PiscineRegistration.objects.filter(pk=1).first()
         if current is not None:
             initial.setdefault("is_active", current.is_active)
-            initial.setdefault("next_piscine_date", current.next_piscine_date)
             initial.setdefault("message", current.message)
         return initial
 

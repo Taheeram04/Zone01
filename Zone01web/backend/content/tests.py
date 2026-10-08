@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from filer.models import File
 
-from content.admin import PiscineRegistrationAdmin
+from content.admin import PiscineDateAdmin, PiscineRegistrationAdmin
 from content.models import (
     Article,
     Category,
@@ -19,6 +19,7 @@ from content.models import (
     Page,
     PageSection,
     Partner,
+    PiscineDate,
     PiscineRegistration,
     SiteLink,
     StaffMember,
@@ -58,17 +59,43 @@ class ContentModelTests(TestCase):
     def test_piscine_save_upserts_into_the_singleton(self):
         PiscineRegistration.get_solo()
 
-        replacement = PiscineRegistration(
-            next_piscine_date=timezone.localdate() + timedelta(days=21),
-            is_active=True,
-        )
+        replacement = PiscineRegistration(message="Piscine #7", is_active=True)
         replacement.save()
 
         self.assertEqual(PiscineRegistration.objects.count(), 1)
         stored = PiscineRegistration.objects.get()
         self.assertEqual(stored.pk, 1)
-        self.assertEqual(stored.next_piscine_date, replacement.next_piscine_date)
+        self.assertEqual(stored.message, "Piscine #7")
         self.assertTrue(stored.is_active)
+
+    def test_next_piscine_date_targets_soonest_upcoming(self):
+        today = timezone.localdate()
+        PiscineDate.objects.create(date=today - timedelta(days=3))  # already started
+        later = PiscineDate.objects.create(date=today + timedelta(days=40))
+        soonest = PiscineDate.objects.create(date=today + timedelta(days=10))
+
+        registration = PiscineRegistration.get_solo()
+
+        self.assertEqual(registration.next_piscine_date, soonest.date)
+        self.assertEqual(registration.starts_at, soonest.starts_at)
+        self.assertNotEqual(registration.next_piscine_date, later.date)
+
+    def test_inactive_dates_are_skipped(self):
+        today = timezone.localdate()
+        PiscineDate.objects.create(date=today + timedelta(days=5), is_active=False)
+        active = PiscineDate.objects.create(date=today + timedelta(days=25))
+
+        self.assertEqual(PiscineRegistration.get_solo().next_piscine_date, active.date)
+
+    def test_registration_is_not_live_without_upcoming_dates(self):
+        today = timezone.localdate()
+        PiscineDate.objects.create(date=today - timedelta(days=1))
+        registration = PiscineRegistration.get_solo()
+        registration.is_active = True
+        registration.save()
+
+        self.assertFalse(registration.is_live)
+        self.assertIsNone(registration.next_piscine_date)
 
 
 class PiscineAdminTests(TestCase):
@@ -76,7 +103,7 @@ class PiscineAdminTests(TestCase):
         # The singleton row exists, which used to hide the admin "Add" button.
         PiscineRegistration.get_solo()
 
-    def test_admin_can_always_add_the_next_piscine(self):
+    def test_admin_can_always_edit_the_banner(self):
         model_admin = PiscineRegistrationAdmin(PiscineRegistration, admin.site)
         request = RequestFactory().get("/admin/content/piscineregistration/add/")
 
@@ -87,7 +114,6 @@ class PiscineAdminTests(TestCase):
 
     def test_add_form_is_prefilled_from_the_current_row(self):
         current = PiscineRegistration.get_solo()
-        current.next_piscine_date = timezone.localdate() + timedelta(days=7)
         current.message = "Piscine #7"
         current.is_active = True
         current.save()
@@ -97,9 +123,18 @@ class PiscineAdminTests(TestCase):
             RequestFactory().get("/admin/content/piscineregistration/add/")
         )
 
-        self.assertEqual(initial["next_piscine_date"], current.next_piscine_date)
         self.assertEqual(initial["message"], "Piscine #7")
         self.assertTrue(initial["is_active"])
+
+    def test_piscine_date_admin_marks_upcoming(self):
+        today = timezone.localdate()
+        future = PiscineDate.objects.create(date=today + timedelta(days=10))
+        past = PiscineDate.objects.create(date=today - timedelta(days=10))
+
+        model_admin = PiscineDateAdmin(PiscineDate, admin.site)
+
+        self.assertTrue(model_admin.upcoming(future))
+        self.assertFalse(model_admin.upcoming(past))
 
 
 class ContentApiTests(TestCase):
@@ -133,32 +168,64 @@ class ContentApiTests(TestCase):
     def test_piscine_detail_exposes_date_and_toggle(self):
         piscine = PiscineRegistration.get_solo()
         piscine.is_active = True
-        piscine.next_piscine_date = timezone.localdate() + timedelta(days=30)
         piscine.save()
+        upcoming = PiscineDate.objects.create(date=timezone.localdate() + timedelta(days=30))
 
         response = self.client.get(reverse("content_api:piscine-detail"))
 
         self.assertEqual(response.status_code, 200)
         payload = response.json()
         self.assertTrue(payload["is_active"])
-        self.assertEqual(payload["next_piscine_date"], piscine.next_piscine_date.isoformat())
+        self.assertEqual(payload["next_piscine_date"], upcoming.date.isoformat())
         self.assertIsNotNone(payload["starts_at"])
         self.assertEqual(payload["label"], "Next Piscine")
 
-    def test_piscine_switches_off_after_its_start_time(self):
-        piscine = PiscineRegistration.get_solo()
-        piscine.is_active = True
-        piscine.next_piscine_date = timezone.localdate() - timedelta(days=1)
-        piscine.save()
+    def test_piscine_detail_exposes_the_date_list(self):
+        today = timezone.localdate()
+        PiscineDate.objects.create(date=today + timedelta(days=30))
+        PiscineDate.objects.create(date=today + timedelta(days=90), label="Cohort 2")
 
         response = self.client.get(reverse("content_api:piscine-detail"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(response.json()["is_active"])
-        # The admin toggle is switched off automatically so it must be
-        # re-activated for the next piscine.
-        piscine.refresh_from_db()
-        self.assertFalse(piscine.is_active)
+        dates = response.json()["dates"]
+        self.assertEqual(
+            [item["date"] for item in dates],
+            [(today + timedelta(days=30)).isoformat(), (today + timedelta(days=90)).isoformat()],
+        )
+        self.assertEqual(dates[1]["label"], "Cohort 2")
+        self.assertIsNone(dates[0]["label"])
+
+    def test_piscine_advances_to_the_next_date_after_one_passes(self):
+        piscine = PiscineRegistration.get_solo()
+        piscine.is_active = True
+        piscine.save()
+        today = timezone.localdate()
+        PiscineDate.objects.create(date=today - timedelta(days=1))
+        upcoming = PiscineDate.objects.create(date=today + timedelta(days=20))
+
+        response = self.client.get(reverse("content_api:piscine-detail"))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        # Still live: the banner rolls on to the following date rather than
+        # switching itself off.
+        self.assertTrue(payload["is_active"])
+        self.assertEqual(payload["next_piscine_date"], upcoming.date.isoformat())
+
+    def test_piscine_is_off_when_no_upcoming_dates_remain(self):
+        piscine = PiscineRegistration.get_solo()
+        piscine.is_active = True
+        piscine.save()
+        PiscineDate.objects.create(date=timezone.localdate() - timedelta(days=1))
+
+        response = self.client.get(reverse("content_api:piscine-detail"))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertFalse(payload["is_active"])
+        self.assertIsNone(payload["next_piscine_date"])
+        self.assertEqual(payload["dates"], [])
 
 
 class ImpactReportTests(TestCase):
