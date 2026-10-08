@@ -5,7 +5,7 @@ import { KineticHeading, TypewriterText } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
 import whoIsItFor1 from '../assets/whoisitfor1.png';
 import whoIsItFor2 from '../assets/whoisitfor2.png';
-import whoIsItFor3 from '../assets/whoisitfor3.JPG';
+import whoIsItFor3 from '../assets/whoisitfor3.png';
 
 const targetAudience = [
   {

@@ -130,8 +130,20 @@ class PiscineRegistrationAdmin(admin.ModelAdmin):
         return obj.is_live
 
     def has_add_permission(self, request):
-        # Only ever one settings row.
-        return not PiscineRegistration.objects.exists()
+        # Keep a single settings row, but let editors schedule the next piscine:
+        # the add form upserts pk=1 (see PiscineRegistration.save).
+        return True
+
+    def get_changeform_initial_data(self, request):
+        # Prefill the add form from the current row so scheduling the next
+        # piscine starts from the existing date/message instead of blanks.
+        initial = super().get_changeform_initial_data(request)
+        current = PiscineRegistration.objects.filter(pk=1).first()
+        if current is not None:
+            initial.setdefault("is_active", current.is_active)
+            initial.setdefault("next_piscine_date", current.next_piscine_date)
+            initial.setdefault("message", current.message)
+        return initial
 
     def has_delete_permission(self, request, obj=None):
         return False

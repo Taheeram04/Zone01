@@ -170,6 +170,30 @@ To grow the disk, run `fly volumes extend <volume-id> --size <GB>`; to give
 the database more memory, `fly machine update <machine-id> --vm-memory 1024
 -a zone01-kisumu-db`.
 
+### Local backups and restore
+
+The `Makefile` wraps `pg_dump`/`pg_restore` for local and staging use. Both
+targets read `DATABASE_URL` from the environment, falling back to `.env`:
+
+```bash
+make db-backup                                    # -> backups/zone01-<timestamp>.dump
+make db-restore FILE=backups/zone01-2026-10-07-174432.dump
+```
+
+`db-restore` drops and recreates the objects in the target database
+(`--clean --if-exists`), so **point it at the database you mean to overwrite**.
+To rehearse a restore without touching your working database, restore into a
+fresh one:
+
+```bash
+createdb zone01_restore_test
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/zone01_restore_test \
+  make db-restore FILE=backups/zone01-2026-10-07-174432.dump
+```
+
+Backups accumulate under `backups/` (git-ignored). Verify a restore by comparing
+table counts and `django_migrations` between the source and restored databases.
+
 ### Hosting on the public domain
 
 The site is served from `https://www.zone01kisumu.ke`, with page URLs like

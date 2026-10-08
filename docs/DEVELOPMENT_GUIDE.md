@@ -439,7 +439,7 @@ Everything editors need is in the Django admin at `/admin/`:
 | **News** | News posts (publish toggle) |
 | **Impact** | Impact stories + optional PDF report |
 | **Site links** | Header navigation links |
-| **Next piscine registration** | Singleton countdown banner |
+| **Next piscine registration** | Singleton countdown banner; **Add** schedules the next piscine (replaces the single row) |
 | **Frontend pages** | Pages the "Frontend status" board links to and checks |
 | **Applicants** | Applicant intake and review |
 | **Events / Registrations** | Events and sign-ups |
@@ -472,6 +472,22 @@ npm run lint
 ```
 
 ESLint config lives in `frontend/eslint.config.js`.
+
+### D.7 Back up and restore the database
+
+The backend `Makefile` wraps `pg_dump`/`pg_restore` for local and staging use:
+
+```bash
+cd Zone01web/backend
+make db-backup                                    # -> backups/zone01-<timestamp>.dump
+make db-restore FILE=backups/zone01-2026-10-07-174432.dump
+```
+
+Both read `DATABASE_URL` from the environment, falling back to `.env`.
+`db-restore` uses `--clean --if-exists`, so restore into the database you intend
+to overwrite — or a throwaway one for a restore drill. Backups are written to
+`backups/` (git-ignored). See `Zone01web/backend/README.md` for the hosted
+(Fly.io) snapshot procedure.
 
 ---
 
@@ -679,7 +695,7 @@ Log in at `/admin/` with a staff account.
 | **News** | title, image, information, publish toggle, order |
 | **Impact** | title, image, information, report PDF, publish toggle, order |
 | **Site links** | label, url, order, is_active, open_in_new_tab, show_chevron |
-| **Next piscine registration** | is_active, next_piscine_date, message (singleton) |
+| **Next piscine registration** | is_active, next_piscine_date, message — still a singleton, but **Add** opens a prefilled form to schedule the next piscine (saving replaces the single row) |
 | **Frontend pages** | label, path, is_active, order (monitor list) |
 | **Applicants** | name, email, county, education level, status, submitted_at |
 | **Events** | title, format, start_at, status, registrations (inline) |
@@ -687,6 +703,10 @@ Log in at `/admin/` with a staff account.
 **Frontend status board:** `/admin/frontend-status/` — probes the frontend root
 plus each active **Frontend pages** entry and shows UP/DOWN, HTTP code and
 latency. Configure the target with `FRONTEND_URL`.
+
+**Scheduling the next piscine:** open **Next piscine registration** and click
+**Add** — the form is prefilled from the current row and saving replaces it, so
+the hero countdown always reflects a single "next" piscine.
 
 ---
 

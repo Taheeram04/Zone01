@@ -10,12 +10,12 @@ const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
 // Two stacked stat columns shown next to the card.
 const statColumns = [
   [
-    { value: '32,253', label: 'Highest Monthly Earning' },
+    { value: '$2,553', label: 'Highest Monthly Earning' },
     { value: '257', label: 'Apprentices' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '$1,576', label: 'Apprentices trained in go' },
+    { value: '1,576', label: 'Apprentices trained in go' },
   ],
 ];
 
@@ -128,11 +128,11 @@ const Stats = () => {
           <KineticHeading
             as="p"
             className="font-mono font-bold text-sm md:text-base text-white uppercase tracking-wide mb-8 md:mb-10"
-            text="Results from our first year"
+            text="Our Impact"
             delay={0.05}
           />
 
-          <div className="flex flex-col lg:flex-row lg:items-stretch gap-10 md:gap-12 lg:gap-16 xl:gap-32">
+          <div className="flex flex-col lg:flex-row lg:items-stretch gap-10 md:gap-12 lg:gap-8 xl:gap-12">
             {/* Headline card */}
             <motion.div
               variants={cardVariants}
@@ -159,8 +159,8 @@ const Stats = () => {
               </p>
             </motion.div>
 
-            {/* Stat row — spreads across the full remaining width */}
-            <div className="flex flex-1 flex-col md:flex-row md:items-center md:justify-between gap-y-10 gap-x-6 lg:gap-x-8 xl:gap-x-12">
+            {/* Centre metrics */}
+            <div className="flex flex-1 flex-col sm:flex-row sm:items-center sm:justify-evenly gap-y-10 gap-x-6 lg:gap-x-8">
               {statColumns.map((column, columnIndex) => (
                 <div key={columnIndex} className="flex flex-col gap-10">
                   {column.map((stat, index) => (
@@ -185,36 +185,44 @@ const Stats = () => {
                   ))}
                 </div>
               ))}
-
-              {/* Featured figure: enlarged + bolded number, smaller label */}
-              <motion.div
-                variants={statItemVariants}
-                className="flex flex-col justify-center text-left"
-              >
-                <CountUp
-                  value={featuredStat.value}
-                  duration={2}
-                  delay={0.35}
-                  inView={isInView}
-                  className="block font-sans font-black text-white text-5xl sm:text-6xl lg:text-7xl mb-2 leading-none tracking-tight whitespace-nowrap"
-                />
-                <p className="font-mono font-bold text-body-s text-white whitespace-nowrap">
-                  {featuredStat.label}
-                </p>
-              </motion.div>
             </div>
+
+            {/* Featured metric card — far right, matching the first metric shape */}
+            <motion.div
+              variants={cardVariants}
+              whileHover={{
+                y: -6,
+                scale: 1.015,
+                boxShadow: '0 20px 35px -10px rgba(0, 58, 147, 0.3)',
+              }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              className="relative bg-white flex-shrink-0 w-full max-w-sm lg:max-w-[260px] xl:max-w-xs p-6 sm:p-8 cursor-default self-stretch flex flex-col justify-center"
+              style={{
+                clipPath: 'polygon(0 0, 82% 0, 100% 18%, 100% 100%, 0 100%)',
+              }}
+            >
+              <CountUp
+                value={featuredStat.value}
+                duration={2}
+                delay={0.35}
+                inView={isInView}
+                className="block font-sans font-extrabold text-primary text-5xl sm:text-6xl xl:text-7xl mb-2 leading-none whitespace-nowrap"
+              />
+              <p className="font-mono font-bold text-sm text-black-900 max-w-[190px]">
+                {featuredStat.label}
+              </p>
+            </motion.div>
           </div>
 
           <motion.p
             variants={statItemVariants}
             className="font-mono text-body-s text-white/70 text-center mt-10 sm:mt-14"
           >
-            As of August 2026. Period covered: Program inception 2024.{' '}
+          {' '}
             <a
               href="/impact"
               className="underline hover:text-accent transition-colors duration-200 inline-block hover:scale-105"
             >
-              Explore our Impact
             </a>
           </motion.p>
         </motion.div>
