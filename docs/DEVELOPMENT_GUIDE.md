@@ -473,6 +473,22 @@ npm run lint
 
 ESLint config lives in `frontend/eslint.config.js`.
 
+### D.7 Back up and restore the database
+
+The backend `Makefile` wraps `pg_dump`/`pg_restore` for local and staging use:
+
+```bash
+cd Zone01web/backend
+make db-backup                                    # -> backups/zone01-<timestamp>.dump
+make db-restore FILE=backups/zone01-2026-10-07-174432.dump
+```
+
+Both read `DATABASE_URL` from the environment, falling back to `.env`.
+`db-restore` uses `--clean --if-exists`, so restore into the database you intend
+to overwrite — or a throwaway one for a restore drill. Backups are written to
+`backups/` (git-ignored). See `Zone01web/backend/README.md` for the hosted
+(Fly.io) snapshot procedure.
+
 ---
 
 ## Part E — Testing, linting and CI

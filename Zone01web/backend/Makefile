@@ -2,8 +2,9 @@ VENV := .venv
 PYTHON := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 MANAGE := $(PYTHON) manage.py
+DUMP ?= backups/latest.dump
 
-.PHONY: help venv install migrate makemigrations run test lint fmt check superuser static clean frontend
+.PHONY: help venv install migrate makemigrations run test lint fmt check superuser static clean frontend db-backup db-restore
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -49,6 +50,12 @@ frontend: ## Build the React SPA and copy it into the backend for Django to serv
 	rm -rf frontend_dist
 	cp -r ../../frontend/dist frontend_dist
 	$(MANAGE) collectstatic --noinput
+
+db-backup: ## Dump the database to backups/ (PostgreSQL custom format)
+	./scripts/db_backup.sh
+
+db-restore: ## Restore a dump: make db-restore FILE=backups/<file>.dump
+	./scripts/db_restore.sh "$(if $(FILE),$(FILE),$(DUMP))"
 
 clean: ## Remove local caches
 	rm -rf $(VENV) .ruff_cache staticfiles media frontend_dist
