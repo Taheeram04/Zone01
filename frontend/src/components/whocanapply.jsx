@@ -226,7 +226,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               <motion.p variants={paragraphVariants}>
                 The Zone01 Kisumu digital training is open to anyone over 18 years
                 old.{' '}
-                <br className="hidden sm:inline" />
+                <p className="hidden sm:inline" />
                 <span className="font-bold text-primary">No prior programming experience</span> or{' '}
                 <span className="font-bold text-primary">academic qualifications</span> are required to apply.
               </motion.p>
@@ -234,7 +234,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               <motion.p variants={paragraphVariants}>
                 Diversity and inclusion are key elements of Zone01 Kisumu&apos;s mission.
                 We therefore particularly encourage{' '}
-                <br className="hidden xl:inline" />
+                <p className="hidden xl:inline" />
                 women, refugees, ethnic minorities and people from disadvantaged
                 backgrounds to apply.
               </motion.p>
