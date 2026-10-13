@@ -13,6 +13,8 @@ from django.utils.html import format_html
 from content.models import (
     Article,
     Category,
+    FaqCategory,
+    FaqItem,
     ImpactUpdate,
     NewsUpdate,
     Page,
@@ -238,3 +240,38 @@ class PageAdmin(admin.ModelAdmin):
     @admin.display(description="Sections")
     def section_count(self, obj):
         return obj.sections.count()
+
+
+class FaqItemInline(admin.StackedInline):
+    """Edit a category's questions right on the category form."""
+
+    model = FaqItem
+    extra = 1
+    fields = ("order", "question", "answer", "keywords", "is_active")
+    ordering = ("order", "id")
+    show_change_link = True
+
+
+@admin.register(FaqCategory)
+class FaqCategoryAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "item_count", "is_active", "order")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active",)
+    search_fields = ("title", "slug", "blurb")
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (FaqItemInline,)
+    ordering = ("order", "id")
+
+    @admin.display(description="Questions")
+    def item_count(self, obj):
+        return obj.items.count()
+
+
+@admin.register(FaqItem)
+class FaqItemAdmin(admin.ModelAdmin):
+    list_display = ("question", "category", "is_active", "order")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active", "category")
+    search_fields = ("question", "answer", "keywords")
+    list_select_related = ("category",)
+    ordering = ("order", "id")

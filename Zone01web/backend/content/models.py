@@ -504,3 +504,67 @@ class PageSection(models.Model):
 
     def __str__(self):
         return self.heading or f"Section {self.pk} of {self.page.title}"
+
+
+class FaqCategory(OrderedContent):
+    """A themed group of FAQ questions (e.g. "The Piscine").
+
+    The FAQ content backs both the website and the WhatsApp assistant, so this
+    is the single source of truth for support answers. Editors manage it from
+    the admin; the assistant reads the active rows through
+    :mod:`whatsapp_bot.retrieval`.
+    """
+
+    slug = models.SlugField(max_length=120, unique=True)
+    title = models.CharField(max_length=200)
+    blurb = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Short description shown under the title.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this group from the website and the assistant.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "FAQ category"
+        verbose_name_plural = "FAQ categories"
+
+    def __str__(self):
+        return self.title
+
+
+class FaqItem(OrderedContent):
+    """One question and its answer.
+
+    ``keywords`` holds extra comma-separated search terms that help the WhatsApp
+    assistant match a visitor's free-text message to this answer when the
+    question wording alone is not enough.
+    """
+
+    category = models.ForeignKey(
+        FaqCategory,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    question = models.CharField(max_length=300)
+    answer = models.TextField(
+        help_text="The full answer. Leave a blank line between paragraphs.",
+    )
+    keywords = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Comma-separated extra keywords for the WhatsApp assistant.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this Q&A from the website and the assistant.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "FAQ item"
+        verbose_name_plural = "FAQ items"
+
+    def __str__(self):
+        return self.question

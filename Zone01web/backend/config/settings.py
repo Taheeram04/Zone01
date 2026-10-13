@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "applicants",
     "events",
     "content",
+    "whatsapp_bot",
 ]
 
 MIDDLEWARE = [
@@ -251,3 +252,34 @@ FRONTEND_HEALTH_TIMEOUT = env.float("FRONTEND_HEALTH_TIMEOUT", default=5.0)
 CORS_ALLOW_ALL_ORIGINS = API_CORS_ALLOW_ALL
 CORS_ALLOWED_ORIGINS = API_CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = True
+
+# ---------------------------------------------------------------------------
+# WhatsApp FAQ assistant (Meta WhatsApp Cloud API)
+# ---------------------------------------------------------------------------
+# The webhook lives at /webhooks/whatsapp/ and answers incoming text messages
+# from the FAQ knowledge base (see the `whatsapp_bot` app and the FAQ content in
+# the `content` app). Configure these from the Meta app dashboard:
+#
+#   WHATSAPP_VERIFY_TOKEN      - any secret string; enter the same value in Meta.
+#   WHATSAPP_ACCESS_TOKEN      - temporary/permanent token for the phone number.
+#   WHATSAPP_PHONE_NUMBER_ID   - the "Phone number ID" of your WhatsApp sender.
+#   WHATSAPP_APP_SECRET        - app secret, used to verify webhook signatures.
+#
+# Leave DRY_RUN on (the default) until credentials are set: replies are logged
+# and stored but not actually sent, so you can test the flow safely.
+WHATSAPP_VERIFY_TOKEN = env("WHATSAPP_VERIFY_TOKEN", default="")
+WHATSAPP_ACCESS_TOKEN = env("WHATSAPP_ACCESS_TOKEN", default="")
+WHATSAPP_PHONE_NUMBER_ID = env("WHATSAPP_PHONE_NUMBER_ID", default="")
+WHATSAPP_APP_SECRET = env("WHATSAPP_APP_SECRET", default="")
+WHATSAPP_API_VERSION = env("WHATSAPP_API_VERSION", default="v21.0")
+WHATSAPP_DRY_RUN = env.bool("WHATSAPP_DRY_RUN", default=True)
+WHATSAPP_TIMEOUT = env.float("WHATSAPP_TIMEOUT", default=10.0)
+# Minimum match score (0..1) before an FAQ answer is sent instead of the fallback.
+WHATSAPP_MATCH_THRESHOLD = env.float("WHATSAPP_MATCH_THRESHOLD", default=0.34)
+WHATSAPP_FALLBACK_MESSAGE = env(
+    "WHATSAPP_FALLBACK_MESSAGE",
+    default=(
+        "Sorry, I couldn't find an answer to that. Please try rephrasing, or "
+        "contact the Zone01 Kisumu team directly and we'll help you."
+    ),
+)

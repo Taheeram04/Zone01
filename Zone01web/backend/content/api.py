@@ -22,6 +22,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 
 from content.models import (
+    FaqCategory,
     ImpactUpdate,
     NewsUpdate,
     Page,
@@ -129,6 +130,29 @@ def serialize_page(request, page):
     }
 
 
+def serialize_faq_item(request, item):
+    return {
+        "id": item.id,
+        "question": item.question,
+        "answer": item.answer,
+        "keywords": [k.strip() for k in item.keywords.split(",") if k.strip()],
+        "order": item.order,
+    }
+
+
+def serialize_faq_category(request, category):
+    # ``category.items`` is prefetched, so filtering here avoids extra queries.
+    items = [item for item in category.items.all() if item.is_active]
+    return {
+        "id": category.id,
+        "slug": category.slug,
+        "title": category.title,
+        "blurb": category.blurb,
+        "order": category.order,
+        "items": [serialize_faq_item(request, item) for item in items],
+    }
+
+
 def serialize_piscine_date(piscine_date):
     starts_at = piscine_date.starts_at
     return {
@@ -209,6 +233,12 @@ def page_detail(request, slug):
 
 
 @require_GET
+def faq_list(request):
+    categories = FaqCategory.objects.filter(is_active=True).prefetch_related("items")
+    return JsonResponse({"results": [serialize_faq_category(request, c) for c in categories]})
+
+
+@require_GET
 def content_index(request):
     """Everything the frontend needs, in a single request."""
     return JsonResponse(
@@ -226,6 +256,10 @@ def content_index(request):
             "pages": [
                 serialize_page(request, p)
                 for p in Page.objects.filter(is_published=True).prefetch_related("sections")
+            ],
+            "faqs": [
+                serialize_faq_category(request, c)
+                for c in FaqCategory.objects.filter(is_active=True).prefetch_related("items")
             ],
         }
     )

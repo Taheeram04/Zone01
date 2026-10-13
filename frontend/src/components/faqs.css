@@ -220,7 +220,7 @@
 }
 
 .faq-row__a-content {
-  max-width: 60ch;
+  width: 100%;
   padding: 0 0 clamp(1rem, 2.4vw, 1.5rem);
   opacity: 0;
   transform: translateY(-4px);

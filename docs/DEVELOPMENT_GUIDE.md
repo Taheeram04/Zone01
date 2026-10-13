@@ -90,6 +90,7 @@ Zone01/
         ├── content/                 # site content models + JSON API
         ├── applicants/              # applicant intake & review
         ├── events/                  # events & registrations
+        ├── whatsapp_bot/            # WhatsApp FAQ assistant (webhook + matching)
         ├── templates/               # CMS page templates + admin overrides
         ├── static/
         ├── docker-compose.yml       # local PostgreSQL
@@ -235,6 +236,7 @@ curl http://localhost:8000/api/content/
 | `content` | Public site content: partners, staff, news, impact, site links, next-piscine; the `/api/` endpoints |
 | `applicants` | Applicant intake and review workflow (`Applicant` model) |
 | `events` | Events and registrations (`Event`, `EventRegistration`) |
+| `whatsapp_bot` | WhatsApp FAQ assistant: webhook at `/webhooks/whatsapp/`, keyword matching, conversation log |
 
 **Models you will edit most often** (`content/models.py`): `Partner`,
 `StaffMember`, `NewsUpdate`, `ImpactUpdate`, `SiteLink`, `PiscineRegistration`,
@@ -645,6 +647,11 @@ snapshots) lives in `Zone01web/backend/README.md`.
 | `FRONTEND_HEALTH_TIMEOUT` | `5` | Seconds before a frontend check times out |
 | `CSRF_TRUSTED_ORIGINS` | _(empty)_ | Full origins trusted for admin forms (HTTPS) |
 | `BUCKET_NAME` / `AWS_*` | _(empty)_ | S3/Tigris bucket for media (production) |
+| `WHATSAPP_VERIFY_TOKEN` | _(empty)_ | Token Meta must echo during webhook verification |
+| `WHATSAPP_ACCESS_TOKEN` | _(empty)_ | Token used to send WhatsApp replies |
+| `WHATSAPP_PHONE_NUMBER_ID` | _(empty)_ | WhatsApp sender's phone-number ID |
+| `WHATSAPP_APP_SECRET` | _(empty)_ | Verifies webhook signature (blank disables the check) |
+| `WHATSAPP_DRY_RUN` | `true` | Log replies instead of sending them |
 
 ### Frontend (`frontend/.env`)
 
@@ -669,6 +676,7 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 | `/api/piscine/` | Next-piscine toggle, date and message |
 | `/api/pages/` | Published CMS pages with their sections (where enabled) |
 | `/api/pages/<slug>/` | A single page by slug |
+| `/api/faqs/` | Active FAQ categories with their questions and answers |
 
 Example:
 
@@ -707,6 +715,33 @@ latency. Configure the target with `FRONTEND_URL`.
 **Scheduling the next piscine:** open **Next piscine registration** and click
 **Add** — the form is prefilled from the current row and saving replaces it, so
 the hero countdown always reflects a single "next" piscine.
+
+---
+
+## Appendix D — WhatsApp FAQ assistant
+
+The `whatsapp_bot` app answers incoming WhatsApp messages with the closest FAQ.
+It uses the Meta WhatsApp Cloud API and a keyword/IDF matcher (no external AI).
+
+1. Seed the FAQ knowledge base:
+   ```bash
+   cd Zone01web/backend
+   make migrate
+   .venv/bin/python manage.py seed_faqs
+   ```
+2. Set the `WHATSAPP_*` variables in `.env` (see
+   [Appendix A](#appendix-a--environment-variables) and `.env.example`).
+3. Point Meta's webhook at `https://<your-host>/webhooks/whatsapp/` using the
+   same value as `WHATSAPP_VERIFY_TOKEN`.
+
+Keep `WHATSAPP_DRY_RUN=true` (the default) to log replies without sending them
+while you test. Full instructions, tuning tips and the go-live checklist are in
+[`Zone01web/backend/whatsapp_bot/README.md`](../Zone01web/backend/whatsapp_bot/README.md).
+
+| Endpoint | Methods | Purpose |
+| -------- | ------- | ------- |
+| `/webhooks/whatsapp/` | `GET` | Meta webhook verification handshake |
+| `/webhooks/whatsapp/` | `POST` | Incoming message events (matched and answered) |
 
 ---
 

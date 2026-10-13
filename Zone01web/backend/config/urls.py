@@ -5,6 +5,7 @@ One Django service hosts the whole product:
 * ``/api/``     - the read-only JSON API the React frontend consumes.
 * ``/admin/``   - the Django admin (content editing, applicants, events).
 * ``/healthz``  - liveness check.
+* ``/webhooks/whatsapp/`` - Meta WhatsApp Cloud API webhook (FAQ assistant).
 * everything else - the built React SPA (client-side routing), served by
   :func:`core.views.spa`. Build it with ``make frontend``.
 """
@@ -28,6 +29,9 @@ urlpatterns = [
     path("api/", include("content.urls")),
     # Unknown API paths must 404 as JSON, not fall through to the SPA.
     re_path(r"^api/.*$", api_not_found, name="api-not-found"),
+    # WhatsApp Cloud API webhook (GET verify + POST events). Public and
+    # CSRF-exempt; see whatsapp_bot.views.
+    path("webhooks/whatsapp/", include("whatsapp_bot.urls")),
 ] + i18n_patterns(
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("admin/frontend-status/", frontend_status, name="frontend-status"),
