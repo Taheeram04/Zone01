@@ -13,6 +13,7 @@ import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
+import Faqs from './components/faqs.jsx';
 import Register from './pages/Register.jsx';
 
 const Home = () => (
@@ -60,6 +61,16 @@ function App() {
           <Layout>
             <Community />
             <OurStaff />
+          </Layout>
+        }
+      />
+
+      {/* FAQs — hover-to-reveal Q&A tables */}
+      <Route
+        path="/faq"
+        element={
+          <Layout>
+            <Faqs />
           </Layout>
         }
       />
