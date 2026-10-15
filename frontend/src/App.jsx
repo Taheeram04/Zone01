@@ -8,6 +8,7 @@ import WhyOurCampus from './components/whyourcampus.jsx';
 import ComingSoon from './components/coming-soon.jsx';
 import Apply from './pages/Apply.jsx';
 import Register from './pages/Register.jsx';
+import Impact from './pages/Impact.jsx';
 
 const Home = () => (
   <>
@@ -36,7 +37,17 @@ function App() {
       {/* Standalone dark registration page */}
       <Route path="/register" element={<Register />} />
 
-      {['/about', '/community', '/impact', '/hire', '*'].map((path) => (
+      {/* Impact page */}
+      <Route
+        path="/impact"
+        element={
+          <Layout>
+            <Impact />
+          </Layout>
+        }
+      />
+
+      {['/about', '/community', '/hire', '*'].map((path) => (
         <Route
           key={path}
           path={path}
