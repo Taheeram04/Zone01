@@ -1,0 +1,30 @@
+# Render Blueprint for the Zone01 Kisumu React frontend (static site).
+#
+# The Django backend/API is deployed separately. Set VITE_API_BASE_URL to its
+# public URL in the Render dashboard -- Vite bakes it into the bundle at build
+# time. Use "Sync" (blueprint) or copy these values into an existing service.
+#
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: zone01-kisumu-web
+    runtime: static
+    branch: main
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      # Vite 8 requires Node >= 20.19 / 22.12.
+      - key: NODE_VERSION
+        value: 22.12.0
+      # Public URL of the Django API, e.g. https://zone01-kisumu-api.fly.dev.
+      # Set the value in the Render dashboard (prompted on first deploy).
+      - key: VITE_API_BASE_URL
+        sync: false
+    routes:
+      # Client-side routing: serve index.html for every non-file path so
+      # /about, /community, /impact, etc. work on direct navigation or refresh.
+      - type: rewrite
+        source: /*
+        destination: /index.html

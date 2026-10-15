@@ -42,7 +42,7 @@ const Community = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="font-sans font-black leading-[1.04] tracking-tight text-white text-[clamp(2rem,7vw,5rem)]"
           >
-            The community behind the impact
+            The community behind the impact.
           </motion.h1>
         </div>
       </Container>

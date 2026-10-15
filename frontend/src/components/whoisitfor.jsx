@@ -66,7 +66,7 @@ const WhoIsItFor = () => {
             className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-tight tracking-tight text-center mb-3"
           />
           <TypewriterText
-            text="World class education made accessible to all in Kisumu, regardless of experience and background"
+            text="World class education made accessible to all, regardless of experience and background"
             className="font-mono text-[15px] sm:text-[16px] md:text-[18px] text-black-900/85 max-w-2xl mx-auto leading-relaxed"
             speed={22}
             delay={200}

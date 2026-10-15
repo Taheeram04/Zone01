@@ -275,6 +275,25 @@ latency for each. Use **Manage pages** to add or remove the paths that get
 checked (`/about`, `/community`, `/register`, ...); each path is joined onto
 `FRONTEND_URL`. The checks run server-side and are staff-only.
 
+## WhatsApp FAQ assistant
+
+The backend can answer WhatsApp messages automatically using the FAQ content.
+Incoming messages hit a webhook at `/webhooks/whatsapp/`, are matched against
+the active `FaqItem` rows, and answered with the closest match (or a fallback).
+There is no external AI dependency — see
+[`whatsapp_bot/README.md`](whatsapp_bot/README.md) for the full setup
+(Meta credentials, webhook configuration, dry-run testing, tuning).
+
+Quick start:
+
+```bash
+.venv/bin/python manage.py seed_faqs     # load the FAQ knowledge base
+```
+
+Then fill in the `WHATSAPP_*` variables in `.env` and point Meta at
+`https://<your-host>/webhooks/whatsapp/`. Conversations are visible read-only
+under **Admin → WhatsApp assistant**.
+
 ## Content API
 
 The React frontend reads this read-only JSON API. All endpoints are `GET` and
@@ -282,7 +301,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 
 | Endpoint           | Returns                                              |
 | ------------------ | ---------------------------------------------------- |
-| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages) |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages, faqs) |
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
@@ -290,6 +309,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 | `/api/piscine/`    | next-piscine toggle, date and message                |
 | `/api/pages/`      | published pages with their sections                  |
 | `/api/pages/<slug>/` | a single page by slug, e.g. `/api/pages/about-us/` |
+| `/api/faqs/`       | active FAQ categories with their questions/answers   |
 
 Example:
 

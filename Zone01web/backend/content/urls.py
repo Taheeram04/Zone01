@@ -14,6 +14,7 @@ urlpatterns = [
     path("impact/", api.impact_list, name="impact-list"),
     path("links/", api.link_list, name="link-list"),
     path("piscine/", api.piscine_detail, name="piscine-detail"),
+    path("faqs/", api.faq_list, name="faq-list"),
     path("pages/", api.page_list, name="page-list"),
     path("pages/<slug:slug>/", api.page_detail, name="page-detail"),
 ]
