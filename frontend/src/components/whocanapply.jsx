@@ -234,7 +234,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               <motion.p variants={paragraphVariants}>
                 Diversity and inclusion are key elements of Zone01 Kisumu&apos;s mission.
                 We therefore particularly encourage{' '}
-                <br className="hidden xl:inline" />
+                <p className="hidden xl:inline" />
                 women, refugees, ethnic minorities and people from disadvantaged
                 backgrounds to apply.
               </motion.p>
