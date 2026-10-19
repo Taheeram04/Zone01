@@ -27,6 +27,7 @@ admin.site.index_template = "admin/frontend_status_index.html"
 urlpatterns = [
     path("healthz", health, name="health"),
     path("api/", include("content.urls")),
+    path("api/applicants/", include("applicants.urls")),
     # Unknown API paths must 404 as JSON, not fall through to the SPA.
     re_path(r"^api/.*$", api_not_found, name="api-not-found"),
     # WhatsApp Cloud API webhook (GET verify + POST events). Public and
