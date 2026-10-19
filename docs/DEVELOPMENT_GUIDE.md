@@ -19,7 +19,7 @@ The project is **two applications**:
 3. [Prerequisites](#3-prerequisites)
 4. [Part A — Backend setup](#part-a--backend-setup)
 5. [Part B — Frontend setup](#part-b--frontend-setup)
-6. [Part C — Run both together](#part-c--run-both-together)
+6. [Part C — Run the app](#part-c--run-the-app)
 7. [Part D — Day-to-day development](#part-d--day-to-day-development)
 8. [Part E — Testing, linting and CI](#part-e--testing-linting-and-ci)
 9. [Part F — Deployment (Fly.io)](#part-f--deployment-flyio)
@@ -37,6 +37,8 @@ the public website and reads its content from a **read-only JSON API** exposed b
 the Django backend. Editors change that content in the Django admin; the
 frontend picks it up on its next request.
 
+Development (hot reload):
+
 ```
 ┌─────────────────────────────┐        GET /api/...        ┌──────────────────────────────┐
 │  React SPA (Vite build)     │ ─────────────────────────▶ │  Django + django CMS         │
@@ -51,14 +53,15 @@ frontend picks it up on its next request.
                                                                    └────────────────┘
 ```
 
-**Key idea:** the backend has two faces.
+**Key idea:** in production there is **one Django service**.
 
-- **JSON API (`/api/`)** — consumed by the React frontend.
+- **React SPA (`/`)** — the built bundle in `frontend_dist`, served by Django.
+- **JSON API (`/api/`)** — consumed by the SPA.
 - **django CMS + admin (`/admin/`)** — consumed by editors through the browser.
 
-> In development the React dev server **proxies** `/api` to the Django server
-> (see `frontend/vite.config.js`), so the browser always talks same-origin and no
-> CORS setup is needed locally.
+> `make serve` (and the root Docker image) uses this single-process shape.
+> `make dev` runs Vite on `:5173` for hot reload; Vite proxies `/api` to Django
+> on `:8000`, so the browser stays same-origin and no CORS setup is needed.
 
 ---
 
@@ -67,6 +70,10 @@ frontend picks it up on its next request.
 ```
 Zone01/
 ├── README.md
+├── Dockerfile                       # combined image: React build + Django
+├── docker-compose.yml               # one command: web + PostgreSQL
+├── Makefile                         # install / build / serve / dev / docker
+├── scripts/dev.sh                   # one command: Django + Vite with HMR
 ├── docs/
 │   └── DEVELOPMENT_GUIDE.md        # this file
 ├── frontend/                        # React SPA
@@ -93,9 +100,9 @@ Zone01/
         ├── whatsapp_bot/            # WhatsApp FAQ assistant (webhook + matching)
         ├── templates/               # CMS page templates + admin overrides
         ├── static/
-        ├── docker-compose.yml       # local PostgreSQL
-        ├── Dockerfile               # production image (gunicorn)
-        ├── Makefile                 # dev shortcuts
+        ├── docker-compose.yml       # local PostgreSQL only
+        ├── Dockerfile               # backend-only image (used by Fly)
+        ├── Makefile                 # backend dev shortcuts
         ├── requirements.txt / -dev.txt
         ├── .env.example
         └── README.md
@@ -290,7 +297,7 @@ cp .env.example .env
 
 For local development you can leave `VITE_API_BASE_URL` **empty** — the Vite dev
 server proxies `/api` to the backend automatically. See
-[Part C](#part-c--run-both-together).
+[Part C](#part-c--run-the-app).
 
 ### B.4 Run the dev server
 
@@ -370,39 +377,76 @@ const data = await res.json();
 
 ---
 
-## Part C — Run both together
+## Part C — Run the app
 
-You need **three** things running: the database, the backend, and the frontend.
+The production shape is **one service**: Django serves the React SPA at `/`,
+the JSON API at `/api/`, the admin at `/admin/`, and static assets through
+WhiteNoise. No second web server, proxy or CORS setup is required.
 
-### Terminal 1 — Database
-
-```bash
-cd Zone01web/backend
-docker compose up -d postgres
-```
-
-### Terminal 2 — Backend
+### C.1 One server (recommended)
 
 ```bash
-cd Zone01web/backend
-source .venv/bin/activate
-make run                 # http://localhost:8000
+# first time only
+make install
+
+# start PostgreSQL (or use your own local server and backend/.env)
+cd Zone01web/backend && docker compose up -d postgres && cd ../..
+
+# build the SPA if needed, apply migrations, then run Django
+make serve               # http://localhost:8000
 ```
 
-### Terminal 3 — Frontend
+`make serve` detects frontend changes, rebuilds `frontend_dist`, runs
+`collectstatic`, applies migrations, and starts Django. Open
+**http://localhost:8000/** for the site and **http://localhost:8000/admin/**
+for content editing.
+
+If you change only frontend files while `make serve` is running, run
+`make build` and refresh the browser. For live reload, use `make dev` below.
+
+### C.2 One command with Docker
 
 ```bash
-cd frontend
-npm run dev              # http://localhost:5173
+make docker-up           # docker compose up --build
 ```
 
-Now open **http://localhost:5173/**. The SPA calls `/api/...`, Vite proxies it
-to Django, and Django answers from PostgreSQL. Edit content at
-**http://localhost:8000/admin/** and refresh the frontend to see it.
+That builds the combined image, starts PostgreSQL, runs migrations and serves
+everything at **http://localhost:8000/**. Stop it with:
+
+```bash
+make docker-down
+```
+
+### C.3 Hot-reload development
+
+`make dev` runs Django (`:8000`) and Vite (`:5173`) together and stops both when
+either exits:
+
+```bash
+make dev                 # http://localhost:5173
+```
+
+The SPA calls `/api/...`, Vite proxies it to Django, and Django answers from
+PostgreSQL. This is the only mode where you need two ports.
+
+### C.4 Manual mode
+
+If you prefer separate terminals:
+
+```bash
+# Terminal 1 — database
+cd Zone01web/backend && docker compose up -d postgres
+
+# Terminal 2 — backend
+cd Zone01web/backend && source .venv/bin/activate && make run
+
+# Terminal 3 — frontend (hot reload)
+cd frontend && npm run dev
+```
 
 > **CORS note:** the defaults already allow `http://localhost:5173`. If you
 > change the frontend port, add its origin to `API_CORS_ALLOWED_ORIGINS` in the
-> backend `.env` and restart Django.
+> backend `.env` and restart Django. The one-server modes do not need CORS.
 
 ---
 
@@ -557,11 +601,42 @@ Keep all five green before pushing.
 
 ---
 
-## Part F — Deployment (Fly.io)
+## Part F — Deployment
 
-The backend and frontend deploy as **two Fly apps**, backed by a third app
-running unmanaged Fly Postgres. Config files: `Zone01web/backend/fly.toml` and
-`frontend/fly.toml`.
+There are two supported shapes:
+
+1. **One Docker service (recommended)** — the root `Dockerfile` builds the
+   React SPA into Django, so one process serves the site, API and admin.
+2. **Two Fly apps** — the older split backend/frontend deployment.
+
+### F.1 One service (Docker / Render)
+
+```bash
+make docker-up            # local: web + PostgreSQL on :8000
+```
+
+`render.yaml` deploys the same image as a single Render web service with a
+managed Postgres database. It includes:
+
+- `Dockerfile` — multi-stage Node build + Django/gunicorn runtime.
+- `healthCheckPath: /healthz`.
+- `DATABASE_URL` wired from the Render database.
+- `DJANGO_SECRET_KEY` generated by Render.
+
+Render sets `RENDER_EXTERNAL_HOSTNAME`; `config/settings.py` adds it to
+`ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` automatically. The SPA is built with
+`VITE_BASE=/static/` and an empty `VITE_API_BASE_URL`, so it calls the API on
+the same origin.
+
+For media uploads in production, set `BUCKET_NAME` (and the `AWS_*` variables)
+so files survive redeploys; otherwise they live on the container's ephemeral
+disk.
+
+### F.2 Two-app Fly deployment
+
+The backend and frontend can still deploy as **two Fly apps**, backed by a
+third app running unmanaged Fly Postgres. Config files:
+`Zone01web/backend/fly.toml` and `frontend/fly.toml`.
 
 | Fly app | Runs | Config |
 | ------- | ---- | ------ |
@@ -569,7 +644,7 @@ running unmanaged Fly Postgres. Config files: `Zone01web/backend/fly.toml` and
 | `zone01-kisumu-web` | React bundle via nginx | `frontend/fly.toml` |
 | `zone01-kisumu-db` | Unmanaged Postgres | created with `fly postgres create` |
 
-### F.1 One-time setup (summary)
+One-time setup:
 
 ```bash
 # Backend app
@@ -595,17 +670,18 @@ fly launch --no-deploy --copy-config
 fly deploy
 ```
 
-### F.2 Deploying an update
+### F.3 Deploying an update
 
 ```bash
-# Backend
-cd Zone01web/backend && fly deploy
+# One combined service
+make docker-up            # or: fly deploy from the repo root with the root Dockerfile
 
-# Frontend
+# Two-app Fly deployment
+cd Zone01web/backend && fly deploy
 cd frontend && fly deploy
 ```
 
-### F.3 Post-deploy checklist
+### F.4 Post-deploy checklist
 
 - Set the site domain in **Admin → Sites**.
 - Set `FRONTEND_URL` on the backend to the public frontend URL, so the
