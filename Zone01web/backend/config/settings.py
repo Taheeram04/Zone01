@@ -34,6 +34,7 @@ CSRF_COOKIE_SECURE = not DEBUG
 INSTALLED_APPS = [
     "djangocms_simple_admin_style",
     "corsheaders",
+    "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
