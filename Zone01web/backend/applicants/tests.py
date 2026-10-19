@@ -8,7 +8,7 @@ from applicants.models import Applicant
 class ApplicantAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.url = "/api/applicants/"
+        self.url = reverse("applicants:apply")
 
     def test_create_applicant_success(self):
         payload = {
@@ -38,6 +38,34 @@ class ApplicantAPITests(TestCase):
         }
         res = self.client.post(self.url, payload, format="json")
         self.assertEqual(res.status_code, 400)
+
+    def test_duplicate_email_is_case_insensitive(self):
+        Applicant.objects.create(
+            name="Jane Doe",
+            email="Jane@Example.com",
+            choice="fullstack",
+            motivation="x",
+        )
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "choice": "fullstack",
+            "motivation": "x",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("email", res.data["errors"])
+
+    def test_invalid_track_rejected(self):
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "choice": "not-a-track",
+            "motivation": "x",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("choice", res.data["errors"])
 
     def test_missing_fields_rejected(self):
         res = self.client.post(self.url, {}, format="json")
