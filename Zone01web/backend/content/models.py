@@ -9,11 +9,11 @@ React frontend as JSON under ``/api/``:
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
-* :class:`PiscineDate`    - scheduled piscine start dates (one row per date).
-* :class:`PiscineRegistration` - the "Apply now" alert banner configuration.
 * :class:`CommunityPost` - a single stream of community updates tagged as news,
   events, blog or podcast, each optionally carrying an image, a video and a
   link to the social account it came from.
+* :class:`PiscineDate` - the piscine schedule and notification in one list
+  (each row carries its own date, banner message and active flag).
 * :class:`Page` + :class:`PageSection` - editable content for a frontend page
   (home, about-us, community, ...), built from ordered reusable sections.
 
@@ -298,12 +298,17 @@ class SiteLink(OrderedContent):
 
 
 class PiscineDate(models.Model):
-    """One scheduled piscine start date.
+    """One scheduled piscine, with its notification settings.
 
-    Editors add a row per date for the year (or years) ahead. Each date starts
-    at 09:00 Kisumu time (EAT). The website always targets the soonest upcoming
-    active row, so the countdown rolls on to the next date automatically once a
-    piscine begins -- no manual re-activation needed.
+    Every row is a piscine: the date it starts (09:00 Kisumu time, EAT), an
+    optional label, and the banner text for that piscine. The website always
+    targets the soonest upcoming active row, so the countdown rolls on to the
+    next date automatically once a piscine begins -- no manual re-activation
+    needed.
+
+    There is no separate settings row: the notification is simply the next
+    active entry in this list. Deactivating the remaining upcoming rows turns
+    the banner off.
     """
 
     date = models.DateField(
@@ -314,11 +319,20 @@ class PiscineDate(models.Model):
         blank=True,
         help_text="Optional label for this date. Leave blank for the default.",
     )
+    message = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=(
+            "Optional banner text for this piscine. The soonest upcoming "
+            "date's message is shown on the website."
+        ),
+    )
     is_active = models.BooleanField(
         default=True,
-        help_text="Uncheck to hide this date from the website.",
+        help_text="Uncheck to hide this piscine from the website.",
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         ordering = ["date", "id"]
@@ -351,80 +365,6 @@ class PiscineDate(models.Model):
     def next_upcoming(cls):
         """The soonest upcoming active date, or ``None`` when there are none."""
         return next(iter(cls.upcoming()), None)
-
-
-class PiscineRegistration(models.Model):
-    """Singleton holding the next-piscine banner configuration.
-
-    Only one row ever exists (``pk=1``). This model holds the master
-    :attr:`is_active` switch and an optional custom :attr:`message`; the actual
-    dates live in :class:`PiscineDate`. The banner targets the soonest upcoming
-    date and advances to the following one automatically, so it never needs to
-    be re-enabled between piscines.
-    """
-
-    is_active = models.BooleanField(
-        default=False,
-        help_text="Turn the next-piscine alert on or off.",
-    )
-    message = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="Optional custom text. Leave blank for the default message.",
-    )
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "next piscine registration"
-        verbose_name_plural = "next piscine registration"
-
-    def __str__(self):
-        next_date = self.next_date
-        if next_date:
-            return f"Next piscine: {next_date.date:%d %b %Y}"
-        return "Next piscine"
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        # The row is a singleton pinned to pk=1. A plain "Add" from the admin
-        # would try to INSERT another pk=1 row and clash, so replace the
-        # existing row instead (upsert).
-        if not kwargs.get("force_insert") and type(self).objects.filter(pk=1).exists():
-            kwargs["force_update"] = True
-        super().save(*args, **kwargs)
-
-    @property
-    def next_date(self):
-        """The soonest upcoming :class:`PiscineDate`, or ``None``."""
-        return PiscineDate.next_upcoming()
-
-    @property
-    def next_piscine_date(self):
-        """Date of the next upcoming piscine, or ``None``."""
-        next_date = self.next_date
-        return next_date.date if next_date else None
-
-    @property
-    def starts_at(self):
-        """Timezone-aware start moment of the next upcoming piscine."""
-        next_date = self.next_date
-        return next_date.starts_at if next_date else None
-
-    @property
-    def is_live(self):
-        """True while the toggle is on and an upcoming piscine date exists.
-
-        The date itself auto-advances (see :meth:`PiscineDate.next_upcoming`),
-        so this only turns off when the master switch is off or no future dates
-        remain.
-        """
-        return bool(self.is_active and self.next_date is not None)
-
-    @classmethod
-    def get_solo(cls):
-        """Return the single settings row, creating it on first access."""
-        obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
 
 
 class Category(models.Model):

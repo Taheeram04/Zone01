@@ -1,16 +1,20 @@
+import datetime
 import shutil
 import tempfile
 from datetime import timedelta
 
+from cms.utils.permissions import set_current_user
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from filer.models import File
 
-from content.admin import PiscineDateAdmin, PiscineRegistrationAdmin
+from content.admin import PiscineDateAdmin
+from content.forms import PiscineDateBulkAddForm
 from content.models import (
     Article,
     Category,
@@ -21,7 +25,6 @@ from content.models import (
     PageSection,
     Partner,
     PiscineDate,
-    PiscineRegistration,
     SiteLink,
     StaffMember,
 )
@@ -49,83 +52,54 @@ class ContentModelTests(TestCase):
         visible = ImpactUpdate.objects.filter(is_published=True).values_list("title", flat=True)
         self.assertEqual(list(visible), ["Shown"])
 
-    def test_piscine_is_singleton(self):
-        first = PiscineRegistration.get_solo()
-        first.is_active = True
-        first.save()
-        second = PiscineRegistration.get_solo()
-        self.assertEqual(first.pk, second.pk)
-        self.assertEqual(PiscineRegistration.objects.count(), 1)
-
-    def test_piscine_save_upserts_into_the_singleton(self):
-        PiscineRegistration.get_solo()
-
-        replacement = PiscineRegistration(message="Piscine #7", is_active=True)
-        replacement.save()
-
-        self.assertEqual(PiscineRegistration.objects.count(), 1)
-        stored = PiscineRegistration.objects.get()
-        self.assertEqual(stored.pk, 1)
-        self.assertEqual(stored.message, "Piscine #7")
-        self.assertTrue(stored.is_active)
-
     def test_next_piscine_date_targets_soonest_upcoming(self):
         today = timezone.localdate()
         PiscineDate.objects.create(date=today - timedelta(days=3))  # already started
         later = PiscineDate.objects.create(date=today + timedelta(days=40))
         soonest = PiscineDate.objects.create(date=today + timedelta(days=10))
 
-        registration = PiscineRegistration.get_solo()
+        next_date = PiscineDate.next_upcoming()
 
-        self.assertEqual(registration.next_piscine_date, soonest.date)
-        self.assertEqual(registration.starts_at, soonest.starts_at)
-        self.assertNotEqual(registration.next_piscine_date, later.date)
+        self.assertEqual(next_date, soonest)
+        self.assertEqual(next_date.starts_at, soonest.starts_at)
+        self.assertNotEqual(next_date, later)
 
     def test_inactive_dates_are_skipped(self):
         today = timezone.localdate()
         PiscineDate.objects.create(date=today + timedelta(days=5), is_active=False)
         active = PiscineDate.objects.create(date=today + timedelta(days=25))
 
-        self.assertEqual(PiscineRegistration.get_solo().next_piscine_date, active.date)
+        self.assertEqual(PiscineDate.next_upcoming(), active)
 
-    def test_registration_is_not_live_without_upcoming_dates(self):
+    def test_no_upcoming_date_is_returned_when_all_have_passed(self):
         today = timezone.localdate()
         PiscineDate.objects.create(date=today - timedelta(days=1))
-        registration = PiscineRegistration.get_solo()
-        registration.is_active = True
-        registration.save()
 
-        self.assertFalse(registration.is_live)
-        self.assertIsNone(registration.next_piscine_date)
+        self.assertIsNone(PiscineDate.next_upcoming())
+
+    def test_message_is_stored_per_piscine(self):
+        today = timezone.localdate()
+        piscine = PiscineDate.objects.create(
+            date=today + timedelta(days=10),
+            label="Cohort 8",
+            message="Applications are open",
+        )
+
+        self.assertEqual(piscine.message, "Applications are open")
+        self.assertEqual(str(piscine), f"{piscine.date:%d %b %Y} - Cohort 8")
 
 
 class PiscineAdminTests(TestCase):
-    def setUp(self):
-        # The singleton row exists, which used to hide the admin "Add" button.
-        PiscineRegistration.get_solo()
+    def test_piscine_dates_are_one_admin_section(self):
+        self.assertTrue(admin.site.is_registered(PiscineDate))
+        registered_models = {model.__name__ for model in admin.site._registry}
+        self.assertNotIn("PiscineRegistration", registered_models)
 
-    def test_admin_can_always_edit_the_banner(self):
-        model_admin = PiscineRegistrationAdmin(PiscineRegistration, admin.site)
-        request = RequestFactory().get("/admin/content/piscineregistration/add/")
+    def test_admin_exposes_the_banner_message(self):
+        model_admin = PiscineDateAdmin(PiscineDate, admin.site)
 
-        self.assertTrue(PiscineRegistration.objects.exists())
-        self.assertTrue(model_admin.has_add_permission(request))
-        # Still a singleton: no deleting.
-        self.assertFalse(model_admin.has_delete_permission(request))
-
-    def test_add_form_is_prefilled_from_the_current_row(self):
-        current = PiscineRegistration.get_solo()
-        current.message = "Piscine #7"
-        current.is_active = True
-        current.save()
-
-        model_admin = PiscineRegistrationAdmin(PiscineRegistration, admin.site)
-        initial = model_admin.get_changeform_initial_data(
-            RequestFactory().get("/admin/content/piscineregistration/add/")
-        )
-
-        self.assertEqual(initial["message"], "Piscine #7")
-        self.assertTrue(initial["is_active"])
+        self.assertIn("message", model_admin.list_display)
+        self.assertIn("message", model_admin.list_editable)
 
     def test_piscine_date_admin_marks_upcoming(self):
         today = timezone.localdate()
@@ -136,6 +110,236 @@ class PiscineAdminTests(TestCase):
 
         self.assertTrue(model_admin.upcoming(future))
         self.assertFalse(model_admin.upcoming(past))
+
+
+class PiscineDateBulkAddFormTests(TestCase):
+    def test_recurring_schedule_generates_a_year_of_dates(self):
+        start = datetime.date(2027, 1, 11)
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_RECURRING,
+                "start_date": start.isoformat(),
+                "interval_weeks": "4",
+                "count": "13",
+                "label": "Cohort {n}",
+                "message": "Applications are open",
+                "is_active": "on",
+                "skip_existing": "on",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        created, skipped = form.save()
+
+        self.assertEqual(created, 13)
+        self.assertEqual(skipped, 0)
+        dates = list(PiscineDate.objects.order_by("date"))
+        self.assertEqual(dates[0].date, start)
+        self.assertEqual(dates[-1].date, start + datetime.timedelta(weeks=48))
+        self.assertEqual(dates[0].label, "Cohort 1")
+        self.assertEqual(dates[-1].label, "Cohort 13")
+        self.assertEqual({item.message for item in dates}, {"Applications are open"})
+        self.assertTrue(all(item.is_active for item in dates))
+
+    def test_recurring_schedule_can_stop_at_an_end_date(self):
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_RECURRING,
+                "start_date": "2027-01-11",
+                "interval_weeks": "4",
+                "end_date": "2027-03-01",
+                "is_active": "on",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+
+        self.assertEqual(
+            list(PiscineDate.objects.values_list("date", flat=True)),
+            [datetime.date(2027, 1, 11), datetime.date(2027, 2, 8)],
+        )
+
+    def test_pasted_list_accepts_labels_and_day_first_dates(self):
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_LIST,
+                "dates": (
+                    "# cohort schedule\n"
+                    "2027-01-11 | Cohort 8\n"
+                    "08/02/2027, Cohort 9\n"
+                    "\n"
+                    "01/03/2027; Cohort 10\n"
+                ),
+                "is_active": "on",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        created, _ = form.save()
+
+        self.assertEqual(created, 3)
+        self.assertEqual(
+            list(PiscineDate.objects.values_list("date", "label")),
+            [
+                (datetime.date(2027, 1, 11), "Cohort 8"),
+                (datetime.date(2027, 2, 8), "Cohort 9"),
+                (datetime.date(2027, 3, 1), "Cohort 10"),
+            ],
+        )
+
+    def test_pasted_list_rejects_an_invalid_date(self):
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_LIST,
+                "dates": "2027-01-11\nnot-a-date\n",
+                "is_active": "on",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("dates", form.errors)
+
+    def test_existing_dates_are_skipped_by_default(self):
+        existing = PiscineDate.objects.create(date=datetime.date(2027, 1, 11))
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_LIST,
+                "dates": "2027-01-11\n2027-02-08",
+                "is_active": "on",
+                "skip_existing": "on",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        created, skipped = form.save()
+
+        self.assertEqual((created, skipped), (1, 1))
+        self.assertEqual(PiscineDate.objects.count(), 2)
+        self.assertEqual(PiscineDate.objects.filter(date=existing.date).count(), 1)
+
+    def test_existing_dates_can_be_created_again_when_skip_is_off(self):
+        PiscineDate.objects.create(date=datetime.date(2027, 1, 11))
+        form = PiscineDateBulkAddForm(
+            {
+                "mode": PiscineDateBulkAddForm.MODE_LIST,
+                "dates": "2027-01-11",
+                "is_active": "on",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        created, skipped = form.save()
+
+        self.assertEqual((created, skipped), (1, 0))
+        self.assertEqual(PiscineDate.objects.count(), 2)
+
+
+class PiscineDateBulkAdminTests(TestCase):
+    def setUp(self):
+        # django CMS keeps the request user in a thread-local. A previous
+        # test's user is rolled back with the database, so clear it before
+        # creating this test's superuser (the cms permission signal would
+        # otherwise point PageUser.created_by at the stale row).
+        set_current_user(None)
+        self.addCleanup(set_current_user, None)
+        self.user = get_user_model().objects.create_superuser(
+            username="editor",
+            email="editor@example.com",
+            password="secret",
+        )
+        self.client.force_login(self.user)
+        self.url = reverse("admin:site_content_piscinedate_bulk_add")
+
+    def test_bulk_add_page_is_linked_from_the_date_list(self):
+        response = self.client.get(reverse("admin:site_content_piscinedate_changelist"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.url)
+        self.assertContains(response, "Add multiple dates")
+
+    def test_bulk_add_page_renders_the_form(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Repeat a schedule")
+        self.assertContains(response, "Paste a list of dates")
+        self.assertContains(response, "Banner message")
+
+    def test_bulk_add_creates_a_recurring_schedule(self):
+        response = self.client.post(
+            self.url,
+            {
+                "mode": PiscineDateBulkAddForm.MODE_RECURRING,
+                "start_date": "2027-01-11",
+                "interval_weeks": "4",
+                "count": "3",
+                "message": "Applications are open",
+                "is_active": "on",
+                "skip_existing": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin:site_content_piscinedate_changelist"),
+        )
+        self.assertEqual(
+            list(PiscineDate.objects.values_list("date", flat=True)),
+            [
+                datetime.date(2027, 1, 11),
+                datetime.date(2027, 2, 8),
+                datetime.date(2027, 3, 8),
+            ],
+        )
+        self.assertEqual(
+            set(PiscineDate.objects.values_list("message", flat=True)),
+            {"Applications are open"},
+        )
+
+    def test_bulk_actions_can_hide_and_show_piscines(self):
+        first = PiscineDate.objects.create(date=datetime.date(2027, 1, 11))
+        second = PiscineDate.objects.create(date=datetime.date(2027, 2, 8))
+        changelist = reverse("admin:site_content_piscinedate_changelist")
+        payload = {
+            "_selected_action": [first.pk, second.pk],
+            "select_across": "0",
+            "index": "0",
+        }
+
+        hide = self.client.post(
+            changelist,
+            {**payload, "action": "deactivate_piscines"},
+        )
+        self.assertEqual(hide.status_code, 302)
+        self.assertFalse(PiscineDate.objects.filter(is_active=True).exists())
+
+        show = self.client.post(
+            changelist,
+            {**payload, "action": "activate_piscines"},
+        )
+        self.assertEqual(show.status_code, 302)
+        self.assertEqual(PiscineDate.objects.filter(is_active=True).count(), 2)
+
+    def test_bulk_add_creates_a_pasted_list(self):
+        response = self.client.post(
+            self.url,
+            {
+                "mode": PiscineDateBulkAddForm.MODE_LIST,
+                "dates": "2027-01-11 | Cohort 8\n2027-02-08 | Cohort 9",
+                "is_active": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin:site_content_piscinedate_changelist"),
+        )
+        self.assertEqual(PiscineDate.objects.count(), 2)
+        self.assertEqual(
+            PiscineDate.objects.get(date=datetime.date(2027, 2, 8)).label,
+            "Cohort 9",
+        )
 
 
 class ContentApiTests(TestCase):
@@ -166,10 +370,7 @@ class ContentApiTests(TestCase):
         titles = [item["title"] for item in response.json()["results"]]
         self.assertEqual(titles, ["Live"])
 
-    def test_piscine_detail_exposes_date_and_toggle(self):
-        piscine = PiscineRegistration.get_solo()
-        piscine.is_active = True
-        piscine.save()
+    def test_piscine_detail_exposes_date_and_active_state(self):
         upcoming = PiscineDate.objects.create(date=timezone.localdate() + timedelta(days=30))
 
         response = self.client.get(reverse("content_api:piscine-detail"))
@@ -181,10 +382,28 @@ class ContentApiTests(TestCase):
         self.assertIsNotNone(payload["starts_at"])
         self.assertEqual(payload["label"], "Next Piscine")
 
+    def test_piscine_uses_the_next_dates_message(self):
+        PiscineDate.objects.create(
+            date=timezone.localdate() + timedelta(days=30),
+            label="Cohort 8",
+            message="Applications are open",
+        )
+
+        response = self.client.get(reverse("content_api:piscine-detail"))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["label"], "Applications are open")
+        self.assertEqual(payload["message"], "Applications are open")
+
     def test_piscine_detail_exposes_the_date_list(self):
         today = timezone.localdate()
         PiscineDate.objects.create(date=today + timedelta(days=30))
-        PiscineDate.objects.create(date=today + timedelta(days=90), label="Cohort 2")
+        PiscineDate.objects.create(
+            date=today + timedelta(days=90),
+            label="Cohort 2",
+            message="Second intake",
+        )
 
         response = self.client.get(reverse("content_api:piscine-detail"))
 
@@ -195,12 +414,11 @@ class ContentApiTests(TestCase):
             [(today + timedelta(days=30)).isoformat(), (today + timedelta(days=90)).isoformat()],
         )
         self.assertEqual(dates[1]["label"], "Cohort 2")
+        self.assertEqual(dates[1]["message"], "Second intake")
         self.assertIsNone(dates[0]["label"])
+        self.assertIsNone(dates[0]["message"])
 
     def test_piscine_advances_to_the_next_date_after_one_passes(self):
-        piscine = PiscineRegistration.get_solo()
-        piscine.is_active = True
-        piscine.save()
         today = timezone.localdate()
         PiscineDate.objects.create(date=today - timedelta(days=1))
         upcoming = PiscineDate.objects.create(date=today + timedelta(days=20))
@@ -215,9 +433,6 @@ class ContentApiTests(TestCase):
         self.assertEqual(payload["next_piscine_date"], upcoming.date.isoformat())
 
     def test_piscine_is_off_when_no_upcoming_dates_remain(self):
-        piscine = PiscineRegistration.get_solo()
-        piscine.is_active = True
-        piscine.save()
         PiscineDate.objects.create(date=timezone.localdate() - timedelta(days=1))
 
         response = self.client.get(reverse("content_api:piscine-detail"))
