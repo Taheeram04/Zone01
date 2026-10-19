@@ -233,14 +233,20 @@ curl http://localhost:8000/api/content/
 | App | Responsibility |
 | --- | -------------- |
 | `core` | `/healthz`; admin "Frontend status" board (`FrontendPage` model, `frontend_status` view) |
-| `content` | Public site content: partners, staff, news, impact, site links, next-piscine; the `/api/` endpoints |
+| `content` | Public site content: partners, staff, news, impact, site links, piscine schedule/notification; the `/api/` endpoints |
 | `applicants` | Applicant intake and review workflow (`Applicant` model) |
 | `events` | Events and registrations (`Event`, `EventRegistration`) |
 | `whatsapp_bot` | WhatsApp FAQ assistant: webhook at `/webhooks/whatsapp/`, keyword matching, conversation log |
 
 **Models you will edit most often** (`content/models.py`): `Partner`,
-`StaffMember`, `NewsUpdate`, `ImpactUpdate`, `SiteLink`, `PiscineRegistration`,
-and the `FrontendPage` monitor list (`core/models.py`).
+`StaffMember`, `NewsUpdate`, `ImpactUpdate`, `CommunityPost`, `SiteLink`,
+`PiscineDate`, and the `FrontendPage` monitor list (`core/models.py`).
+
+`CommunityPost` is the single source for the four **Community Hub** streams on
+`/community` — news, events, blog and podcast. Each post carries a `kind`, an
+optional picture (`cover_image`), an optional `video_url` and the `platform`
+(Facebook, Instagram, YouTube, …) it came from, so editors add, edit or delete
+every card from one admin list and the frontend group updates on next load.
 
 ### A.10 Useful backend commands
 
@@ -328,7 +334,7 @@ Defined in `src/App.jsx`:
 | ---- | ---- |
 | `/` | Home (Hero + Stats + Who can apply + Who is it for + Why our campus) |
 | `/about` | About Us (hero, know us, our model, how to apply, careers) |
-| `/community` | Community (partners + staff carousel) |
+| `/community` | Community (partners hero + staff carousel + news/event/blog/podcast hub) |
 | `/register` | Standalone registration page |
 | `/impact`, `/hire`, `*` | "Coming soon" placeholder |
 
@@ -439,9 +445,10 @@ Everything editors need is in the Django admin at `/admin/`:
 | **Partners** | Partner logos and blurbs |
 | **Staff** | Team members, roles, photos |
 | **News** | News posts (publish toggle) |
+| **Community posts** | The News / Event / Blog / Podcast cards under the Community page — kind, picture, video, source platform, publish + feature toggles |
 | **Impact** | Impact stories + optional PDF report |
 | **Site links** | Header navigation links |
-| **Next piscine registration** | Singleton countdown banner; **Add** schedules the next piscine (replaces the single row) |
+| **Piscine dates** | The schedule and its notification in one list — date, label, banner message and active flag; **Add multiple dates** generates a recurring schedule or imports a pasted list |
 | **Frontend pages** | Pages the "Frontend status" board links to and checks |
 | **Applicants** | Applicant intake and review |
 | **Events / Registrations** | Events and sign-ups |
@@ -625,7 +632,6 @@ snapshots) lives in `Zone01web/backend/README.md`.
 | Migration drift in CI | Model changed without a migration | `make makemigrations` and commit the file |
 | Deep links 404 in production (e.g. `/about`) | Web server lacks SPA fallback | Serve with the nginx config that does `try_files ... /index.html` |
 | `VITE_` change has no effect | Vite vars are build-time only | Rebuild (`npm run build`) / redeploy |
-| Only one row allowed in "Next piscine registration" | It is a singleton by design | Edit the existing row |
 
 ---
 
@@ -667,13 +673,14 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 
 | Endpoint | Returns |
 | -------- | ------- |
-| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `links`, `piscine` |
+| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `community`, `links`, `piscine` |
 | `/api/partners/` | Partner list |
 | `/api/staff/` | Staff list |
 | `/api/news/` | Published news |
 | `/api/impact/` | Published impact stories (includes `report` download URL) |
+| `/api/community/` | Published community posts grouped by kind: `news`, `event`, `blog`, `podcast` |
 | `/api/links/` | Active header site links |
-| `/api/piscine/` | Next-piscine toggle, date and message |
+| `/api/piscine/` | Next piscine date, active state, message and full upcoming schedule |
 | `/api/pages/` | Published CMS pages with their sections (where enabled) |
 | `/api/pages/<slug>/` | A single page by slug |
 | `/api/faqs/` | Active FAQ categories with their questions and answers |
@@ -701,9 +708,10 @@ Log in at `/admin/` with a staff account.
 | **Partners** | name, logo, information, order |
 | **Staff** | name, role, photo, bio, order |
 | **News** | title, image, information, publish toggle, order |
+| **Community posts** | kind (news/event/blog/podcast), title, summary, body, cover image, video URL, external URL, platform, event date, published_at, featured + publish toggles, order |
 | **Impact** | title, image, information, report PDF, publish toggle, order |
 | **Site links** | label, url, order, is_active, open_in_new_tab, show_chevron |
-| **Next piscine registration** | is_active, next_piscine_date, message — still a singleton, but **Add** opens a prefilled form to schedule the next piscine (saving replaces the single row) |
+| **Piscine dates** | date, label, message, is_active — one row per scheduled piscine; the soonest upcoming active row is the countdown banner. Use **Add multiple dates** to create a whole year at once |
 | **Frontend pages** | label, path, is_active, order (monitor list) |
 | **Applicants** | name, email, county, education level, status, submitted_at |
 | **Events** | title, format, start_at, status, registrations (inline) |
@@ -712,9 +720,20 @@ Log in at `/admin/` with a staff account.
 plus each active **Frontend pages** entry and shows UP/DOWN, HTTP code and
 latency. Configure the target with `FRONTEND_URL`.
 
-**Scheduling the next piscine:** open **Next piscine registration** and click
-**Add** — the form is prefilled from the current row and saving replaces it, so
-the hero countdown always reflects a single "next" piscine.
+**Scheduling piscines:** open **Piscine dates** to add one date at a time, or
+click **Add multiple dates** to either:
+
+- **Repeat a schedule** — choose the first date, the interval in weeks (4 by
+  default), and either a number of piscines (13 ≈ one year) or an end date.
+  Labels can use `{n}`, e.g. `Cohort {n}`.
+- **Paste a list of dates** — one date per line (`YYYY-MM-DD` or `DD/MM/YYYY`),
+  with an optional label after `|` or a comma, e.g. `2027-02-08 | Cohort 8`.
+
+Existing dates are skipped by default, so re-running a schedule is safe. The
+website always targets the soonest active upcoming date, and the banner text is
+that row's **message** (falling back to its label, then “Next Piscine”). To turn
+the banner off, select the remaining upcoming rows and run **Hide selected
+piscines from the website** (or uncheck each row).
 
 ---
 
