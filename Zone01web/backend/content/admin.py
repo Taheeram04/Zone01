@@ -13,6 +13,7 @@ from django.utils.html import format_html
 from content.models import (
     Article,
     Category,
+    CommunityPost,
     FaqCategory,
     FaqItem,
     ImpactUpdate,
@@ -107,6 +108,32 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
             '<a href="{}" target="_blank" rel="noopener">Download</a>',
             url,
         )
+
+
+@admin.register(CommunityPost)
+class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
+    """Manage every News / Event / Blog / Podcast card from one list."""
+
+    image_field = "cover_image"
+    list_display = (
+        "preview",
+        "title",
+        "kind",
+        "platform",
+        "is_featured",
+        "is_published",
+        "published_at",
+        "order",
+    )
+    list_editable = ("is_featured", "is_published", "order")
+    list_filter = ("kind", "platform", "is_published", "is_featured")
+    date_hierarchy = "published_at"
+    search_fields = ("title", "summary", "body", "slug")
+    trigram_search_fields = ("title", "summary", "body", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("kind", "-is_featured", "-published_at", "order")
+    show_full_result_count = False
 
 
 @admin.register(SiteLink)

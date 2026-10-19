@@ -13,6 +13,7 @@ import HowToApply from './components/how-to-apply.jsx';
 import Careers from './components/careers.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
+import CommunityFeed from './components/community-feed.jsx';
 import Faqs from './components/faqs.jsx';
 import Register from './pages/Register.jsx';
 
@@ -54,13 +55,14 @@ function App() {
         }
       />
 
-      {/* Community — partners hero + 3D glowing staff carousel */}
+      {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
       <Route
         path="/community"
         element={
           <Layout>
             <Community />
             <OurStaff />
+            <CommunityFeed />
           </Layout>
         }
       />

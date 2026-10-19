@@ -14,6 +14,7 @@ from content.admin import PiscineDateAdmin, PiscineRegistrationAdmin
 from content.models import (
     Article,
     Category,
+    CommunityPost,
     ImpactUpdate,
     NewsUpdate,
     Page,
@@ -263,6 +264,79 @@ class ImpactReportTests(TestCase):
 
         response = self.client.get(reverse("content_api:impact-list"))
         self.assertIsNone(response.json()["results"][0]["report"])
+
+
+class CommunityPostModelTests(TestCase):
+    def test_str_includes_kind_and_title(self):
+        post = CommunityPost.objects.create(
+            kind=CommunityPost.Kind.PODCAST,
+            title="Episode 1",
+            slug="episode-1",
+        )
+        self.assertEqual(str(post), "Podcast: Episode 1")
+
+    def test_ordering_pins_featured_then_newest(self):
+        old = CommunityPost.objects.create(
+            title="Old",
+            slug="old",
+            published_at=timezone.now() - timezone.timedelta(days=10),
+        )
+        new = CommunityPost.objects.create(title="New", slug="new", published_at=timezone.now())
+        pinned = CommunityPost.objects.create(
+            title="Pinned",
+            slug="pinned",
+            published_at=timezone.now() - timezone.timedelta(days=30),
+            is_featured=True,
+        )
+
+        self.assertEqual(list(CommunityPost.objects.all()), [pinned, new, old])
+
+    def test_slug_is_unique(self):
+        CommunityPost.objects.create(title="Hello", slug="hello")
+
+        with self.assertRaises(IntegrityError):
+            CommunityPost.objects.create(title="Hello again", slug="hello")
+
+
+class CommunityApiTests(TestCase):
+    def test_community_list_groups_and_hides_unpublished(self):
+        CommunityPost.objects.create(
+            kind=CommunityPost.Kind.NEWS, title="Live news", slug="live-news"
+        )
+        CommunityPost.objects.create(
+            kind=CommunityPost.Kind.NEWS,
+            title="Draft news",
+            slug="draft-news",
+            is_published=False,
+        )
+        CommunityPost.objects.create(
+            kind=CommunityPost.Kind.EVENT,
+            title="Open day",
+            slug="open-day",
+            event_date=timezone.now(),
+            platform=CommunityPost.Platform.INSTAGRAM,
+        )
+
+        response = self.client.get(reverse("content_api:community-list"))
+
+        self.assertEqual(response.status_code, 200)
+        grouped = response.json()["results"]
+        # Every group is present, even when empty.
+        self.assertEqual(set(grouped), {"news", "event", "blog", "podcast"})
+        self.assertEqual([item["title"] for item in grouped["news"]], ["Live news"])
+        self.assertEqual(grouped["blog"], [])
+        event = grouped["event"][0]
+        self.assertEqual(event["platform"], "instagram")
+        self.assertIsNotNone(event["event_date"])
+
+    def test_content_index_includes_community(self):
+        CommunityPost.objects.create(kind=CommunityPost.Kind.BLOG, title="A post", slug="a-post")
+
+        response = self.client.get(reverse("content_api:content-index"))
+
+        self.assertEqual(response.status_code, 200)
+        community = response.json()["community"]
+        self.assertEqual(community["blog"][0]["title"], "A post")
 
 
 class CategoryModelTests(TestCase):

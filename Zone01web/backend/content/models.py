@@ -11,6 +11,9 @@ React frontend as JSON under ``/api/``:
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
 * :class:`PiscineDate`    - scheduled piscine start dates (one row per date).
 * :class:`PiscineRegistration` - the "Apply now" alert banner configuration.
+* :class:`CommunityPost` - a single stream of community updates tagged as news,
+  events, blog or podcast, each optionally carrying an image, a video and a
+  link to the social account it came from.
 * :class:`Page` + :class:`PageSection` - editable content for a frontend page
   (home, about-us, community, ...), built from ordered reusable sections.
 
@@ -161,6 +164,102 @@ class ImpactUpdate(OrderedContent):
 
     def __str__(self):
         return self.title
+
+
+class CommunityPost(OrderedContent):
+    """An item in the community hub, grouped by :attr:`kind`.
+
+    One model backs all four groups on the public "Community" page (news,
+    events, blog and podcast) so editors manage everything from a single admin
+    list. A post can carry a picture (:attr:`cover_image`), a video
+    (:attr:`video_url`) and/or a link to the social post it came from
+    (:attr:`external_url` + :attr:`platform`); the frontend renders whichever
+    of these are set.
+    """
+
+    class Kind(models.TextChoices):
+        NEWS = "news", "News"
+        EVENT = "event", "Event"
+        BLOG = "blog", "Blog"
+        PODCAST = "podcast", "Podcast"
+
+    class Platform(models.TextChoices):
+        WEBSITE = "website", "Website"
+        FACEBOOK = "facebook", "Facebook"
+        X = "x", "X (Twitter)"
+        INSTAGRAM = "instagram", "Instagram"
+        LINKEDIN = "linkedin", "LinkedIn"
+        YOUTUBE = "youtube", "YouTube"
+        TIKTOK = "tiktok", "TikTok"
+
+    kind = models.CharField(
+        max_length=20,
+        choices=Kind.choices,
+        default=Kind.NEWS,
+        help_text="Which community group this post belongs to.",
+    )
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        help_text="URL-safe identifier, generated from the title.",
+    )
+    summary = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="One-line teaser shown on the collapsed row and cards.",
+    )
+    body = models.TextField(blank=True, help_text="The full story or episode notes.")
+    cover_image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="community_post_covers",
+        help_text="Picture shown on the card (poster frame for a video).",
+    )
+    video_url = models.URLField(
+        blank=True,
+        help_text="Optional video/episode URL, e.g. a YouTube or podcast link.",
+    )
+    external_url = models.URLField(
+        blank=True,
+        help_text="Optional link to the original post on a social platform.",
+    )
+    platform = models.CharField(
+        max_length=20,
+        choices=Platform.choices,
+        default=Platform.WEBSITE,
+        help_text="Where this post came from (drives the badge on the card).",
+    )
+    event_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="For events: when it takes place.",
+    )
+    published_at = models.DateTimeField(default=timezone.now)
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Pin to the front of its group on the website.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "community post"
+        verbose_name_plural = "community posts"
+        ordering = ["-is_featured", "-published_at", "order", "id"]
+        indexes = [
+            models.Index(fields=["kind", "is_published"], name="community_kind_pub_idx"),
+            # One GIN/trigram index per column searched in the admin: see
+            # core.indexes.GinTrigramIndex for why these are single-column.
+            GinTrigramIndex(fields=["title"], name="community_title_trgm"),
+            GinTrigramIndex(fields=["summary"], name="community_summary_trgm"),
+            GinTrigramIndex(fields=["body"], name="community_body_trgm"),
+            GinTrigramIndex(fields=["slug"], name="community_slug_trgm"),
+        ]
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.title}"
 
 
 class SiteLink(OrderedContent):

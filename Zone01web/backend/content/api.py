@@ -11,6 +11,7 @@ Endpoints (all GET):
 * ``/api/staff/``
 * ``/api/news/``
 * ``/api/impact/``
+* ``/api/community/`` - news/event/blog/podcast posts grouped by kind
 * ``/api/links/``
 * ``/api/piscine/``
 * ``/api/pages/``            - published pages with their sections
@@ -22,6 +23,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 
 from content.models import (
+    CommunityPost,
     FaqCategory,
     ImpactUpdate,
     NewsUpdate,
@@ -87,6 +89,38 @@ def serialize_impact(request, item):
         "report_name": item.report.name if report_url and item.report else None,
         "order": item.order,
     }
+
+
+def serialize_community_post(request, post):
+    return {
+        "id": post.id,
+        "kind": post.kind,
+        "title": post.title,
+        "slug": post.slug,
+        "summary": post.summary,
+        "body": post.body,
+        "image": _media_url(request, post.cover_image),
+        "video_url": post.video_url or None,
+        "external_url": post.external_url or None,
+        "platform": post.platform,
+        "event_date": post.event_date.isoformat() if post.event_date else None,
+        "published_at": post.published_at.isoformat() if post.published_at else None,
+        "is_featured": post.is_featured,
+        "order": post.order,
+    }
+
+
+def _grouped_community_posts(request):
+    """Published community posts grouped by kind, newest first in each group.
+
+    Every group is always present (even when empty) so the frontend can render
+    a stable set of tabs/sections without a second lookup.
+    """
+    grouped = {kind: [] for kind, _ in CommunityPost.Kind.choices}
+    posts = CommunityPost.objects.filter(is_published=True)
+    for post in posts:
+        grouped[post.kind].append(serialize_community_post(request, post))
+    return grouped
 
 
 def serialize_link(link):
@@ -206,6 +240,11 @@ def impact_list(request):
 
 
 @require_GET
+def community_list(request):
+    return JsonResponse({"results": _grouped_community_posts(request)})
+
+
+@require_GET
 def link_list(request):
     links = SiteLink.objects.filter(is_active=True)
     return JsonResponse({"results": [serialize_link(link) for link in links]})
@@ -251,6 +290,7 @@ def content_index(request):
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
             ],
+            "community": _grouped_community_posts(request),
             "links": [serialize_link(link) for link in SiteLink.objects.filter(is_active=True)],
             "piscine": serialize_piscine(PiscineRegistration.get_solo()),
             "pages": [
