@@ -7,5 +7,5 @@ from applicants import views
 app_name = "applicants"
 
 urlpatterns = [
-    path("apply/", views.ApplicationSubmitView.as_view(), name="apply"),
+    path("", views.ApplicationSubmitView.as_view(), name="apply"),
 ]
