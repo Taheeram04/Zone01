@@ -113,7 +113,7 @@ class TrigramTermTests(TestCase):
 @postgres_only
 class IContainsLookupTests(TestCase):
     def test_icontains_renders_as_ilike(self):
-        sql, params = Applicant.objects.filter(first_name__icontains="am").query.sql_with_params()
+        sql, params = Applicant.objects.filter(name__icontains="am").query.sql_with_params()
 
         self.assertIn("ILIKE", sql)
         self.assertNotIn("UPPER", sql)
@@ -127,15 +127,15 @@ class TrigramRankingTests(TestCase):
         # Both rows contain the term, but only in the first one does it dominate
         # the searchable text, so the first should outrank the second.
         self.exact = Applicant.objects.create(
-            first_name="Achieng",
-            last_name="Odhiambo",
+            name="Achieng Odhiambo",
             email="achieng@example.com",
-            county="Nairobi",
+            choice="fullstack",
+            motivation="I would like to join the programme.",
         )
         self.buried = Applicant.objects.create(
-            first_name="Brian",
-            last_name="Ochieng",
+            name="Brian Ochieng",
             email="brian@example.com",
+            choice="fullstack",
             motivation="I heard about Odhiambo on the radio and would like to apply",
         )
 

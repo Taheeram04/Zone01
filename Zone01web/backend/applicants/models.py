@@ -1,9 +1,4 @@
-"""Draft schema for applicant intake and review.
-
-Sprint 5 draft: field names and choices are open for review before the schema
-is locked. Kept intentionally close to the application form so it can back both
-the public "Apply" flow and the internal review workflow.
-"""
+"""Applicant intake model for the Zone01 application form."""
 
 from django.db import models
 
@@ -13,72 +8,29 @@ from core.indexes import GinTrigramIndex
 class Applicant(models.Model):
     """A person applying to a Zone01 programme."""
 
-    class Status(models.TextChoices):
-        DRAFT = "draft", "Draft"
-        SUBMITTED = "submitted", "Submitted"
-        SCREENING = "screening", "Screening"
-        INTERVIEW = "interview", "Interview"
-        ACCEPTED = "accepted", "Accepted"
-        WAITLISTED = "waitlisted", "Waitlisted"
-        REJECTED = "rejected", "Rejected"
-        WITHDRAWN = "withdrawn", "Withdrawn"
-
-    class EducationLevel(models.TextChoices):
-        SECONDARY = "secondary", "Secondary school"
-        CERTIFICATE = "certificate", "Certificate"
-        DIPLOMA = "diploma", "Diploma"
-        DEGREE = "degree", "Bachelor's degree"
-        POSTGRADUATE = "postgraduate", "Postgraduate"
-        SELF_TAUGHT = "self_taught", "Self-taught"
+    class Track(models.TextChoices):
+        FULLSTACK = "fullstack", "Full-Stack Development"
+        DATA = "data", "Data & AI"
+        DEVOPS = "devops", "DevOps & Cloud"
+        CYBERSECURITY = "cybersecurity", "Cybersecurity"
         OTHER = "other", "Other"
 
-    class Gender(models.TextChoices):
-        FEMALE = "female", "Female"
-        MALE = "male", "Male"
-        OTHER = "other", "Other"
-        UNDISCLOSED = "undisclosed", "Prefer not to say"
-
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=30, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=20, choices=Gender.choices, blank=True)
-    county = models.CharField(max_length=100, blank=True)
-    education_level = models.CharField(max_length=20, choices=EducationLevel.choices, blank=True)
-    current_occupation = models.CharField(max_length=150, blank=True)
-    motivation = models.TextField(blank=True)
-    portfolio_url = models.URLField(blank=True)
-    github_url = models.URLField(blank=True)
-    linkedin_url = models.URLField(blank=True)
-    referral_source = models.CharField(max_length=100, blank=True)
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
-    reviewer_notes = models.TextField(blank=True)
-    consented_at = models.DateTimeField(null=True, blank=True)
-    submitted_at = models.DateTimeField(null=True, blank=True)
+    choice = models.CharField(max_length=30, choices=Track.choices)
+    motivation = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["status"]),
-            models.Index(fields=["county"]),
-            # One GIN/trigram index per column searched in the admin: the admin
-            # ORs the term across every search field, which PostgreSQL can only
-            # serve from indexes when each column is indexed individually.
-            GinTrigramIndex(fields=["first_name"], name="applicant_first_name_trgm"),
-            GinTrigramIndex(fields=["last_name"], name="applicant_last_name_trgm"),
+            # One GIN/trigram index per admin search field: see core.indexes.
+            GinTrigramIndex(fields=["name"], name="applicant_name_trgm"),
             GinTrigramIndex(fields=["email"], name="applicant_email_trgm"),
             GinTrigramIndex(fields=["phone"], name="applicant_phone_trgm"),
-            GinTrigramIndex(fields=["county"], name="applicant_county_trgm"),
-            GinTrigramIndex(fields=["current_occupation"], name="applicant_occupation_trgm"),
             GinTrigramIndex(fields=["motivation"], name="applicant_motivation_trgm"),
         ]
 
     def __str__(self):
-        return self.full_name
-
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}".strip()
+        return f"{self.name} <{self.email}>"

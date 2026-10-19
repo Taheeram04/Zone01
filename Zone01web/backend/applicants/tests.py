@@ -1,22 +1,72 @@
-from django.db import IntegrityError, transaction
 from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APIClient
 
 from applicants.models import Applicant
 
 
-class ApplicantModelTests(TestCase):
-    def test_defaults_and_full_name(self):
-        applicant = Applicant.objects.create(
-            first_name="Amina",
-            last_name="Otieno",
-            email="amina@example.com",
+class ApplicantAPITests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse("applicants:apply")
+
+    def test_create_applicant_success(self):
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "phone": "+254700000000",
+            "choice": "fullstack",
+            "motivation": "I want to learn.",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 201)
+        self.assertTrue(res.data["success"])
+        self.assertEqual(Applicant.objects.count(), 1)
+
+    def test_duplicate_email_rejected(self):
+        Applicant.objects.create(
+            name="Jane Doe",
+            email="jane@example.com",
+            choice="fullstack",
+            motivation="x",
         )
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "choice": "fullstack",
+            "motivation": "x",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 400)
 
-        self.assertEqual(applicant.full_name, "Amina Otieno")
-        self.assertEqual(applicant.status, Applicant.Status.DRAFT)
+    def test_duplicate_email_is_case_insensitive(self):
+        Applicant.objects.create(
+            name="Jane Doe",
+            email="Jane@Example.com",
+            choice="fullstack",
+            motivation="x",
+        )
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "choice": "fullstack",
+            "motivation": "x",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("email", res.data["errors"])
 
-    def test_email_is_unique(self):
-        Applicant.objects.create(first_name="A", last_name="B", email="dup@example.com")
+    def test_invalid_track_rejected(self):
+        payload = {
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "choice": "not-a-track",
+            "motivation": "x",
+        }
+        res = self.client.post(self.url, payload, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("choice", res.data["errors"])
 
-        with self.assertRaises(IntegrityError), transaction.atomic():
-            Applicant.objects.create(first_name="C", last_name="D", email="dup@example.com")
+    def test_missing_fields_rejected(self):
+        res = self.client.post(self.url, {}, format="json")
+        self.assertEqual(res.status_code, 400)
