@@ -25,6 +25,14 @@ APP_VERSION = env("APP_VERSION", default="dev")
 # Full origins (scheme + host) trusted for CSRF, e.g. https://zone01-api.fly.dev.
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# Render sets this for every web service. Trusting it automatically lets the
+# single-service Docker image serve the SPA, API and admin on one hostname
+# without duplicating the domain in DJANGO_ALLOWED_HOSTS/CSRF_TRUSTED_ORIGINS.
+RENDER_EXTERNAL_HOSTNAME = env("RENDER_EXTERNAL_HOSTNAME", default="")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
 # TLS is terminated by the hosting proxy (e.g. Fly.io), which forwards the
 # original scheme in X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
