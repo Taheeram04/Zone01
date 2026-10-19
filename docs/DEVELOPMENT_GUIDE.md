@@ -3,12 +3,21 @@
 A complete, step-by-step guide to setting up, running, testing and deploying the
 Zone01 platform.
 
-The project is **two applications**:
+The repository contains **two apps**, but they run as **one website**:
 
-| Part | Tech | Location | Runs on |
-| ---- | ---- | -------- | ------- |
-| **Backend** | Django 5 + django CMS 5 + PostgreSQL | `Zone01web/backend/` | `:8000` |
-| **Frontend** | React 19 + Vite 8 + Tailwind 4 | `frontend/` | `:5173` |
+| Part | Tech | Location | Dev URL | Production |
+| ---- | ---- | -------- | ------- | ---------- |
+| **Backend** | Django 5 + django CMS 5 + PostgreSQL | `Zone01web/backend/` | `:8000` | Serves the SPA, API and admin |
+| **Frontend** | React 19 + Vite 8 + Tailwind 4 | `frontend/` | `:5173` | Built into Django's `frontend_dist` |
+
+> **Just want to run the combined website?**
+>
+> ```bash
+> make docker-up     # everything + PostgreSQL → http://localhost:8000
+> ```
+>
+> Without Docker, start PostgreSQL, then `make install` once and `make serve`.
+> See [Part C](#part-c--run-the-app) for all modes.
 
 ---
 
@@ -22,7 +31,7 @@ The project is **two applications**:
 6. [Part C — Run the app](#part-c--run-the-app)
 7. [Part D — Day-to-day development](#part-d--day-to-day-development)
 8. [Part E — Testing, linting and CI](#part-e--testing-linting-and-ci)
-9. [Part F — Deployment (Fly.io)](#part-f--deployment-flyio)
+9. [Part F — Deployment](#part-f--deployment)
 10. [Part G — Troubleshooting](#part-g--troubleshooting)
 11. [Appendix A — Environment variables](#appendix-a--environment-variables)
 12. [Appendix B — API reference](#appendix-b--api-reference)
@@ -383,14 +392,23 @@ The production shape is **one service**: Django serves the React SPA at `/`,
 the JSON API at `/api/`, the admin at `/admin/`, and static assets through
 WhiteNoise. No second web server, proxy or CORS setup is required.
 
+| Goal | Command | Open |
+| ---- | ------- | ---- |
+| Run everything including PostgreSQL | `make docker-up` | http://localhost:8000 |
+| Run one local Django server | `make serve` | http://localhost:8000 |
+| Edit React with hot reload | `make dev` | http://localhost:5173 |
+
+The first three commands assume you are in the repository root and have run
+`make install` once.
+
 ### C.1 One server (recommended)
+
+Prerequisite: PostgreSQL must be running, and `DATABASE_URL` in
+`Zone01web/backend/.env` must point to it.
 
 ```bash
 # first time only
 make install
-
-# start PostgreSQL (or use your own local server and backend/.env)
-cd Zone01web/backend && docker compose up -d postgres && cd ../..
 
 # build the SPA if needed, apply migrations, then run Django
 make serve               # http://localhost:8000
@@ -403,6 +421,9 @@ for content editing.
 
 If you change only frontend files while `make serve` is running, run
 `make build` and refresh the browser. For live reload, use `make dev` below.
+
+If you do not already have PostgreSQL, the easiest option is `make docker-up`
+(C.2); it starts its own database and needs no `.env` changes.
 
 ### C.2 One command with Docker
 
@@ -434,8 +455,9 @@ PostgreSQL. This is the only mode where you need two ports.
 If you prefer separate terminals:
 
 ```bash
-# Terminal 1 — database
+# Terminal 1 — database (or use your own PostgreSQL)
 cd Zone01web/backend && docker compose up -d postgres
+# Make sure DATABASE_URL in .env matches the database you started.
 
 # Terminal 2 — backend
 cd Zone01web/backend && source .venv/bin/activate && make run

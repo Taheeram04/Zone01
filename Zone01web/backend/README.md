@@ -13,6 +13,9 @@ so the whole product runs as one service.
 
 ## Quick start
 
+This starts the backend only. To run the whole product (React + API + admin)
+as one service, see [Single-service deployment](#single-service-deployment).
+
 ```bash
 cp .env.example .env          # adjust values as needed
 docker compose up -d postgres # start PostgreSQL on :5432

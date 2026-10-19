@@ -9,24 +9,35 @@ API, the admin and static assets. The root `Dockerfile` builds both; the root
 
 ## Quick start
 
-```bash
-make install             # backend + frontend dependencies
-make docker-up           # whole app on http://localhost:8000
-```
-
-Or without Docker (use an existing PostgreSQL and `Zone01web/backend/.env`):
+### Option 1 — Docker (includes PostgreSQL)
 
 ```bash
-make install
-make serve               # builds the SPA and runs Django on :8000
+make docker-up
 ```
 
-For hot reload during frontend work:
+Open **http://localhost:8000**. Stop with `make docker-down`.
+
+### Option 2 — One local Django server
+
+Requires PostgreSQL running and `DATABASE_URL` set in
+`Zone01web/backend/.env`.
 
 ```bash
-make dev                 # Django :8000 + Vite :5173
+make install     # first time only
+make serve
 ```
 
-Run `make help` for all targets. See the
+Open **http://localhost:8000**.
+
+### Option 3 — Hot reload while editing React
+
+```bash
+make install     # first time only
+make dev
+```
+
+Open **http://localhost:5173**. Django also runs on `:8000`.
+
+The admin is at **/admin/**. Run `make help` for all targets. See the
 [development guide](docs/DEVELOPMENT_GUIDE.md) for setup, testing and
 deployment details.
