@@ -3,6 +3,7 @@
 One Django service hosts the whole product:
 
 * ``/api/``     - the read-only JSON API the React frontend consumes.
+  ``/api/services/`` serves the Hire Talent service catalogue.
 * ``/admin/``   - the Django admin (content editing, applicants, events).
 * ``/healthz``  - liveness check.
 * ``/webhooks/whatsapp/`` - Meta WhatsApp Cloud API webhook (FAQ assistant).
@@ -26,6 +27,7 @@ admin.site.index_template = "admin/frontend_status_index.html"
 
 urlpatterns = [
     path("healthz", health, name="health"),
+    path("api/services/", include("services.urls")),
     path("api/", include("content.urls")),
     path("api/applicants/", include("applicants.urls")),
     # Unknown API paths must 404 as JSON, not fall through to the SPA.

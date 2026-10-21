@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "applicants",
     "events",
     "content",
+    "services",
     "whatsapp_bot",
 ]
 

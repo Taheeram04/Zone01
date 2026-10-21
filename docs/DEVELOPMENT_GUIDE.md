@@ -81,7 +81,7 @@ Zone01/
 │   │   ├── main.jsx                 # React entry (BrowserRouter)
 │   │   ├── App.jsx                  # Route table
 │   │   ├── components/              # Page sections & UI
-│   │   ├── pages/                   # Standalone pages (e.g. Register)
+│   │   ├── pages/                   # Standalone pages (e.g. Register, Hire)
 │   │   ├── assets/                  # Images
 │   │   ├── constants.js             # Shared constants
 │   │   ├── index.css / App.css
@@ -95,6 +95,7 @@ Zone01/
         ├── config/                  # settings.py, urls.py, wsgi/asgi
         ├── core/                    # health check + admin frontend-status board
         ├── content/                 # site content models + JSON API
+        ├── services/                # Hire Talent service catalogue + JSON API
         ├── applicants/              # applicant intake & review
         ├── events/                  # events & registrations
         ├── whatsapp_bot/            # WhatsApp FAQ assistant (webhook + matching)
@@ -759,6 +760,8 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 | `/api/piscine/` | Next piscine date, active state, message and full upcoming schedule |
 | `/api/pages/` | Published CMS pages with their sections (where enabled) |
 | `/api/pages/<slug>/` | A single page by slug |
+| `/api/services/` | Hire Talent catalogue: `services` plus grouped `navbar_services` (`what_we_offer`, `languages`, `frameworks`, `specializations`) |
+| `/api/services/<slug>/` | A single service by slug (detail page) |
 | `/api/faqs/` | Active FAQ categories with their questions and answers |
 
 Example:
@@ -787,6 +790,7 @@ Log in at `/admin/` with a staff account.
 | **Community posts** | kind (news/event/blog/podcast), title, summary, body, cover image, video URL, external URL, platform, event date, published_at, featured + publish toggles, order |
 | **Impact** | title, image, information, report PDF, publish toggle, order |
 | **Site links** | label, url, order, is_active, open_in_new_tab, show_chevron |
+| **Services** | title, name, slug, category, description, icon, order — powers the `/hire` page |
 | **Piscine dates** | date, label, message, is_active — one row per scheduled piscine; the soonest upcoming active row is the countdown banner. Use **Add multiple dates** to create a whole year at once |
 | **Frontend pages** | label, path, is_active, order (monitor list) |
 | **Applicants** | name, email, county, education level, status, submitted_at |

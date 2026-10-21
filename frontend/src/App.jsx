@@ -8,6 +8,7 @@ import Faqs from './components/faqs.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import Register from './pages/Register.jsx';
+import Hire from './pages/Hire.jsx';
 
 function App() {
   return (
@@ -55,7 +56,17 @@ function App() {
         }
       />
 
-      {['/impact', '/hire', '/donate', '*'].map((path) => (
+      {/* Hire Talent — service catalogue, technologies and employer CTA */}
+      <Route
+        path="/hire"
+        element={
+          <Layout>
+            <Hire />
+          </Layout>
+        }
+      />
+
+      {['/impact', '/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}
