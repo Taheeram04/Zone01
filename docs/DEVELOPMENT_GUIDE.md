@@ -19,7 +19,7 @@ The project is **two applications**:
 3. [Prerequisites](#3-prerequisites)
 4. [Part A — Backend setup](#part-a--backend-setup)
 5. [Part B — Frontend setup](#part-b--frontend-setup)
-6. [Part C — Run both together](#part-c--run-both-together)
+6. [Part C — Run the app](#part-c--run-the-app)
 7. [Part D — Day-to-day development](#part-d--day-to-day-development)
 8. [Part E — Testing, linting and CI](#part-e--testing-linting-and-ci)
 9. [Part F — Deployment (Fly.io)](#part-f--deployment-flyio)
@@ -37,6 +37,8 @@ the public website and reads its content from a **read-only JSON API** exposed b
 the Django backend. Editors change that content in the Django admin; the
 frontend picks it up on its next request.
 
+Development (hot reload):
+
 ```
 ┌─────────────────────────────┐        GET /api/...        ┌──────────────────────────────┐
 │  React SPA (Vite build)     │ ─────────────────────────▶ │  Django + django CMS         │
@@ -51,14 +53,15 @@ frontend picks it up on its next request.
                                                                    └────────────────┘
 ```
 
-**Key idea:** the backend has two faces.
+**Key idea:** in production there is **one Django service**.
 
-- **JSON API (`/api/`)** — consumed by the React frontend.
+- **React SPA (`/`)** — the built bundle in `frontend_dist`, served by Django.
+- **JSON API (`/api/`)** — consumed by the SPA.
 - **django CMS + admin (`/admin/`)** — consumed by editors through the browser.
 
-> In development the React dev server **proxies** `/api` to the Django server
-> (see `frontend/vite.config.js`), so the browser always talks same-origin and no
-> CORS setup is needed locally.
+> `make serve` (and the root Docker image) uses this single-process shape.
+> `make dev` runs Vite on `:5173` for hot reload; Vite proxies `/api` to Django
+> on `:8000`, so the browser stays same-origin and no CORS setup is needed.
 
 ---
 
@@ -67,6 +70,10 @@ frontend picks it up on its next request.
 ```
 Zone01/
 ├── README.md
+├── Dockerfile                       # combined image: React build + Django
+├── docker-compose.yml               # one command: web + PostgreSQL
+├── Makefile                         # install / build / serve / dev / docker
+├── scripts/dev.sh                   # one command: Django + Vite with HMR
 ├── docs/
 │   └── DEVELOPMENT_GUIDE.md        # this file
 ├── frontend/                        # React SPA
@@ -74,7 +81,7 @@ Zone01/
 │   │   ├── main.jsx                 # React entry (BrowserRouter)
 │   │   ├── App.jsx                  # Route table
 │   │   ├── components/              # Page sections & UI
-│   │   ├── pages/                   # Standalone pages (e.g. Register)
+│   │   ├── pages/                   # Standalone pages (e.g. Register, Hire)
 │   │   ├── assets/                  # Images
 │   │   ├── constants.js             # Shared constants
 │   │   ├── index.css / App.css
@@ -88,13 +95,15 @@ Zone01/
         ├── config/                  # settings.py, urls.py, wsgi/asgi
         ├── core/                    # health check + admin frontend-status board
         ├── content/                 # site content models + JSON API
+        ├── services/                # Hire Talent service catalogue + JSON API
         ├── applicants/              # applicant intake & review
         ├── events/                  # events & registrations
+        ├── whatsapp_bot/            # WhatsApp FAQ assistant (webhook + matching)
         ├── templates/               # CMS page templates + admin overrides
         ├── static/
-        ├── docker-compose.yml       # local PostgreSQL
-        ├── Dockerfile               # production image (gunicorn)
-        ├── Makefile                 # dev shortcuts
+        ├── docker-compose.yml       # local PostgreSQL only
+        ├── Dockerfile               # backend-only image (used by Fly)
+        ├── Makefile                 # backend dev shortcuts
         ├── requirements.txt / -dev.txt
         ├── .env.example
         └── README.md
@@ -232,13 +241,20 @@ curl http://localhost:8000/api/content/
 | App | Responsibility |
 | --- | -------------- |
 | `core` | `/healthz`; admin "Frontend status" board (`FrontendPage` model, `frontend_status` view) |
-| `content` | Public site content: partners, staff, news, impact, site links, next-piscine; the `/api/` endpoints |
+| `content` | Public site content: partners, staff, news, impact, site links, piscine schedule/notification; the `/api/` endpoints |
 | `applicants` | Applicant intake and review workflow (`Applicant` model) |
 | `events` | Events and registrations (`Event`, `EventRegistration`) |
+| `whatsapp_bot` | WhatsApp FAQ assistant: webhook at `/webhooks/whatsapp/`, keyword matching, conversation log |
 
 **Models you will edit most often** (`content/models.py`): `Partner`,
-`StaffMember`, `NewsUpdate`, `ImpactUpdate`, `SiteLink`, `PiscineRegistration`,
-and the `FrontendPage` monitor list (`core/models.py`).
+`StaffMember`, `NewsUpdate`, `ImpactUpdate`, `CommunityPost`, `SiteLink`,
+`PiscineDate`, and the `FrontendPage` monitor list (`core/models.py`).
+
+`CommunityPost` is the single source for the four **Community Hub** streams on
+`/community` — news, events, blog and podcast. Each post carries a `kind`, an
+optional picture (`cover_image`), an optional `video_url` and the `platform`
+(Facebook, Instagram, YouTube, …) it came from, so editors add, edit or delete
+every card from one admin list and the frontend group updates on next load.
 
 ### A.10 Useful backend commands
 
@@ -282,7 +298,7 @@ cp .env.example .env
 
 For local development you can leave `VITE_API_BASE_URL` **empty** — the Vite dev
 server proxies `/api` to the backend automatically. See
-[Part C](#part-c--run-both-together).
+[Part C](#part-c--run-the-app).
 
 ### B.4 Run the dev server
 
@@ -326,7 +342,7 @@ Defined in `src/App.jsx`:
 | ---- | ---- |
 | `/` | Home (Hero + Stats + Who can apply + Who is it for + Why our campus) |
 | `/about` | About Us (hero, know us, our model, how to apply, careers) |
-| `/community` | Community (partners + staff carousel) |
+| `/community` | Community (partners hero + staff carousel + news/event/blog/podcast hub) |
 | `/register` | Standalone registration page |
 | `/impact`, `/hire`, `*` | "Coming soon" placeholder |
 
@@ -362,39 +378,76 @@ const data = await res.json();
 
 ---
 
-## Part C — Run both together
+## Part C — Run the app
 
-You need **three** things running: the database, the backend, and the frontend.
+The production shape is **one service**: Django serves the React SPA at `/`,
+the JSON API at `/api/`, the admin at `/admin/`, and static assets through
+WhiteNoise. No second web server, proxy or CORS setup is required.
 
-### Terminal 1 — Database
-
-```bash
-cd Zone01web/backend
-docker compose up -d postgres
-```
-
-### Terminal 2 — Backend
+### C.1 One server (recommended)
 
 ```bash
-cd Zone01web/backend
-source .venv/bin/activate
-make run                 # http://localhost:8000
+# first time only
+make install
+
+# start PostgreSQL (or use your own local server and backend/.env)
+cd Zone01web/backend && docker compose up -d postgres && cd ../..
+
+# build the SPA if needed, apply migrations, then run Django
+make serve               # http://localhost:8000
 ```
 
-### Terminal 3 — Frontend
+`make serve` detects frontend changes, rebuilds `frontend_dist`, runs
+`collectstatic`, applies migrations, and starts Django. Open
+**http://localhost:8000/** for the site and **http://localhost:8000/admin/**
+for content editing.
+
+If you change only frontend files while `make serve` is running, run
+`make build` and refresh the browser. For live reload, use `make dev` below.
+
+### C.2 One command with Docker
 
 ```bash
-cd frontend
-npm run dev              # http://localhost:5173
+make docker-up           # docker compose up --build
 ```
 
-Now open **http://localhost:5173/**. The SPA calls `/api/...`, Vite proxies it
-to Django, and Django answers from PostgreSQL. Edit content at
-**http://localhost:8000/admin/** and refresh the frontend to see it.
+That builds the combined image, starts PostgreSQL, runs migrations and serves
+everything at **http://localhost:8000/**. Stop it with:
+
+```bash
+make docker-down
+```
+
+### C.3 Hot-reload development
+
+`make dev` runs Django (`:8000`) and Vite (`:5173`) together and stops both when
+either exits:
+
+```bash
+make dev                 # http://localhost:5173
+```
+
+The SPA calls `/api/...`, Vite proxies it to Django, and Django answers from
+PostgreSQL. This is the only mode where you need two ports.
+
+### C.4 Manual mode
+
+If you prefer separate terminals:
+
+```bash
+# Terminal 1 — database
+cd Zone01web/backend && docker compose up -d postgres
+
+# Terminal 2 — backend
+cd Zone01web/backend && source .venv/bin/activate && make run
+
+# Terminal 3 — frontend (hot reload)
+cd frontend && npm run dev
+```
 
 > **CORS note:** the defaults already allow `http://localhost:5173`. If you
 > change the frontend port, add its origin to `API_CORS_ALLOWED_ORIGINS` in the
-> backend `.env` and restart Django.
+> backend `.env` and restart Django. The one-server modes do not need CORS.
 
 ---
 
@@ -437,9 +490,10 @@ Everything editors need is in the Django admin at `/admin/`:
 | **Partners** | Partner logos and blurbs |
 | **Staff** | Team members, roles, photos |
 | **News** | News posts (publish toggle) |
+| **Community posts** | The News / Event / Blog / Podcast cards under the Community page — kind, picture, video, source platform, publish + feature toggles |
 | **Impact** | Impact stories + optional PDF report |
 | **Site links** | Header navigation links |
-| **Next piscine registration** | Singleton countdown banner; **Add** schedules the next piscine (replaces the single row) |
+| **Piscine dates** | The schedule and its notification in one list — date, label, banner message and active flag; **Add multiple dates** generates a recurring schedule or imports a pasted list |
 | **Frontend pages** | Pages the "Frontend status" board links to and checks |
 | **Applicants** | Applicant intake and review |
 | **Events / Registrations** | Events and sign-ups |
@@ -548,11 +602,42 @@ Keep all five green before pushing.
 
 ---
 
-## Part F — Deployment (Fly.io)
+## Part F — Deployment
 
-The backend and frontend deploy as **two Fly apps**, backed by a third app
-running unmanaged Fly Postgres. Config files: `Zone01web/backend/fly.toml` and
-`frontend/fly.toml`.
+There are two supported shapes:
+
+1. **One Docker service (recommended)** — the root `Dockerfile` builds the
+   React SPA into Django, so one process serves the site, API and admin.
+2. **Two Fly apps** — the older split backend/frontend deployment.
+
+### F.1 One service (Docker / Render)
+
+```bash
+make docker-up            # local: web + PostgreSQL on :8000
+```
+
+`render.yaml` deploys the same image as a single Render web service with a
+managed Postgres database. It includes:
+
+- `Dockerfile` — multi-stage Node build + Django/gunicorn runtime.
+- `healthCheckPath: /healthz`.
+- `DATABASE_URL` wired from the Render database.
+- `DJANGO_SECRET_KEY` generated by Render.
+
+Render sets `RENDER_EXTERNAL_HOSTNAME`; `config/settings.py` adds it to
+`ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` automatically. The SPA is built with
+`VITE_BASE=/static/` and an empty `VITE_API_BASE_URL`, so it calls the API on
+the same origin.
+
+For media uploads in production, set `BUCKET_NAME` (and the `AWS_*` variables)
+so files survive redeploys; otherwise they live on the container's ephemeral
+disk.
+
+### F.2 Two-app Fly deployment
+
+The backend and frontend can still deploy as **two Fly apps**, backed by a
+third app running unmanaged Fly Postgres. Config files:
+`Zone01web/backend/fly.toml` and `frontend/fly.toml`.
 
 | Fly app | Runs | Config |
 | ------- | ---- | ------ |
@@ -560,7 +645,7 @@ running unmanaged Fly Postgres. Config files: `Zone01web/backend/fly.toml` and
 | `zone01-kisumu-web` | React bundle via nginx | `frontend/fly.toml` |
 | `zone01-kisumu-db` | Unmanaged Postgres | created with `fly postgres create` |
 
-### F.1 One-time setup (summary)
+One-time setup:
 
 ```bash
 # Backend app
@@ -586,17 +671,18 @@ fly launch --no-deploy --copy-config
 fly deploy
 ```
 
-### F.2 Deploying an update
+### F.3 Deploying an update
 
 ```bash
-# Backend
-cd Zone01web/backend && fly deploy
+# One combined service
+make docker-up            # or: fly deploy from the repo root with the root Dockerfile
 
-# Frontend
+# Two-app Fly deployment
+cd Zone01web/backend && fly deploy
 cd frontend && fly deploy
 ```
 
-### F.3 Post-deploy checklist
+### F.4 Post-deploy checklist
 
 - Set the site domain in **Admin → Sites**.
 - Set `FRONTEND_URL` on the backend to the public frontend URL, so the
@@ -623,7 +709,6 @@ snapshots) lives in `Zone01web/backend/README.md`.
 | Migration drift in CI | Model changed without a migration | `make makemigrations` and commit the file |
 | Deep links 404 in production (e.g. `/about`) | Web server lacks SPA fallback | Serve with the nginx config that does `try_files ... /index.html` |
 | `VITE_` change has no effect | Vite vars are build-time only | Rebuild (`npm run build`) / redeploy |
-| Only one row allowed in "Next piscine registration" | It is a singleton by design | Edit the existing row |
 
 ---
 
@@ -645,6 +730,11 @@ snapshots) lives in `Zone01web/backend/README.md`.
 | `FRONTEND_HEALTH_TIMEOUT` | `5` | Seconds before a frontend check times out |
 | `CSRF_TRUSTED_ORIGINS` | _(empty)_ | Full origins trusted for admin forms (HTTPS) |
 | `BUCKET_NAME` / `AWS_*` | _(empty)_ | S3/Tigris bucket for media (production) |
+| `WHATSAPP_VERIFY_TOKEN` | _(empty)_ | Token Meta must echo during webhook verification |
+| `WHATSAPP_ACCESS_TOKEN` | _(empty)_ | Token used to send WhatsApp replies |
+| `WHATSAPP_PHONE_NUMBER_ID` | _(empty)_ | WhatsApp sender's phone-number ID |
+| `WHATSAPP_APP_SECRET` | _(empty)_ | Verifies webhook signature (blank disables the check) |
+| `WHATSAPP_DRY_RUN` | `true` | Log replies instead of sending them |
 
 ### Frontend (`frontend/.env`)
 
@@ -660,15 +750,19 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 
 | Endpoint | Returns |
 | -------- | ------- |
-| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `links`, `piscine` |
+| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `community`, `links`, `piscine` |
 | `/api/partners/` | Partner list |
 | `/api/staff/` | Staff list |
 | `/api/news/` | Published news |
 | `/api/impact/` | Published impact stories (includes `report` download URL) |
+| `/api/community/` | Published community posts grouped by kind: `news`, `event`, `blog`, `podcast` |
 | `/api/links/` | Active header site links |
-| `/api/piscine/` | Next-piscine toggle, date and message |
+| `/api/piscine/` | Next piscine date, active state, message and full upcoming schedule |
 | `/api/pages/` | Published CMS pages with their sections (where enabled) |
 | `/api/pages/<slug>/` | A single page by slug |
+| `/api/services/` | Hire Talent catalogue: `services` plus grouped `navbar_services` (`what_we_offer`, `languages`, `frameworks`, `specializations`) |
+| `/api/services/<slug>/` | A single service by slug (detail page) |
+| `/api/faqs/` | Active FAQ categories with their questions and answers |
 
 Example:
 
@@ -693,9 +787,11 @@ Log in at `/admin/` with a staff account.
 | **Partners** | name, logo, information, order |
 | **Staff** | name, role, photo, bio, order |
 | **News** | title, image, information, publish toggle, order |
+| **Community posts** | kind (news/event/blog/podcast), title, summary, body, cover image, video URL, external URL, platform, event date, published_at, featured + publish toggles, order |
 | **Impact** | title, image, information, report PDF, publish toggle, order |
 | **Site links** | label, url, order, is_active, open_in_new_tab, show_chevron |
-| **Next piscine registration** | is_active, next_piscine_date, message — still a singleton, but **Add** opens a prefilled form to schedule the next piscine (saving replaces the single row) |
+| **Services** | title, name, slug, category, description, icon, order — powers the `/hire` page |
+| **Piscine dates** | date, label, message, is_active — one row per scheduled piscine; the soonest upcoming active row is the countdown banner. Use **Add multiple dates** to create a whole year at once |
 | **Frontend pages** | label, path, is_active, order (monitor list) |
 | **Applicants** | name, email, county, education level, status, submitted_at |
 | **Events** | title, format, start_at, status, registrations (inline) |
@@ -704,9 +800,47 @@ Log in at `/admin/` with a staff account.
 plus each active **Frontend pages** entry and shows UP/DOWN, HTTP code and
 latency. Configure the target with `FRONTEND_URL`.
 
-**Scheduling the next piscine:** open **Next piscine registration** and click
-**Add** — the form is prefilled from the current row and saving replaces it, so
-the hero countdown always reflects a single "next" piscine.
+**Scheduling piscines:** open **Piscine dates** to add one date at a time, or
+click **Add multiple dates** to either:
+
+- **Repeat a schedule** — choose the first date, the interval in weeks (4 by
+  default), and either a number of piscines (13 ≈ one year) or an end date.
+  Labels can use `{n}`, e.g. `Cohort {n}`.
+- **Paste a list of dates** — one date per line (`YYYY-MM-DD` or `DD/MM/YYYY`),
+  with an optional label after `|` or a comma, e.g. `2027-02-08 | Cohort 8`.
+
+Existing dates are skipped by default, so re-running a schedule is safe. The
+website always targets the soonest active upcoming date, and the banner text is
+that row's **message** (falling back to its label, then “Next Piscine”). To turn
+the banner off, select the remaining upcoming rows and run **Hide selected
+piscines from the website** (or uncheck each row).
+
+---
+
+## Appendix D — WhatsApp FAQ assistant
+
+The `whatsapp_bot` app answers incoming WhatsApp messages with the closest FAQ.
+It uses the Meta WhatsApp Cloud API and a keyword/IDF matcher (no external AI).
+
+1. Seed the FAQ knowledge base:
+   ```bash
+   cd Zone01web/backend
+   make migrate
+   .venv/bin/python manage.py seed_faqs
+   ```
+2. Set the `WHATSAPP_*` variables in `.env` (see
+   [Appendix A](#appendix-a--environment-variables) and `.env.example`).
+3. Point Meta's webhook at `https://<your-host>/webhooks/whatsapp/` using the
+   same value as `WHATSAPP_VERIFY_TOKEN`.
+
+Keep `WHATSAPP_DRY_RUN=true` (the default) to log replies without sending them
+while you test. Full instructions, tuning tips and the go-live checklist are in
+[`Zone01web/backend/whatsapp_bot/README.md`](../Zone01web/backend/whatsapp_bot/README.md).
+
+| Endpoint | Methods | Purpose |
+| -------- | ------- | ------- |
+| `/webhooks/whatsapp/` | `GET` | Meta webhook verification handshake |
+| `/webhooks/whatsapp/` | `POST` | Incoming message events (matched and answered) |
 
 ---
 
