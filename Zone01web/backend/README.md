@@ -1,8 +1,9 @@
 # Zone01 CMS
 
-Server-rendered website for Zone01 built on **Django** and **django CMS 5 (LTS)**,
-with **PostgreSQL** as the database. Editors manage pages, menus, and content
-from the CMS toolbar and the Django admin; no separate frontend build is needed.
+Django backend for Zone01, built on **Django** and **django CMS 5 (LTS)** with
+**PostgreSQL** as the database. It provides the JSON API and the Django admin.
+In the combined deployment the same process also serves the built React SPA,
+so the whole product runs as one service.
 
 ## Requirements
 
@@ -55,11 +56,25 @@ Configuration is read from the environment and may be seeded from `.env`.
 After the first deploy, set the site domain in **Admin → Sites** to match your
 hostname (the default is `example.com`).
 
+## Single-service deployment
+
+From the repository root, `Dockerfile` builds the React SPA into Django and
+`docker-compose.yml` runs the whole product plus PostgreSQL:
+
+```bash
+make docker-up       # http://localhost:8000
+```
+
+`render.yaml` deploys the same image as one Render web service. The combined
+service serves `/`, `/api/`, `/admin/` and `/static/` from one origin, so no
+CORS or separate frontend host is needed.
+
 ## Deploying to Fly.io
 
 The backend (`Zone01web/backend/fly.toml`) and the React frontend
-(`frontend/fly.toml`) deploy as two Fly apps, backed by a third app running
-**unmanaged Fly Postgres** (`fly postgres`, not Managed Postgres / `fly mpg`).
+(`frontend/fly.toml`) can also deploy as two Fly apps, backed by a third app
+running **unmanaged Fly Postgres** (`fly postgres`, not Managed Postgres /
+`fly mpg`).
 Static files are served by WhiteNoise; uploaded media (filer images,
 thumbnails, impact PDFs) is stored in a public Tigris bucket. If you rename
 either app, update the hostnames in both `fly.toml` files.
@@ -275,6 +290,25 @@ latency for each. Use **Manage pages** to add or remove the paths that get
 checked (`/about`, `/community`, `/register`, ...); each path is joined onto
 `FRONTEND_URL`. The checks run server-side and are staff-only.
 
+## WhatsApp FAQ assistant
+
+The backend can answer WhatsApp messages automatically using the FAQ content.
+Incoming messages hit a webhook at `/webhooks/whatsapp/`, are matched against
+the active `FaqItem` rows, and answered with the closest match (or a fallback).
+There is no external AI dependency — see
+[`whatsapp_bot/README.md`](whatsapp_bot/README.md) for the full setup
+(Meta credentials, webhook configuration, dry-run testing, tuning).
+
+Quick start:
+
+```bash
+.venv/bin/python manage.py seed_faqs     # load the FAQ knowledge base
+```
+
+Then fill in the `WHATSAPP_*` variables in `.env` and point Meta at
+`https://<your-host>/webhooks/whatsapp/`. Conversations are visible read-only
+under **Admin → WhatsApp assistant**.
+
 ## Content API
 
 The React frontend reads this read-only JSON API. All endpoints are `GET` and
@@ -282,7 +316,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 
 | Endpoint           | Returns                                              |
 | ------------------ | ---------------------------------------------------- |
-| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages) |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages, faqs) |
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
@@ -290,6 +324,7 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 | `/api/piscine/`    | next-piscine toggle, date and message                |
 | `/api/pages/`      | published pages with their sections                  |
 | `/api/pages/<slug>/` | a single page by slug, e.g. `/api/pages/about-us/` |
+| `/api/faqs/`       | active FAQ categories with their questions/answers   |
 
 Example:
 
