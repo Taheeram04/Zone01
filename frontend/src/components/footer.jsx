@@ -1,15 +1,8 @@
 // components/footer.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  FaPhone,
-  FaFacebookF,
-  FaXTwitter,
-  FaInstagram,
-  FaLinkedinIn,
-  FaYoutube,
-  FaTiktok,
-} from 'react-icons/fa6';
+import { FaPhone } from 'react-icons/fa6';
+import { SOCIAL_LINKS } from '../social.js';
 import logo from '../assets/whitelogo.png';
 
 // Footer navigation links, laid out in a single aligned grid.
@@ -21,52 +14,6 @@ const footerLinks = [
   { label: 'FAQ', href: '/faq' },
   { label: 'PRIVACY', href: '/privacy' },
   { label: 'CAREERS', href: '/careers' },
-];
-
-// Social media links including TikTok placed last with matching size and design
-const socialLinks = [
-  {
-    type: 'solid',
-    Icon: FaFacebookF,
-    href: 'https://www.facebook.com/share/1DLp6tDVmK/?mibextid=wwXIfr',
-    label: 'Facebook',
-    iconClass: 'w-[13px] h-[13px] sm:w-[15px] sm:h-[15px]',
-  },
-  {
-    type: 'outlined',
-    Icon: FaXTwitter,
-    href: 'https://x.com/Zone01Kisumu',
-    label: 'X (formerly Twitter)',
-    iconClass: 'w-[12px] h-[12px] sm:w-[14px] sm:h-[14px]',
-  },
-  {
-    type: 'solid',
-    Icon: FaInstagram,
-    href: 'https://www.instagram.com/zone01_kisumu/',
-    label: 'Instagram',
-    iconClass: 'w-[14px] h-[14px] sm:w-[16px] sm:h-[16px]',
-  },
-  {
-    type: 'solid',
-    Icon: FaLinkedinIn,
-    href: 'https://www.linkedin.com/company/zone01kisumu/',
-    label: 'LinkedIn',
-    iconClass: 'w-[12px] h-[12px] sm:w-[14px] sm:h-[14px]',
-  },
-  {
-    type: 'solid',
-    Icon: FaYoutube,
-    href: 'https://www.youtube.com/@Zone01Kisumu',
-    label: 'YouTube',
-    iconClass: 'w-[13px] h-[13px] sm:w-[15px] sm:h-[15px]',
-  },
-  {
-    type: 'solid',
-    Icon: FaTiktok,
-    href: 'https://www.tiktok.com/@zone01kisumu?_r=1&_t=ZS-9ANaGVKhcEH',
-    label: 'TikTok',
-    iconClass: 'w-[13px] h-[13px] sm:w-[14px] sm:h-[14px]',
-  },
 ];
 
 const Footer = () => {
@@ -175,7 +122,7 @@ const Footer = () => {
 
             {/* Social Icons (6 icons including TikTok placed last) */}
             <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:gap-3">
-              {socialLinks.map(({ type, Icon, href, label, iconClass }) => (
+              {SOCIAL_LINKS.map(({ type, Icon, href, label, iconClass }) => (
                 <a
                   key={label}
                   href={href}

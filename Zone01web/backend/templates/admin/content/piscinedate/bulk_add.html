@@ -1,0 +1,144 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate "Home" %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url 'admin:site_content_piscinedate_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; {% translate "Add multiple dates" %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <p class="errornote">{{ form.non_field_errors|join:" " }}</p>
+    {% endif %}
+
+    <fieldset class="module aligned">
+      <h2>{% translate "Schedule" %}</h2>
+
+      <div class="form-row">
+        {{ form.mode.errors }}
+        <div>
+          <label>{{ form.mode.label }}:</label>
+          {{ form.mode }}
+          {% if form.mode.help_text %}<div class="help">{{ form.mode.help_text }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div data-mode="recurring">
+        <div class="form-row">
+          {{ form.start_date.errors }}
+          <div>
+            <label for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}:</label>
+            {{ form.start_date }}
+            {% if form.start_date.help_text %}<div class="help">{{ form.start_date.help_text }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ form.interval_weeks.errors }}
+          <div>
+            <label for="{{ form.interval_weeks.id_for_label }}">{{ form.interval_weeks.label }}:</label>
+            {{ form.interval_weeks }}
+            {% if form.interval_weeks.help_text %}<div class="help">{{ form.interval_weeks.help_text }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ form.count.errors }}
+          <div>
+            <label for="{{ form.count.id_for_label }}">{{ form.count.label }}:</label>
+            {{ form.count }}
+            {% if form.count.help_text %}<div class="help">{{ form.count.help_text }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ form.end_date.errors }}
+          <div>
+            <label for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}:</label>
+            {{ form.end_date }}
+            {% if form.end_date.help_text %}<div class="help">{{ form.end_date.help_text }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div data-mode="list">
+        <div class="form-row">
+          {{ form.dates.errors }}
+          <div>
+            <label for="{{ form.dates.id_for_label }}">{{ form.dates.label }}:</label>
+            {{ form.dates }}
+            {% if form.dates.help_text %}<div class="help">{{ form.dates.help_text }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        {{ form.label.errors }}
+        <div>
+          <label for="{{ form.label.id_for_label }}">{{ form.label.label }}:</label>
+          {{ form.label }}
+          {% if form.label.help_text %}<div class="help">{{ form.label.help_text }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-row">
+        {{ form.message.errors }}
+        <div>
+          <label for="{{ form.message.id_for_label }}">{{ form.message.label }}:</label>
+          {{ form.message }}
+          {% if form.message.help_text %}<div class="help">{{ form.message.help_text }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-row">
+        {{ form.is_active.errors }}
+        <div>
+          <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}:</label>
+          {{ form.is_active }}
+          {% if form.is_active.help_text %}<div class="help">{{ form.is_active.help_text }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-row">
+        {{ form.skip_existing.errors }}
+        <div>
+          <label for="{{ form.skip_existing.id_for_label }}">{{ form.skip_existing.label }}:</label>
+          {{ form.skip_existing }}
+          {% if form.skip_existing.help_text %}<div class="help">{{ form.skip_existing.help_text }}</div>{% endif %}
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="submit-row">
+      <input type="submit" value="{% translate 'Add dates' %}" class="default" />
+      <a href="{% url 'admin:site_content_piscinedate_changelist' %}" class="closelink">
+        {% translate "Cancel" %}
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+  (function () {
+    const updateMode = () => {
+      const checked = document.querySelector('input[name="mode"]:checked');
+      const mode = checked ? checked.value : 'recurring';
+      document.querySelectorAll('[data-mode]').forEach((block) => {
+        block.hidden = block.dataset.mode !== mode;
+      });
+    };
+    document.querySelectorAll('input[name="mode"]').forEach((input) => {
+      input.addEventListener('change', updateMode);
+    });
+    updateMode();
+  })();
+</script>
+{% endblock %}

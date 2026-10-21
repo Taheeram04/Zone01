@@ -3,6 +3,7 @@ import Layout from './components/layout.jsx';
 import ComingSoon from './components/coming-soon.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
+import CommunityFeed from './components/community-feed.jsx';
 import Faqs from './components/faqs.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
@@ -32,13 +33,14 @@ function App() {
         }
       />
 
-      {/* Community — partners hero + 3D glowing staff carousel */}
+      {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
       <Route
         path="/community"
         element={
           <Layout>
             <Community />
             <OurStaff />
+            <CommunityFeed />
           </Layout>
         }
       />

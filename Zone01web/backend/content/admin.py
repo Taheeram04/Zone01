@@ -7,12 +7,20 @@ The editorial stream models (:class:`~content.models.Category` and
 their searches run against the GIN/trigram indexes on the model.
 """
 
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import path, reverse
+from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.translation import ngettext
 
+from content.forms import PiscineDateBulkAddForm
 from content.models import (
     Article,
     Category,
+    CommunityPost,
     FaqCategory,
     FaqItem,
     ImpactUpdate,
@@ -21,7 +29,6 @@ from content.models import (
     PageSection,
     Partner,
     PiscineDate,
-    PiscineRegistration,
     SiteLink,
     StaffMember,
 )
@@ -109,6 +116,32 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
         )
 
 
+@admin.register(CommunityPost)
+class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
+    """Manage every News / Event / Blog / Podcast card from one list."""
+
+    image_field = "cover_image"
+    list_display = (
+        "preview",
+        "title",
+        "kind",
+        "platform",
+        "is_featured",
+        "is_published",
+        "published_at",
+        "order",
+    )
+    list_editable = ("is_featured", "is_published", "order")
+    list_filter = ("kind", "platform", "is_published", "is_featured")
+    date_hierarchy = "published_at"
+    search_fields = ("title", "summary", "body", "slug")
+    trigram_search_fields = ("title", "summary", "body", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("kind", "-is_featured", "-published_at", "order")
+    show_full_result_count = False
+
+
 @admin.register(SiteLink)
 class SiteLinkAdmin(admin.ModelAdmin):
     list_display = ("label", "url", "order", "is_active", "open_in_new_tab", "show_chevron")
@@ -121,59 +154,109 @@ class SiteLinkAdmin(admin.ModelAdmin):
 
 @admin.register(PiscineDate)
 class PiscineDateAdmin(admin.ModelAdmin):
-    """Manage the list of scheduled piscine dates.
+    """One page for the piscine schedule and its notification.
 
-    Editors add one row per date; the website always uses the soonest upcoming
-    active date and advances to the next one automatically.
+    Each row is a piscine: its date, label, banner message and active flag.
+    Editors add one row at a time, or use "Add multiple dates" to generate a
+    recurring schedule (e.g. a whole year of four-week cycles) or paste a list.
+    The website always uses the soonest upcoming active row, so the countdown
+    advances automatically once a piscine begins. Unchecking every upcoming row
+    turns the banner off.
     """
 
-    list_display = ("date", "label", "is_active", "upcoming", "created_at")
-    list_editable = ("label", "is_active")
+    list_display = ("date", "label", "message", "is_active", "upcoming", "updated_at")
+    list_editable = ("label", "message", "is_active")
     list_filter = ("is_active",)
     date_hierarchy = "date"
     ordering = ("date", "id")
-    readonly_fields = ("created_at",)
-    search_fields = ("label",)
+    readonly_fields = ("created_at", "updated_at")
+    search_fields = ("label", "message")
+    change_list_template = "admin/content/piscinedate/change_list.html"
+    actions = ("activate_piscines", "deactivate_piscines")
 
     @admin.display(boolean=True, description="Upcoming")
     def upcoming(self, obj):
         return obj.is_upcoming
 
+    @admin.action(description="Show selected piscines on the website")
+    def activate_piscines(self, request, queryset):
+        updated = queryset.update(is_active=True, updated_at=timezone.now())
+        self.message_user(
+            request,
+            ngettext(
+                "%(count)d piscine activated.",
+                "%(count)d piscines activated.",
+                updated,
+            )
+            % {"count": updated},
+            messages.SUCCESS,
+        )
 
-@admin.register(PiscineRegistration)
-class PiscineRegistrationAdmin(admin.ModelAdmin):
-    list_display = ("is_active", "live", "next_date", "updated_at")
-    list_display_links = ("next_date",)
-    # Flip the countdown on/off straight from the list.
-    list_editable = ("is_active",)
-    readonly_fields = ("updated_at",)
+    @admin.action(description="Hide selected piscines from the website")
+    def deactivate_piscines(self, request, queryset):
+        updated = queryset.update(is_active=False, updated_at=timezone.now())
+        self.message_user(
+            request,
+            ngettext(
+                "%(count)d piscine hidden.",
+                "%(count)d piscines hidden.",
+                updated,
+            )
+            % {"count": updated},
+            messages.SUCCESS,
+        )
 
-    @admin.display(description="Next date")
-    def next_date(self, obj):
-        return obj.next_piscine_date or "-"
+    def get_urls(self):
+        # Registered before the standard admin URLs so "bulk-add/" is not
+        # mistaken for an object id by the catch-all change view.
+        custom_urls = [
+            path(
+                "bulk-add/",
+                self.admin_site.admin_view(self.bulk_add_view),
+                name="site_content_piscinedate_bulk_add",
+            ),
+        ]
+        return custom_urls + super().get_urls()
 
-    @admin.display(boolean=True, description="Live now")
-    def live(self, obj):
-        # True while the toggle is on and an upcoming piscine date exists.
-        return obj.is_live
+    def bulk_add_view(self, request):
+        """Add several piscine dates in one form submission."""
+        if not self.has_add_permission(request):
+            raise PermissionDenied
 
-    def has_add_permission(self, request):
-        # Keep a single settings row, but let editors edit the banner: the add
-        # form upserts pk=1 (see PiscineRegistration.save).
-        return True
+        form = PiscineDateBulkAddForm(request.POST or None)
+        if request.method == "POST" and form.is_valid():
+            created, skipped = form.save()
+            self.message_user(
+                request,
+                ngettext(
+                    "%(count)d piscine date added.",
+                    "%(count)d piscine dates added.",
+                    created,
+                )
+                % {"count": created},
+                messages.SUCCESS,
+            )
+            if skipped:
+                self.message_user(
+                    request,
+                    ngettext(
+                        "%(count)d existing date was skipped.",
+                        "%(count)d existing dates were skipped.",
+                        skipped,
+                    )
+                    % {"count": skipped},
+                    messages.WARNING,
+                )
+            return HttpResponseRedirect(reverse("admin:site_content_piscinedate_changelist"))
 
-    def get_changeform_initial_data(self, request):
-        # Prefill the add form from the current row so editing the banner starts
-        # from the existing values instead of blanks.
-        initial = super().get_changeform_initial_data(request)
-        current = PiscineRegistration.objects.filter(pk=1).first()
-        if current is not None:
-            initial.setdefault("is_active", current.is_active)
-            initial.setdefault("message", current.message)
-        return initial
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Add multiple piscine dates",
+            "opts": self.model._meta,
+            "form": form,
+            "add": True,
+        }
+        return render(request, "admin/content/piscinedate/bulk_add.html", context)
 
 
 @admin.register(Category)

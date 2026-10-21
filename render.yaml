@@ -1,30 +1,31 @@
-# Render Blueprint for the Zone01 Kisumu React frontend (static site).
-#
-# The Django backend/API is deployed separately. Set VITE_API_BASE_URL to its
-# public URL in the Render dashboard -- Vite bakes it into the bundle at build
-# time. Use "Sync" (blueprint) or copy these values into an existing service.
+# Render Blueprint for the whole Zone01 app: one Docker service serves the
+# Django API, admin and the built React SPA, backed by a Render Postgres.
 #
 # Docs: https://render.com/docs/blueprint-spec
+databases:
+  - name: zone01-db
+    databaseName: zone01
+    user: zone01
+    plan: free
+    region: oregon
+
 services:
   - type: web
-    name: zone01-kisumu-web
-    runtime: static
-    branch: main
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    name: zone01-kisumu
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    preDeployCommand: python manage.py migrate --noinput
     autoDeploy: true
     envVars:
-      # Vite 8 requires Node >= 20.19 / 22.12.
-      - key: NODE_VERSION
-        value: 22.12.0
-      # Public URL of the Django API, e.g. https://zone01-kisumu-api.fly.dev.
-      # Set the value in the Render dashboard (prompted on first deploy).
-      - key: VITE_API_BASE_URL
-        sync: false
-    routes:
-      # Client-side routing: serve index.html for every non-file path so
-      # /about, /community, /impact, etc. work on direct navigation or refresh.
-      - type: rewrite
-        source: /*
-        destination: /index.html
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: zone01-db
+          property: connectionString
