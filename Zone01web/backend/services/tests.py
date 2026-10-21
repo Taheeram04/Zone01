@@ -20,9 +20,7 @@ class ServiceModelTests(TestCase):
         self.assertEqual(service.slug, "software-development-as-a-service")
 
     def test_duplicate_names_get_unique_slugs(self):
-        first = Service.objects.create(
-            name="React", title="React", description="Frontend library."
-        )
+        first = Service.objects.create(name="React", title="React", description="Frontend library.")
         second = Service.objects.create(
             name="React", title="React", description="Also a frontend library."
         )
@@ -74,9 +72,7 @@ class ServiceApiTests(TestCase):
         )
         self.assertEqual(payload["navbar_services"]["languages"][0]["name"], "Python")
         self.assertEqual(payload["navbar_services"]["frameworks"][0]["name"], "Django")
-        self.assertEqual(
-            payload["navbar_services"]["specializations"][0]["name"], "DevOps"
-        )
+        self.assertEqual(payload["navbar_services"]["specializations"][0]["name"], "DevOps")
 
     def test_detail_returns_service_by_slug(self):
         response = self.client.get(
@@ -90,8 +86,6 @@ class ServiceApiTests(TestCase):
         self.assertIn("languages", payload["navbar_services"])
 
     def test_detail_404s_for_unknown_slug(self):
-        response = self.client.get(
-            reverse("services_api:service-detail", args=["does-not-exist"])
-        )
+        response = self.client.get(reverse("services_api:service-detail", args=["does-not-exist"]))
 
         self.assertEqual(response.status_code, 404)

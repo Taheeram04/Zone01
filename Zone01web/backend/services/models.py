@@ -86,6 +86,11 @@ class Service(models.Model):
     def __str__(self):
         return self.title or self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._unique_slug()
+        super().save(*args, **kwargs)
+
     def _unique_slug(self):
         base = slugify(self.name)[:240] or "service"
         slug = base
@@ -95,8 +100,3 @@ class Service(models.Model):
             slug = f"{base}-{suffix}"
             suffix += 1
         return slug
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = self._unique_slug()
-        super().save(*args, **kwargs)
