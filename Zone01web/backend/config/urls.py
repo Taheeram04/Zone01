@@ -3,6 +3,7 @@
 One Django service hosts the whole product:
 
 * ``/api/``     - the read-only JSON API the React frontend consumes.
+  ``/api/services/`` serves the Hire Talent service catalogue.
 * ``/admin/``   - the Django admin (content editing, applicants, events).
 * ``/healthz``  - liveness check.
 * everything else - the built React SPA (client-side routing), served by
@@ -25,6 +26,7 @@ admin.site.index_template = "admin/frontend_status_index.html"
 
 urlpatterns = [
     path("healthz", health, name="health"),
+    path("api/services/", include("services.urls")),
     path("api/", include("content.urls")),
     # Unknown API paths must 404 as JSON, not fall through to the SPA.
     re_path(r"^api/.*$", api_not_found, name="api-not-found"),

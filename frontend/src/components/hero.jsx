@@ -274,7 +274,7 @@ const Hero = () => {
               top: `${node.top}%`,
               transform: 'translate(-50%, -50%)',
               animation: `pulse-glow ${node.duration}s ease-in-out ${node.delay}s infinite`,
-              boxShadow: '0 0 8px 2px rgba(53,214,180,0.6)',
+              boxShadow: '0 0 8px 2px rgba(61,139,253,0.6)',
             }}
           />
         ))}

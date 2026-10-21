@@ -14,6 +14,7 @@ import Careers from './components/careers.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
 import Register from './pages/Register.jsx';
+import Hire from './pages/Hire.jsx';
 
 const Home = () => (
   <>
@@ -64,7 +65,17 @@ function App() {
         }
       />
 
-      {['/impact', '/hire', '/donate', '*'].map((path) => (
+      {/* Hire Talent — service catalogue, technologies and employer CTA */}
+      <Route
+        path="/hire"
+        element={
+          <Layout>
+            <Hire />
+          </Layout>
+        }
+      />
+
+      {['/impact', '/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}

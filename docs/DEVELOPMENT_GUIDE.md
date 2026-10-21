@@ -74,7 +74,7 @@ Zone01/
 │   │   ├── main.jsx                 # React entry (BrowserRouter)
 │   │   ├── App.jsx                  # Route table
 │   │   ├── components/              # Page sections & UI
-│   │   ├── pages/                   # Standalone pages (e.g. Register)
+│   │   ├── pages/                   # Standalone pages (e.g. Register, Hire)
 │   │   ├── assets/                  # Images
 │   │   ├── constants.js             # Shared constants
 │   │   ├── index.css / App.css
@@ -88,6 +88,7 @@ Zone01/
         ├── config/                  # settings.py, urls.py, wsgi/asgi
         ├── core/                    # health check + admin frontend-status board
         ├── content/                 # site content models + JSON API
+        ├── services/                # Hire Talent service catalogue + JSON API
         ├── applicants/              # applicant intake & review
         ├── events/                  # events & registrations
         ├── templates/               # CMS page templates + admin overrides
@@ -669,6 +670,8 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 | `/api/piscine/` | Next-piscine toggle, date and message |
 | `/api/pages/` | Published CMS pages with their sections (where enabled) |
 | `/api/pages/<slug>/` | A single page by slug |
+| `/api/services/` | Hire Talent catalogue: `services` plus grouped `navbar_services` (`what_we_offer`, `languages`, `frameworks`, `specializations`) |
+| `/api/services/<slug>/` | A single service by slug (detail page) |
 
 Example:
 
@@ -695,6 +698,7 @@ Log in at `/admin/` with a staff account.
 | **News** | title, image, information, publish toggle, order |
 | **Impact** | title, image, information, report PDF, publish toggle, order |
 | **Site links** | label, url, order, is_active, open_in_new_tab, show_chevron |
+| **Services** | title, name, slug, category, description, icon, order — powers the `/hire` page |
 | **Next piscine registration** | is_active, next_piscine_date, message — still a singleton, but **Add** opens a prefilled form to schedule the next piscine (saving replaces the single row) |
 | **Frontend pages** | label, path, is_active, order (monitor list) |
 | **Applicants** | name, email, county, education level, status, submitted_at |
