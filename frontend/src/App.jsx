@@ -1,24 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout.jsx';
-import Hero from './components/hero.jsx';
-import Stats from './components/stats.jsx';
-import WhoCanApply from './components/whocanapply.jsx';
-import WhoIsItFor from './components/whoisitfor.jsx';
-import WhyOurCampus from './components/whyourcampus.jsx';
 import ComingSoon from './components/coming-soon.jsx';
-import Apply from './pages/Apply.jsx';
+import Community from './components/community.jsx';
+import OurStaff from './components/our-staff.jsx';
+import CommunityFeed from './components/community-feed.jsx';
+import Faqs from './components/faqs.jsx';
+import Home from './pages/Home.jsx';
+import About from './pages/About.jsx';
 import Register from './pages/Register.jsx';
+import Hire from './pages/Hire.jsx';
 import Impact from './pages/Impact.jsx';
-
-const Home = () => (
-  <>
-    <Hero />
-    <Stats />
-    <WhoCanApply />
-    <WhoIsItFor />
-    <WhyOurCampus />
-  </>
-);
 
 function App() {
   return (
@@ -31,13 +22,52 @@ function App() {
           </Layout>
         }
       />
-      {/* Standalone dark login / onboarding page */}
-      <Route path="/apply" element={<Apply />} />
-
       {/* Standalone dark registration page */}
       <Route path="/register" element={<Register />} />
 
-      {/* Impact page */}
+      {/* About Us — hero, Know Us, Our Model Works, How to Apply, Careers */}
+      <Route
+        path="/about"
+        element={
+          <Layout>
+            <About />
+          </Layout>
+        }
+      />
+
+      {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
+      <Route
+        path="/community"
+        element={
+          <Layout>
+            <Community />
+            <OurStaff />
+            <CommunityFeed />
+          </Layout>
+        }
+      />
+
+      {/* FAQs — hover-to-reveal Q&A tables */}
+      <Route
+        path="/faq"
+        element={
+          <Layout>
+            <Faqs />
+          </Layout>
+        }
+      />
+
+      {/* Hire Talent — service catalogue, technologies and employer CTA */}
+      <Route
+        path="/hire"
+        element={
+          <Layout>
+            <Hire />
+          </Layout>
+        }
+      />
+
+      {/* Our Impact — cross-zoom hero, headline results and geographic reach */}
       <Route
         path="/impact"
         element={
@@ -47,7 +77,7 @@ function App() {
         }
       />
 
-      {['/about', '/community', '/hire', '*'].map((path) => (
+      {['/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}

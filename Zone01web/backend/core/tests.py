@@ -1,17 +1,27 @@
+import shutil
+import tempfile
 from functools import reduce
 from operator import and_, or_
+from pathlib import Path
 from unittest import skipIf, skipUnless
+from unittest.mock import patch
+from urllib.error import URLError
 
+from cms.utils.permissions import set_current_user
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
+from django.urls import reverse
 
 from applicants.admin import ApplicantAdmin
 from applicants.models import Applicant
 from core.indexes import GinTrigramIndex
+from core.models import FrontendPage
 from core.search import RANK_ANNOTATION, TrigramSearchMixin
+from core.views import build_page_url
 
 postgres_only = skipUnless(connection.vendor == "postgresql", "PostgreSQL only")
 other_backend_only = skipIf(connection.vendor == "postgresql", "non-PostgreSQL only")
@@ -23,6 +33,22 @@ def resolve_search_field(model, search_field):
     for part in parts[:-1]:
         model = model._meta.get_field(part).related_model
     return model, parts[-1]
+
+
+class FakeResponse:
+    """Minimal stand-in for the context manager ``urlopen`` returns."""
+
+    def __init__(self, status=200):
+        self.status = status
+
+    def read(self, *_args):
+        return b""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        return False
 
 
 class HealthEndpointTests(TestCase):
@@ -87,7 +113,7 @@ class TrigramTermTests(TestCase):
 @postgres_only
 class IContainsLookupTests(TestCase):
     def test_icontains_renders_as_ilike(self):
-        sql, params = Applicant.objects.filter(first_name__icontains="am").query.sql_with_params()
+        sql, params = Applicant.objects.filter(name__icontains="am").query.sql_with_params()
 
         self.assertIn("ILIKE", sql)
         self.assertNotIn("UPPER", sql)
@@ -101,15 +127,15 @@ class TrigramRankingTests(TestCase):
         # Both rows contain the term, but only in the first one does it dominate
         # the searchable text, so the first should outrank the second.
         self.exact = Applicant.objects.create(
-            first_name="Achieng",
-            last_name="Odhiambo",
+            name="Achieng Odhiambo",
             email="achieng@example.com",
-            county="Nairobi",
+            choice="fullstack",
+            motivation="I would like to join the programme.",
         )
         self.buried = Applicant.objects.create(
-            first_name="Brian",
-            last_name="Ochieng",
+            name="Brian Ochieng",
             email="brian@example.com",
+            choice="fullstack",
             motivation="I heard about Odhiambo on the radio and would like to apply",
         )
 
@@ -166,3 +192,92 @@ class TrigramRankingTests(TestCase):
         queryset = self.changelist({"q": "od"})
 
         self.assertNotIn(RANK_ANNOTATION, queryset.query.annotations)
+
+
+class BuildPageUrlTests(TestCase):
+    def test_joins_paths_without_doubling_slashes(self):
+        self.assertEqual(build_page_url("https://x.test/", "/about"), "https://x.test/about")
+        self.assertEqual(build_page_url("https://x.test", "about"), "https://x.test/about")
+        self.assertEqual(build_page_url("https://x.test", "/"), "https://x.test/")
+
+
+class FrontendStatusTests(TestCase):
+    def setUp(self):
+        # CurrentUserMiddleware stores the user in a thread local that outlives
+        # the request, so clear any leftover before creating a new user (the
+        # django CMS post_save signal would otherwise reference a rolled-back
+        # creator row).
+        set_current_user(None)
+        # The seed migration ships default pages; start from a clean slate.
+        FrontendPage.objects.all().delete()
+        self.staff = get_user_model().objects.create_user(
+            username="staff", password="pw", is_staff=True
+        )
+        FrontendPage.objects.create(label="About Us", path="/about", order=1)
+        FrontendPage.objects.create(label="Hidden", path="/hidden", is_active=False, order=2)
+
+    def tearDown(self):
+        set_current_user(None)
+
+    def test_requires_staff_login(self):
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.status_code, 302)
+
+    @patch("core.views.urlopen")
+    def test_lists_root_and_active_pages_only(self, mock_urlopen):
+        mock_urlopen.return_value = FakeResponse(200)
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.status_code, 200)
+        labels = [page["label"] for page in response.context["pages"]]
+        self.assertEqual(labels, ["Home", "About Us"])
+        self.assertEqual(response.context["up_count"], 2)
+        self.assertTrue(response.context["all_up"])
+
+    @patch("core.views.urlopen")
+    def test_reports_down_pages(self, mock_urlopen):
+        mock_urlopen.side_effect = URLError("connection refused")
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("frontend-status"))
+
+        self.assertEqual(response.context["up_count"], 0)
+        self.assertFalse(response.context["all_up"])
+        for page in response.context["pages"]:
+            self.assertFalse(page["reachable"])
+            self.assertIn("connection refused", page["error"])
+
+
+class SpaServingTests(TestCase):
+    def _built_index(self):
+        directory = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        index = Path(directory) / "index.html"
+        index.write_text('<div id="root">spa</div>', encoding="utf-8")
+        return index
+
+    def test_serves_index_for_root_and_client_routes(self):
+        with override_settings(FRONTEND_INDEX=self._built_index()):
+            root = self.client.get("/")
+            deep = self.client.get("/about")
+
+        self.assertEqual(root.status_code, 200)
+        self.assertEqual(root["Content-Type"], "text/html")
+        self.assertContains(root, 'id="root"')
+        self.assertEqual(deep.status_code, 200)
+        self.assertContains(deep, 'id="root"')
+
+    def test_missing_build_returns_404(self):
+        with override_settings(FRONTEND_INDEX=Path("/nonexistent/index.html")):
+            response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_unknown_api_path_returns_json_404(self):
+        response = self.client.get("/api/does-not-exist/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "Not found")

@@ -9,7 +9,11 @@ React frontend as JSON under ``/api/``:
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
-* :class:`PiscineRegistration` - the "Apply now" alert banner and its date.
+* :class:`CommunityPost` - a single stream of community updates tagged as news,
+  events, blog or podcast, each optionally carrying an image, a video and a
+  link to the social account it came from.
+* :class:`PiscineDate` - the piscine schedule and notification in one list
+  (each row carries its own date, banner message and active flag).
 * :class:`Page` + :class:`PageSection` - editable content for a frontend page
   (home, about-us, community, ...), built from ordered reusable sections.
 
@@ -162,70 +166,205 @@ class ImpactUpdate(OrderedContent):
         return self.title
 
 
-class PiscineRegistration(models.Model):
-    """Singleton controlling the next-piscine countdown in the hero.
+class CommunityPost(OrderedContent):
+    """An item in the community hub, grouped by :attr:`kind`.
 
-    Only one row ever exists (``pk=1``). Editors toggle :attr:`is_active` on to
-    show the countdown and set :attr:`next_piscine_date`; the alert switches
-    itself off automatically at 09:00 EAT on that date.
+    One model backs all four groups on the public "Community" page (news,
+    events, blog and podcast) so editors manage everything from a single admin
+    list. A post can carry a picture (:attr:`cover_image`), a video
+    (:attr:`video_url`) and/or a link to the social post it came from
+    (:attr:`external_url` + :attr:`platform`); the frontend renders whichever
+    of these are set.
     """
 
-    is_active = models.BooleanField(
-        default=False,
-        help_text="Turn the next-piscine alert on or off.",
+    class Kind(models.TextChoices):
+        NEWS = "news", "News"
+        EVENT = "event", "Event"
+        BLOG = "blog", "Blog"
+        PODCAST = "podcast", "Podcast"
+
+    class Platform(models.TextChoices):
+        WEBSITE = "website", "Website"
+        FACEBOOK = "facebook", "Facebook"
+        X = "x", "X (Twitter)"
+        INSTAGRAM = "instagram", "Instagram"
+        LINKEDIN = "linkedin", "LinkedIn"
+        YOUTUBE = "youtube", "YouTube"
+        TIKTOK = "tiktok", "TikTok"
+
+    kind = models.CharField(
+        max_length=20,
+        choices=Kind.choices,
+        default=Kind.NEWS,
+        help_text="Which community group this post belongs to.",
     )
-    next_piscine_date = models.DateField(
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        help_text="URL-safe identifier, generated from the title.",
+    )
+    summary = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="One-line teaser shown on the collapsed row and cards.",
+    )
+    body = models.TextField(blank=True, help_text="The full story or episode notes.")
+    cover_image = FilerImageField(
         null=True,
         blank=True,
-        help_text="Date the next piscine starts.",
+        on_delete=models.SET_NULL,
+        related_name="community_post_covers",
+        help_text="Picture shown on the card (poster frame for a video).",
+    )
+    video_url = models.URLField(
+        blank=True,
+        help_text="Optional video/episode URL, e.g. a YouTube or podcast link.",
+    )
+    external_url = models.URLField(
+        blank=True,
+        help_text="Optional link to the original post on a social platform.",
+    )
+    platform = models.CharField(
+        max_length=20,
+        choices=Platform.choices,
+        default=Platform.WEBSITE,
+        help_text="Where this post came from (drives the badge on the card).",
+    )
+    event_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="For events: when it takes place.",
+    )
+    published_at = models.DateTimeField(default=timezone.now)
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Pin to the front of its group on the website.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "community post"
+        verbose_name_plural = "community posts"
+        ordering = ["-is_featured", "-published_at", "order", "id"]
+        indexes = [
+            models.Index(fields=["kind", "is_published"], name="community_kind_pub_idx"),
+            # One GIN/trigram index per column searched in the admin: see
+            # core.indexes.GinTrigramIndex for why these are single-column.
+            GinTrigramIndex(fields=["title"], name="community_title_trgm"),
+            GinTrigramIndex(fields=["summary"], name="community_summary_trgm"),
+            GinTrigramIndex(fields=["body"], name="community_body_trgm"),
+            GinTrigramIndex(fields=["slug"], name="community_slug_trgm"),
+        ]
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.title}"
+
+
+class SiteLink(OrderedContent):
+    """A navigation link rendered in the website header.
+
+    Editors add, reorder and hide header links from the admin. :attr:`url` may
+    be an internal path (``/about``) or a full external URL (``https://...``).
+    """
+
+    label = models.CharField(max_length=100)
+    url = models.CharField(
+        max_length=500,
+        help_text="Internal path (e.g. /about) or a full external URL (https://...).",
+    )
+    is_active = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    open_in_new_tab = models.BooleanField(
+        default=False,
+        help_text="Open this link in a new tab.",
+    )
+    show_chevron = models.BooleanField(
+        default=False,
+        help_text="Show a small dropdown chevron next to the label.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "site link"
+        verbose_name_plural = "site links"
+
+    def __str__(self):
+        return self.label
+
+    @property
+    def is_external(self):
+        """True when the link points off-site, so the frontend can use an ``<a>``."""
+        return self.url.startswith(("http://", "https://", "//"))
+
+
+class PiscineDate(models.Model):
+    """One scheduled piscine, with its notification settings.
+
+    Every row is a piscine: the date it starts (09:00 Kisumu time, EAT), an
+    optional label, and the banner text for that piscine. The website always
+    targets the soonest upcoming active row, so the countdown rolls on to the
+    next date automatically once a piscine begins -- no manual re-activation
+    needed.
+
+    There is no separate settings row: the notification is simply the next
+    active entry in this list. Deactivating the remaining upcoming rows turns
+    the banner off.
+    """
+
+    date = models.DateField(
+        help_text="Date this piscine starts (09:00 EAT).",
+    )
+    label = models.CharField(
+        max_length=120,
+        blank=True,
+        help_text="Optional label for this date. Leave blank for the default.",
     )
     message = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Optional custom text. Leave blank for the default message.",
+        help_text=(
+            "Optional banner text for this piscine. The soonest upcoming "
+            "date's message is shown on the website."
+        ),
     )
-    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this piscine from the website.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
-        verbose_name = "next piscine registration"
-        verbose_name_plural = "next piscine registration"
+        ordering = ["date", "id"]
+        verbose_name = "piscine date"
+        verbose_name_plural = "piscine dates"
 
     def __str__(self):
-        if self.next_piscine_date:
-            return f"Next piscine: {self.next_piscine_date:%d %b %Y}"
-        return "Next piscine"
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super().save(*args, **kwargs)
+        if self.label:
+            return f"{self.date:%d %b %Y} - {self.label}"
+        return f"{self.date:%d %b %Y}"
 
     @property
     def starts_at(self):
-        """Timezone-aware start moment (09:00 EAT on :attr:`next_piscine_date`)."""
-        if not self.next_piscine_date:
-            return None
-        naive = datetime.datetime.combine(self.next_piscine_date, PISCINE_START_TIME)
+        """Timezone-aware start moment (09:00 EAT on :attr:`date`)."""
+        naive = datetime.datetime.combine(self.date, PISCINE_START_TIME)
         return timezone.make_aware(naive, PISCINE_TIMEZONE)
 
     @property
-    def is_live(self):
-        """True only while the toggle is on and the start moment is still ahead."""
-        starts = self.starts_at
-        return bool(self.is_active and starts and starts > timezone.now())
+    def is_upcoming(self):
+        """True while this date's 09:00 EAT start is still ahead."""
+        return self.starts_at > timezone.now()
 
     @classmethod
-    def get_solo(cls):
-        """Return the single settings row, creating it on first access.
+    def upcoming(cls):
+        """Active dates whose start is still ahead, soonest first."""
+        now = timezone.now()
+        return [obj for obj in cls.objects.filter(is_active=True) if obj.starts_at > now]
 
-        Also lazily flips the toggle off once the start time has passed, so the
-        alert switches itself off on D-day and must be re-activated for the next
-        piscine.
-        """
-        obj, _ = cls.objects.get_or_create(pk=1)
-        if obj.is_active and obj.starts_at and obj.starts_at <= timezone.now():
-            obj.is_active = False
-            obj.save(update_fields=["is_active", "updated_at"])
-        return obj
+    @classmethod
+    def next_upcoming(cls):
+        """The soonest upcoming active date, or ``None`` when there are none."""
+        return next(iter(cls.upcoming()), None)
 
 
 class Category(models.Model):
@@ -404,3 +543,67 @@ class PageSection(models.Model):
 
     def __str__(self):
         return self.heading or f"Section {self.pk} of {self.page.title}"
+
+
+class FaqCategory(OrderedContent):
+    """A themed group of FAQ questions (e.g. "The Piscine").
+
+    The FAQ content backs both the website and the WhatsApp assistant, so this
+    is the single source of truth for support answers. Editors manage it from
+    the admin; the assistant reads the active rows through
+    :mod:`whatsapp_bot.retrieval`.
+    """
+
+    slug = models.SlugField(max_length=120, unique=True)
+    title = models.CharField(max_length=200)
+    blurb = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Short description shown under the title.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this group from the website and the assistant.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "FAQ category"
+        verbose_name_plural = "FAQ categories"
+
+    def __str__(self):
+        return self.title
+
+
+class FaqItem(OrderedContent):
+    """One question and its answer.
+
+    ``keywords`` holds extra comma-separated search terms that help the WhatsApp
+    assistant match a visitor's free-text message to this answer when the
+    question wording alone is not enough.
+    """
+
+    category = models.ForeignKey(
+        FaqCategory,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    question = models.CharField(max_length=300)
+    answer = models.TextField(
+        help_text="The full answer. Leave a blank line between paragraphs.",
+    )
+    keywords = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Comma-separated extra keywords for the WhatsApp assistant.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this Q&A from the website and the assistant.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "FAQ item"
+        verbose_name_plural = "FAQ items"
+
+    def __str__(self):
+        return self.question

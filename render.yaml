@@ -1,0 +1,31 @@
+# Render Blueprint for the whole Zone01 app: one Docker service serves the
+# Django API, admin and the built React SPA, backed by a Render Postgres.
+#
+# Docs: https://render.com/docs/blueprint-spec
+databases:
+  - name: zone01-db
+    databaseName: zone01
+    user: zone01
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: zone01-kisumu
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    preDeployCommand: python manage.py migrate --noinput
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: zone01-db
+          property: connectionString

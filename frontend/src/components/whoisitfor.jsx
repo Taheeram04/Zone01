@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { KineticHeading, TypewriterText } from './whocanapply.jsx';
+import { APPLICATION_URL } from '../constants.js';
 import whoIsItFor1 from '../assets/whoisitfor1.png';
 import whoIsItFor2 from '../assets/whoisitfor2.png';
 import whoIsItFor3 from '../assets/whoisitfor3.png';
@@ -55,8 +55,6 @@ const cardVariants = {
 };
 
 const WhoIsItFor = () => {
-  const navigate = useNavigate();
-
   return (
     <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
       <Container>
@@ -68,7 +66,7 @@ const WhoIsItFor = () => {
             className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-tight tracking-tight text-center mb-3"
           />
           <TypewriterText
-            text="World class education made accessible to all in Kisumu, regardless of experience and background"
+            text="World class education made accessible to all, regardless of experience and background"
             className="font-mono text-[15px] sm:text-[16px] md:text-[18px] text-black-900/85 max-w-2xl mx-auto leading-relaxed"
             speed={22}
             delay={200}
@@ -118,7 +116,9 @@ const WhoIsItFor = () => {
         <div className="mt-12 md:mt-16 flex justify-center">
           <Button
             variant="primary"
-            onClick={() => navigate('/apply')}
+            href={APPLICATION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-3"
           >
             Apply Now

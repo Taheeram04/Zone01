@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
 
       {/* Global fixed WhatsApp button hovering across all sections */}
       <motion.a
-        href="https://wa.me/"
+        href="https://wa.me/254748902779"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"

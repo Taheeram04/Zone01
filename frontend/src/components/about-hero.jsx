@@ -1,7 +1,7 @@
 // components/about-hero.jsx
 import { motion } from 'framer-motion';
 import { Container } from './layout.jsx';
-import aboutUs from '../assets/about us.JPG';
+import aboutHeroImg from '../assets/US Embassy at Zone001.jpg';
 
 /**
  * AboutHero
@@ -18,8 +18,8 @@ const AboutHero = () => {
     >
       {/* Background layer — the team photograph, sharp and full-bleed */}
       <img
-        src={aboutUs}
-        alt="The Zone01 Kisumu team gathered at the campus"
+        src={aboutHeroImg}
+        alt="The Zone01 Kisumu community gathered with US Embassy visitors at the campus"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
@@ -35,7 +35,7 @@ const AboutHero = () => {
 
       {/* Text layer — centred */}
       <Container className="relative z-10 py-28 sm:py-32">
-        <div className="mx-auto max-w-6xl text-center">
+        <div className="mx-auto max-w-6xl translate-y-6 text-center sm:translate-y-10">
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}

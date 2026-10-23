@@ -7,18 +7,29 @@ The editorial stream models (:class:`~content.models.Category` and
 their searches run against the GIN/trigram indexes on the model.
 """
 
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import path, reverse
+from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.translation import ngettext
 
+from content.forms import PiscineDateBulkAddForm
 from content.models import (
     Article,
     Category,
+    CommunityPost,
+    FaqCategory,
+    FaqItem,
     ImpactUpdate,
     NewsUpdate,
     Page,
     PageSection,
     Partner,
-    PiscineRegistration,
+    PiscineDate,
+    SiteLink,
     StaffMember,
 )
 from core.search import TrigramSearchMixin
@@ -105,25 +116,147 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
         )
 
 
-@admin.register(PiscineRegistration)
-class PiscineRegistrationAdmin(admin.ModelAdmin):
-    list_display = ("is_active", "live", "next_piscine_date", "updated_at")
-    list_display_links = ("next_piscine_date",)
-    # Flip the countdown on/off straight from the list.
-    list_editable = ("is_active",)
-    readonly_fields = ("updated_at",)
+@admin.register(CommunityPost)
+class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
+    """Manage every News / Event / Blog / Podcast card from one list."""
 
-    @admin.display(boolean=True, description="Live now")
-    def live(self, obj):
-        # True while the toggle is on and the 09:00 EAT start is still ahead.
-        return obj.is_live
+    image_field = "cover_image"
+    list_display = (
+        "preview",
+        "title",
+        "kind",
+        "platform",
+        "is_featured",
+        "is_published",
+        "published_at",
+        "order",
+    )
+    list_editable = ("is_featured", "is_published", "order")
+    list_filter = ("kind", "platform", "is_published", "is_featured")
+    date_hierarchy = "published_at"
+    search_fields = ("title", "summary", "body", "slug")
+    trigram_search_fields = ("title", "summary", "body", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("kind", "-is_featured", "-published_at", "order")
+    show_full_result_count = False
 
-    def has_add_permission(self, request):
-        # Only ever one settings row.
-        return not PiscineRegistration.objects.exists()
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+@admin.register(SiteLink)
+class SiteLinkAdmin(admin.ModelAdmin):
+    list_display = ("label", "url", "order", "is_active", "open_in_new_tab", "show_chevron")
+    list_editable = ("order", "is_active")
+    list_filter = ("is_active", "open_in_new_tab")
+    search_fields = ("label", "url")
+    readonly_fields = ("created_at",)
+    ordering = ("order", "id")
+
+
+@admin.register(PiscineDate)
+class PiscineDateAdmin(admin.ModelAdmin):
+    """One page for the piscine schedule and its notification.
+
+    Each row is a piscine: its date, label, banner message and active flag.
+    Editors add one row at a time, or use "Add multiple dates" to generate a
+    recurring schedule (e.g. a whole year of four-week cycles) or paste a list.
+    The website always uses the soonest upcoming active row, so the countdown
+    advances automatically once a piscine begins. Unchecking every upcoming row
+    turns the banner off.
+    """
+
+    list_display = ("date", "label", "message", "is_active", "upcoming", "updated_at")
+    list_editable = ("label", "message", "is_active")
+    list_filter = ("is_active",)
+    date_hierarchy = "date"
+    ordering = ("date", "id")
+    readonly_fields = ("created_at", "updated_at")
+    search_fields = ("label", "message")
+    change_list_template = "admin/content/piscinedate/change_list.html"
+    actions = ("activate_piscines", "deactivate_piscines")
+
+    @admin.display(boolean=True, description="Upcoming")
+    def upcoming(self, obj):
+        return obj.is_upcoming
+
+    @admin.action(description="Show selected piscines on the website")
+    def activate_piscines(self, request, queryset):
+        updated = queryset.update(is_active=True, updated_at=timezone.now())
+        self.message_user(
+            request,
+            ngettext(
+                "%(count)d piscine activated.",
+                "%(count)d piscines activated.",
+                updated,
+            )
+            % {"count": updated},
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Hide selected piscines from the website")
+    def deactivate_piscines(self, request, queryset):
+        updated = queryset.update(is_active=False, updated_at=timezone.now())
+        self.message_user(
+            request,
+            ngettext(
+                "%(count)d piscine hidden.",
+                "%(count)d piscines hidden.",
+                updated,
+            )
+            % {"count": updated},
+            messages.SUCCESS,
+        )
+
+    def get_urls(self):
+        # Registered before the standard admin URLs so "bulk-add/" is not
+        # mistaken for an object id by the catch-all change view.
+        custom_urls = [
+            path(
+                "bulk-add/",
+                self.admin_site.admin_view(self.bulk_add_view),
+                name="site_content_piscinedate_bulk_add",
+            ),
+        ]
+        return custom_urls + super().get_urls()
+
+    def bulk_add_view(self, request):
+        """Add several piscine dates in one form submission."""
+        if not self.has_add_permission(request):
+            raise PermissionDenied
+
+        form = PiscineDateBulkAddForm(request.POST or None)
+        if request.method == "POST" and form.is_valid():
+            created, skipped = form.save()
+            self.message_user(
+                request,
+                ngettext(
+                    "%(count)d piscine date added.",
+                    "%(count)d piscine dates added.",
+                    created,
+                )
+                % {"count": created},
+                messages.SUCCESS,
+            )
+            if skipped:
+                self.message_user(
+                    request,
+                    ngettext(
+                        "%(count)d existing date was skipped.",
+                        "%(count)d existing dates were skipped.",
+                        skipped,
+                    )
+                    % {"count": skipped},
+                    messages.WARNING,
+                )
+            return HttpResponseRedirect(reverse("admin:site_content_piscinedate_changelist"))
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Add multiple piscine dates",
+            "opts": self.model._meta,
+            "form": form,
+            "add": True,
+        }
+        return render(request, "admin/content/piscinedate/bulk_add.html", context)
 
 
 @admin.register(Category)
@@ -190,3 +323,38 @@ class PageAdmin(admin.ModelAdmin):
     @admin.display(description="Sections")
     def section_count(self, obj):
         return obj.sections.count()
+
+
+class FaqItemInline(admin.StackedInline):
+    """Edit a category's questions right on the category form."""
+
+    model = FaqItem
+    extra = 1
+    fields = ("order", "question", "answer", "keywords", "is_active")
+    ordering = ("order", "id")
+    show_change_link = True
+
+
+@admin.register(FaqCategory)
+class FaqCategoryAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "item_count", "is_active", "order")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active",)
+    search_fields = ("title", "slug", "blurb")
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (FaqItemInline,)
+    ordering = ("order", "id")
+
+    @admin.display(description="Questions")
+    def item_count(self, obj):
+        return obj.items.count()
+
+
+@admin.register(FaqItem)
+class FaqItemAdmin(admin.ModelAdmin):
+    list_display = ("question", "category", "is_active", "order")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active", "category")
+    search_fields = ("question", "answer", "keywords")
+    list_select_related = ("category",)
+    ordering = ("order", "id")

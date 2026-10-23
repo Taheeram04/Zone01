@@ -182,3 +182,19 @@
     border-right-color: var(--border);
   }
 }
+
+.stats{
+  @media (width < 500px) {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.per-stats{
+  @media (width < 500px) {
+    max-width: 150px;
+    display: flex;
+    flex-direction: column;
+    overflow-wrap: break-word;
+  }
+}

@@ -25,6 +25,14 @@ APP_VERSION = env("APP_VERSION", default="dev")
 # Full origins (scheme + host) trusted for CSRF, e.g. https://zone01-api.fly.dev.
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# Render sets this for every web service. Trusting it automatically lets the
+# single-service Docker image serve the SPA, API and admin on one hostname
+# without duplicating the domain in DJANGO_ALLOWED_HOSTS/CSRF_TRUSTED_ORIGINS.
+RENDER_EXTERNAL_HOSTNAME = env("RENDER_EXTERNAL_HOSTNAME", default="")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
 # TLS is terminated by the hosting proxy (e.g. Fly.io), which forwards the
 # original scheme in X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -34,6 +42,7 @@ CSRF_COOKIE_SECURE = not DEBUG
 INSTALLED_APPS = [
     "djangocms_simple_admin_style",
     "corsheaders",
+    "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -81,6 +90,8 @@ INSTALLED_APPS = [
     "applicants",
     "events",
     "content",
+    "services",
+    "whatsapp_bot",
 ]
 
 MIDDLEWARE = [
@@ -161,6 +172,20 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# ---------------------------------------------------------------------------
+# React SPA served by Django
+# ---------------------------------------------------------------------------
+# `make frontend` builds the React app with Vite's base set to `/static/` and
+# copies the bundle here, so its hashed assets are collected alongside the other
+# static files and `index.html` is served for client-side routes by
+# `core.views.spa` (see `config/urls.py`). This lets one Django service host the
+# whole product: the SPA at `/`, the JSON API at `/api/` and the admin at
+# `/admin/`.
+FRONTEND_DIST = Path(env("FRONTEND_DIST", default=str(BASE_DIR / "frontend_dist")))
+FRONTEND_INDEX = FRONTEND_DIST / "index.html"
+if FRONTEND_DIST.is_dir():
+    STATICFILES_DIRS.append(FRONTEND_DIST)
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -229,6 +254,42 @@ API_CORS_ALLOWED_ORIGINS = env.list(
     ],
 )
 
+# Hosted frontend shown on the admin "Frontend status" page. Set this to the
+# public URL of the React app so editors can check it is up from the dashboard.
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
+FRONTEND_HEALTH_TIMEOUT = env.float("FRONTEND_HEALTH_TIMEOUT", default=5.0)
+
 CORS_ALLOW_ALL_ORIGINS = API_CORS_ALLOW_ALL
 CORS_ALLOWED_ORIGINS = API_CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = True
+
+# ---------------------------------------------------------------------------
+# WhatsApp FAQ assistant (Meta WhatsApp Cloud API)
+# ---------------------------------------------------------------------------
+# The webhook lives at /webhooks/whatsapp/ and answers incoming text messages
+# from the FAQ knowledge base (see the `whatsapp_bot` app and the FAQ content in
+# the `content` app). Configure these from the Meta app dashboard:
+#
+#   WHATSAPP_VERIFY_TOKEN      - any secret string; enter the same value in Meta.
+#   WHATSAPP_ACCESS_TOKEN      - temporary/permanent token for the phone number.
+#   WHATSAPP_PHONE_NUMBER_ID   - the "Phone number ID" of your WhatsApp sender.
+#   WHATSAPP_APP_SECRET        - app secret, used to verify webhook signatures.
+#
+# Leave DRY_RUN on (the default) until credentials are set: replies are logged
+# and stored but not actually sent, so you can test the flow safely.
+WHATSAPP_VERIFY_TOKEN = env("WHATSAPP_VERIFY_TOKEN", default="")
+WHATSAPP_ACCESS_TOKEN = env("WHATSAPP_ACCESS_TOKEN", default="")
+WHATSAPP_PHONE_NUMBER_ID = env("WHATSAPP_PHONE_NUMBER_ID", default="")
+WHATSAPP_APP_SECRET = env("WHATSAPP_APP_SECRET", default="")
+WHATSAPP_API_VERSION = env("WHATSAPP_API_VERSION", default="v21.0")
+WHATSAPP_DRY_RUN = env.bool("WHATSAPP_DRY_RUN", default=True)
+WHATSAPP_TIMEOUT = env.float("WHATSAPP_TIMEOUT", default=10.0)
+# Minimum match score (0..1) before an FAQ answer is sent instead of the fallback.
+WHATSAPP_MATCH_THRESHOLD = env.float("WHATSAPP_MATCH_THRESHOLD", default=0.34)
+WHATSAPP_FALLBACK_MESSAGE = env(
+    "WHATSAPP_FALLBACK_MESSAGE",
+    default=(
+        "Sorry, I couldn't find an answer to that. Please try rephrasing, or "
+        "contact the Zone01 Kisumu team directly and we'll help you."
+    ),
+)

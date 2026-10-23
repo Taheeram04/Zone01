@@ -1,0 +1,15 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block sidebar %}
+<div class="module" id="frontend-status-module">
+  <h2>{% translate "Frontend status" %}</h2>
+  <p style="padding: 0 10px;">
+    <a href="{% url 'frontend-status' %}">{% translate "Check the hosted frontend" %}</a>
+  </p>
+  <p style="padding: 0 10px;">
+    <a href="{% url 'admin:core_frontendpage_changelist' %}">{% translate "Manage frontend pages" %}</a>
+  </p>
+</div>
+{{ block.super }}
+{% endblock %}
