@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Check,
+  Copy,
   Globe,
   Mail,
   MessageCircle,
@@ -120,12 +121,15 @@ const Field = ({ label, name, error, required = false, children }) => (
 /**
  * Talent request form. Submitting validates the brief and opens WhatsApp with
  * the full request pre-filled (the team's live employer channel), with an
- * email fallback that carries exactly the same copy.
+ * email fallback that carries exactly the same copy. If the browser blocks the
+ * WhatsApp pop-up, the success panel says so and offers email + copy paths.
  */
 const HireRequest = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sent
+  const [delivery, setDelivery] = useState('whatsapp'); // whatsapp | blocked
+  const [copied, setCopied] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -157,14 +161,42 @@ const HireRequest = () => {
     }
 
     setErrors({});
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    // Open a blank tab first so we can tell whether the pop-up was blocked.
+    // `noopener` makes window.open() return null even on success, so we sever
+    // the opener reference ourselves before navigating.
+    let popup;
+    try {
+      popup = window.open('about:blank', '_blank');
+      if (popup) {
+        popup.opener = null;
+        popup.location.replace(whatsappUrl);
+      }
+    } catch {
+      popup = null;
+    }
+
+    setDelivery(popup ? 'whatsapp' : 'blocked');
     setStatus('sent');
+  };
+
+  const handleCopy = async () => {
+    if (!navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(brief);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(false);
+    }
   };
 
   const handleReset = () => {
     setForm(EMPTY_FORM);
     setErrors({});
     setStatus('idle');
+    setDelivery('whatsapp');
+    setCopied(false);
   };
 
   return (
@@ -251,28 +283,71 @@ const HireRequest = () => {
                   Your brief is ready.
                 </h3>
                 <p className="mt-3 max-w-md font-sans text-body-m leading-relaxed text-black-900/65">
-                  We opened WhatsApp with your request pre-filled — review and
-                  send it to reach the talent team. Prefer email? Send the same
-                  brief from your inbox.
+                  {delivery === 'blocked'
+                    ? 'Your browser blocked the WhatsApp window, but your brief is ready. Send it by email or copy it below.'
+                    : 'We opened WhatsApp with your request pre-filled — review and send it to reach the talent team. Prefer email? Send the same brief from your inbox.'}
                 </p>
+
+                {delivery === 'blocked' && (
+                  <div
+                    role="status"
+                    className="mt-4 max-w-md rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
+                  >
+                    <p className="font-sans text-body-m font-semibold text-amber-900">
+                      Pop-up blocked — nothing has been sent yet.
+                    </p>
+                    <p className="mt-1 font-sans text-body-s leading-relaxed text-amber-900/80">
+                      Use <strong>Email the brief</strong> or copy it below. Your
+                      answers are safe.
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <a
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-sans text-body-m font-semibold text-white transition-colors hover:bg-primary/90"
+                    className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-body-m font-semibold transition-colors ${
+                      delivery === 'blocked'
+                        ? 'border border-primary text-primary hover:bg-primary hover:text-white'
+                        : 'bg-primary text-white hover:bg-primary/90'
+                    }`}
                   >
                     Open WhatsApp again
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </a>
                   <a
                     href={mailtoUrl}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-6 py-3 font-sans text-body-m font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+                    className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-body-m font-semibold transition-colors ${
+                      delivery === 'blocked'
+                        ? 'bg-primary text-white hover:bg-primary/90'
+                        : 'border border-primary text-primary hover:bg-primary hover:text-white'
+                    }`}
                   >
                     <Mail className="h-4 w-4" aria-hidden="true" />
                     Email the brief
                   </a>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="inline-flex items-center gap-2 rounded-full border border-secondary/20 px-4 py-2 font-sans text-body-s font-semibold text-secondary transition-colors hover:border-primary hover:text-primary"
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                    ) : (
+                      <Copy className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    <span aria-live="polite">
+                      {copied ? 'Brief copied' : 'Copy the brief'}
+                    </span>
+                  </button>
+                  <span className="font-mono text-body-s text-black-900/45">
+                    Same text as the WhatsApp message
+                  </span>
                 </div>
 
                 <button
