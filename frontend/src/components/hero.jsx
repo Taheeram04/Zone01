@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
 import heroImg1 from '../assets/001.webp';
@@ -229,8 +228,6 @@ const Hero = () => {
       className="relative w-full min-h-screen flex items-end overflow-hidden"
       style={{ filter: 'saturate(0.75)', minHeight: '100svh' }}
     >
-      <MagneticCursor containerRef={sectionRef} />
-
       {/* Spring-crossfading, Ken Burns background */}
       <AnimatePresence>
         <motion.div
@@ -319,7 +316,6 @@ const Hero = () => {
             className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4"
           >
             <Button
-              data-magnetic
               variant="primary"
               href={APPLICATION_URL}
               target="_blank"
@@ -329,7 +325,6 @@ const Hero = () => {
               Apply Now
             </Button>
             <Button
-              data-magnetic
               variant="outline"
               onClick={() => navigate('/hire')}
               className="w-full sm:w-auto !bg-transparent !border-white !text-white hover:!bg-white hover:!text-black-900"
