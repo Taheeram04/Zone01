@@ -149,6 +149,14 @@ img, video, canvas, svg {
   50% { opacity: 0.9; }
 }
 
+@keyframes partner-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-partner-marquee {
+  animation: partner-marquee 55s linear infinite;
+}
 
 .animate-kenburns {
   animation: kenburns 5.5s ease-out forwards;
