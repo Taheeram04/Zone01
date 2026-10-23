@@ -13,7 +13,11 @@ def notify_on_application(sender, instance, created, **kwargs):
     # Confirmation to applicant
     send_mail(
         subject="Zone01 Application Received",
-        message=f"Hi {instance.name},\n\nWe received your application for {instance.get_choice_display()}. We'll be in touch.\n\nZone01 Team",
+        message=(
+            f"Hi {instance.name},\n\n"
+            f"We received your application for {instance.get_choice_display()}. "
+            "We'll be in touch.\n\nZone01 Team"
+        ),
         from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@zone01.org"),
         recipient_list=[instance.email],
         fail_silently=True,
@@ -23,7 +27,13 @@ def notify_on_application(sender, instance, created, **kwargs):
     if staff_email:
         send_mail(
             subject=f"New Applicant: {instance.name}",
-            message=f"New application submitted.\nName: {instance.name}\nEmail: {instance.email}\nTrack: {instance.get_choice_display()}\nMotivation: {instance.motivation}",
+            message=(
+                "New application submitted.\n"
+                f"Name: {instance.name}\n"
+                f"Email: {instance.email}\n"
+                f"Track: {instance.get_choice_display()}\n"
+                f"Motivation: {instance.motivation}"
+            ),
             from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@zone01.org"),
             recipient_list=[staff_email],
             fail_silently=True,
