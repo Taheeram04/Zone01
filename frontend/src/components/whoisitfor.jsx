@@ -5,12 +5,18 @@ import { KineticHeading, TypewriterText } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
 import { useSnapCarousel } from '../hooks/useSnapCarousel.js';
 import whoIsItFor1 from '../assets/whoisitfor1.webp';
+import whoIsItFor1Small from '../assets/whoisitfor1-700.webp';
 import whoIsItFor2 from '../assets/whoisitfor2.webp';
+import whoIsItFor2Small from '../assets/whoisitfor2-360.webp';
 import whoIsItFor3 from '../assets/whoisitfor3.webp';
+import whoIsItFor3Small from '../assets/whoisitfor3-360.webp';
 
 const targetAudience = [
   {
     image: whoIsItFor1,
+    small: whoIsItFor1Small,
+    width: 1600,
+    smallWidth: 700,
     title: 'EARLY CAREER STARTERS',
     description:
       'Finished High School or College and looking to build world-class tech skills?',
@@ -18,6 +24,9 @@ const targetAudience = [
   },
   {
     image: whoIsItFor2,
+    small: whoIsItFor2Small,
+    width: 604,
+    smallWidth: 360,
     title: 'CAREER SWITCHERS',
     description:
       'Looking for a mid career switch into the exciting world of tech?',
@@ -25,6 +34,9 @@ const targetAudience = [
   },
   {
     image: whoIsItFor3,
+    small: whoIsItFor3Small,
+    width: 604,
+    smallWidth: 360,
     title: 'EXPERIENCED PROFESSIONALS',
     description:
       'Having a wealth of experience but looking to re-skill to keep up with global digital transformation and trends?',
@@ -98,6 +110,8 @@ const WhoIsItFor = () => {
               <div className="relative w-full aspect-[4/3.5] sm:aspect-[4/4.3] rounded-2xl overflow-hidden bg-slate-100 shadow-sm">
                 <motion.img
                   src={item.image}
+                  srcSet={`${item.small} ${item.smallWidth}w, ${item.image} ${item.width}w`}
+                  sizes="(min-width: 768px) 25vw, 85vw"
                   alt={item.alt}
                   className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                   loading="lazy"
@@ -118,7 +132,7 @@ const WhoIsItFor = () => {
         </motion.div>
 
         {/* Mobile pagination */}
-        <div className="mt-5 flex items-center justify-center gap-2 md:hidden">
+        <div className="mt-5 flex items-center justify-center gap-1 md:hidden">
           {targetAudience.map((item, i) => (
             <button
               key={item.title}
@@ -126,10 +140,14 @@ const WhoIsItFor = () => {
               onClick={() => goTo(i)}
               aria-label={`Show ${item.title}`}
               aria-current={i === index}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? 'w-6 bg-primary' : 'w-1.5 bg-secondary/20'
-              }`}
-            />
+              className="flex h-6 w-6 items-center justify-center"
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === index ? 'w-6 bg-primary' : 'w-1.5 bg-secondary/20'
+                }`}
+              />
+            </button>
           ))}
         </div>
 

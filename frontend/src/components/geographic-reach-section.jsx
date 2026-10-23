@@ -387,7 +387,6 @@ export default function GeographicReachSection() {
       }
 
       const physics = physicsRef.current;
-      const rect = container.getBoundingClientRect();
       const isDesktop = window.innerWidth >= 900;
 
       // Coordinate dimensions - spacious 1140x740 desktop frame
@@ -727,7 +726,7 @@ export default function GeographicReachSection() {
       const r = canvas.getBoundingClientRect();
       const isDesktop = window.innerWidth >= 900;
       const cw = isDesktop ? 1140 : r.width || 360;
-      const ch = isDesktop ? 740 : Math.round(canvasRect.height) || cw;
+      const ch = isDesktop ? 740 : Math.round(r.height) || cw;
       return {
         x: ((e.clientX - r.left) / r.width) * cw,
         y: ((e.clientY - r.top) / r.height) * ch,
@@ -945,7 +944,7 @@ export default function GeographicReachSection() {
         />
 
         {/* Desktop Overlay: Dynamic white rounded cards with monospace labels and tracking */}
-        <div className="reach-desktop-cards" aria-hidden="true">
+        <div className="reach-desktop-cards">
           {regions.map((region) => {
             const isHovered = activeRegionId === region.id;
             const def = region.defaultDesktopPos;

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // components/headline-results.jsx
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Container } from './layout.jsx';
@@ -126,6 +127,7 @@ export default function HeadlineResults() {
 
   useEffect(() => {
     if (reducedMotion) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasScrolledIn(true);
       setAnimProgress(1);
       return;
@@ -316,7 +318,7 @@ export default function HeadlineResults() {
             >
               {HEADLINE_DATA.header.title}
             </h2>
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full font-mono font-medium text-body-s tracking-wide bg-primary/10 text-primary border border-primary/20 whitespace-nowrap">
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full font-mono font-medium text-body-s tracking-wide bg-primary/10 text-[#0052d4] border border-primary/20 whitespace-nowrap">
               {HEADLINE_DATA.header.dateBadge}
             </span>
           </div>
@@ -377,10 +379,10 @@ export default function HeadlineResults() {
 
               {/* Top Eyebrow */}
               <div className="relative z-10 flex items-center justify-between w-full">
-                <span className="font-mono font-semibold text-xs sm:text-[13px] text-white/90 uppercase tracking-wider">
+                <span className="font-mono font-semibold text-xs sm:text-[13px] text-white uppercase tracking-wider">
                   {HEADLINE_DATA.keyOutcome.eyebrow}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 font-mono text-xs text-white/90 font-medium">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/15 border border-white/20 font-mono text-xs text-white font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   Primary Metric
                 </span>
@@ -431,7 +433,7 @@ export default function HeadlineResults() {
                 <h3 className="font-sans font-black text-white text-xl sm:text-2xl lg:text-3xl mt-4 sm:mt-5 tracking-tight text-center">
                   {HEADLINE_DATA.keyOutcome.label}
                 </h3>
-                <p className="font-mono font-medium text-xs sm:text-sm text-white/85 text-center mt-1 sm:mt-1.5 max-w-sm">
+                <p className="font-mono font-medium text-xs sm:text-sm text-white text-center mt-1 sm:mt-1.5 max-w-sm">
                   {HEADLINE_DATA.keyOutcome.sublabel}
                 </p>
               </div>
@@ -440,13 +442,13 @@ export default function HeadlineResults() {
               <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/15">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-white shrink-0" />
-                  <span className="font-mono text-xs sm:text-[13px] text-white/90">
+                  <span className="font-mono text-xs sm:text-[13px] text-white">
                     89% In paid work (86 apprentices)
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-[#DFDFDF] shrink-0" />
-                  <span className="font-mono text-xs sm:text-[13px] text-white/75">
+                  <span className="font-mono text-xs sm:text-[13px] text-white">
                     11% In training (11 apprentices)
                   </span>
                 </div>
@@ -468,7 +470,7 @@ export default function HeadlineResults() {
                 <span className="font-mono font-semibold text-xs text-primary uppercase tracking-wider">
                   {HEADLINE_DATA.placement.eyebrow}
                 </span>
-                <span className="font-mono text-[11px] text-black-900/50">
+                <span className="font-mono text-[11px] text-black-900/70">
                   86 / 97
                 </span>
               </div>
@@ -528,7 +530,7 @@ export default function HeadlineResults() {
                 <span className="font-mono font-semibold text-xs text-primary uppercase tracking-wider">
                   {HEADLINE_DATA.speed.eyebrow}
                 </span>
-                <span className="font-mono text-[11px] text-black-900/50">
+                <span className="font-mono text-[11px] text-black-900/70">
                   Weeks to Hire
                 </span>
               </div>
@@ -580,7 +582,7 @@ export default function HeadlineResults() {
                     opacity="0.25"
                   />
                 </svg>
-                <div className="flex justify-between font-mono text-[10px] text-black-900/50 px-1 mt-1">
+                <div className="flex justify-between font-mono text-[10px] text-black-900/70 px-1 mt-1">
                   <span>Day 0</span>
                   <span className="font-bold text-primary">~6 wks</span>
                   <span>12 wks</span>
@@ -613,7 +615,7 @@ export default function HeadlineResults() {
                 <span className="font-mono font-semibold text-xs text-primary uppercase tracking-wider">
                   {HEADLINE_DATA.cohort.eyebrow}
                 </span>
-                <span className="font-mono text-[11px] text-black-900/50">
+                <span className="font-mono text-[11px] text-black-900/70">
                   Cohort 1
                 </span>
               </div>
@@ -664,10 +666,10 @@ export default function HeadlineResults() {
 
               {/* Eyebrow */}
               <div className="relative z-10 flex items-center justify-between">
-                <span className="font-mono font-semibold text-xs text-white/90 uppercase tracking-wider">
+                <span className="font-mono font-semibold text-xs text-white uppercase tracking-wider">
                   {HEADLINE_DATA.demand.eyebrow}
                 </span>
-                <span className="font-mono text-[11px] text-white/70">
+                <span className="font-mono text-[11px] text-white">
                   Top 0.35%
                 </span>
               </div>
@@ -716,7 +718,7 @@ export default function HeadlineResults() {
                 <div className="font-sans font-black text-white text-3xl sm:text-4xl tracking-tight leading-none">
                   {demandDisplay}+
                 </div>
-                <p className="font-mono text-xs sm:text-[13px] text-white/90 mt-1.5 leading-snug">
+                <p className="font-mono text-xs sm:text-[13px] text-white mt-1.5 leading-snug">
                   {HEADLINE_DATA.demand.label}
                 </p>
               </div>
@@ -737,7 +739,7 @@ export default function HeadlineResults() {
                 <span className="font-mono font-semibold text-xs sm:text-[13px] text-primary uppercase tracking-wider">
                   {HEADLINE_DATA.incomeTrajectory.eyebrow}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono font-bold text-xs sm:text-sm">
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 text-[#0052d4] border border-primary/20 font-mono font-bold text-xs sm:text-sm">
                   <span className="w-2 h-2 rounded-full bg-primary" />
                   {HEADLINE_DATA.incomeTrajectory.badge}
                 </span>
@@ -785,7 +787,7 @@ export default function HeadlineResults() {
               </div>
 
               {/* Bottom Explanatory Note */}
-              <p className="font-mono text-xs text-black-900/60 mt-3">
+              <p className="font-mono text-xs text-black-900/70 mt-3">
                 Tracking monthly earnings progression from student enrollment to full-time career placement.
               </p>
             </div>
@@ -809,10 +811,10 @@ export default function HeadlineResults() {
 
               {/* Eyebrow */}
               <div className="relative z-10 flex items-center justify-between">
-                <span className="font-mono font-semibold text-xs sm:text-[13px] text-white/90 uppercase tracking-wider">
+                <span className="font-mono font-semibold text-xs sm:text-[13px] text-white uppercase tracking-wider">
                   {HEADLINE_DATA.genderEquity.eyebrow}
                 </span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono text-[11px]">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-black/15 text-white font-mono text-[11px]">
                   Top 2%
                 </span>
               </div>
@@ -847,7 +849,7 @@ export default function HeadlineResults() {
                 <div className="font-sans font-black text-white text-3xl sm:text-4xl tracking-tight leading-none">
                   {womenDisplay} <span className="text-2xl font-bold">women</span>
                 </div>
-                <p className="font-mono text-xs sm:text-sm text-white/90 mt-2 leading-snug">
+                <p className="font-mono text-xs sm:text-sm text-white mt-2 leading-snug">
                   {HEADLINE_DATA.genderEquity.label}
                 </p>
               </div>

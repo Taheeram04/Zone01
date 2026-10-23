@@ -47,6 +47,8 @@ const Footer = () => {
               <img
                 src={logo}
                 alt="Zone01 Kisumu"
+                width="311"
+                height="118"
                 className="w-[140px] sm:w-[170px] xl:w-[200px] max-w-full h-auto object-contain"
               />
             </Link>

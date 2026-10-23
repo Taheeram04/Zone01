@@ -118,7 +118,7 @@
   font-size: clamp(7px, 2vw, 9px);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
 }
 
 .careers__branch {

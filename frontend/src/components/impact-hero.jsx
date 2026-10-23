@@ -489,7 +489,7 @@ export default function ImpactHero() {
                   {APPRENTICE_DATA.label}
                 </span>
               </div>
-              <p className="font-sans text-xs sm:text-sm text-white/75 leading-relaxed max-w-[280px]">
+              <p className="font-sans text-xs sm:text-sm text-white leading-relaxed max-w-[280px]">
                 86 employed in tech, 11 progressing in advanced training. Exactly 97 lives transformed.
               </p>
             </div>
@@ -550,7 +550,7 @@ export default function ImpactHero() {
               </div>
 
               {/* Caption: 16 to 18px monospace */}
-              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white/85 leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
+              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
                 {IMPACT_STATS[0].label}
               </p>
             </div>
@@ -607,7 +607,7 @@ export default function ImpactHero() {
                 className="flex flex-wrap items-baseline font-sans font-black tracking-tight leading-none text-white text-[clamp(48px,6vw,96px)]"
                 aria-label={IMPACT_STATS[1].formattedDisplay}
               >
-                <span className="text-[0.45em] font-extrabold text-white/85 mr-2 tracking-normal align-baseline">
+                <span className="text-[0.45em] font-extrabold text-white mr-2 tracking-normal align-baseline">
                   USD
                 </span>
                 <span>
@@ -618,7 +618,7 @@ export default function ImpactHero() {
               </div>
 
               {/* Caption */}
-              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white/85 leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
+              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
                 {IMPACT_STATS[1].label}
               </p>
             </div>
@@ -681,7 +681,7 @@ export default function ImpactHero() {
                 className="flex flex-wrap items-baseline font-sans font-black tracking-tight leading-none text-white text-[clamp(48px,6vw,96px)]"
                 aria-label={IMPACT_STATS[2].formattedDisplay}
               >
-                <span className="text-[0.55em] font-extrabold text-white/85 mr-1 align-baseline">
+                <span className="text-[0.55em] font-extrabold text-white mr-1 align-baseline">
                   ~
                 </span>
                 <span>
@@ -689,13 +689,13 @@ export default function ImpactHero() {
                     ? '6'
                     : Math.max(1, Math.round(stat3Progress * IMPACT_STATS[2].numericValue))}
                 </span>
-                <span className="text-[0.42em] font-bold text-white/85 ml-2 tracking-normal align-baseline">
+                <span className="text-[0.42em] font-bold text-white ml-2 tracking-normal align-baseline">
                   weeks
                 </span>
               </div>
 
               {/* Caption */}
-              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white/85 leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
+              <p className="font-mono text-[16px] sm:text-[17px] md:text-[18px] text-white leading-snug tracking-tight mt-3 sm:mt-4 max-w-[280px]">
                 {IMPACT_STATS[2].label}
               </p>
             </div>
