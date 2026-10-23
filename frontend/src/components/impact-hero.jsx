@@ -483,7 +483,7 @@ export default function ImpactHero() {
 
             {/* Monospace Badge & Legend */}
             <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-2">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/15 select-none shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/15 backdrop-blur-xs border border-white/20 select-none shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                 <span className="font-mono text-xs sm:text-[13px] text-white/95 tracking-wide font-medium">
                   {APPRENTICE_DATA.label}
@@ -703,7 +703,7 @@ export default function ImpactHero() {
           </div>
 
           {/* Note: As of August 2026 */}
-          <div className="mt-6 sm:mt-8 flex items-center gap-2 font-mono text-xs sm:text-sm text-white/60 tracking-wider uppercase">
+          <div className="mt-6 sm:mt-8 flex items-center gap-2 font-mono text-xs sm:text-sm text-white tracking-wider uppercase">
             <span className="inline-block w-2 h-2 rounded-full bg-accent/80" />
             <span>{STATS_NOTE}</span>
           </div>
