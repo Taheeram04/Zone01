@@ -23,7 +23,7 @@ const buildCategories = (groups = {}) =>
     },
   ].filter((category) => category.items.length > 0);
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 12;
 
 /**
  * Technologies grid driven by the API's grouped services. Each technology
@@ -39,18 +39,19 @@ const Technologies = ({ groups }) => {
     <section
       id="technologies"
       data-nav-theme="light"
-      className="bg-campus-bg py-20"
+      className="bg-white pb-12 pt-10 md:pb-16 md:pt-14"
     >
       <Container>
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <p className="font-mono text-body-s uppercase tracking-[0.25em] text-primary">
-            Skill sets
+            The toolbox
           </p>
-          <h2 className="mt-3 font-sans text-[clamp(1.9rem,4vw,3rem)] font-black tracking-tight text-secondary">
-            Technologies
+          <h2 className="mt-3 text-balance font-sans text-[1.875rem] font-black tracking-tight text-secondary sm:text-section-headline">
+            Technologies our talent ships with
           </h2>
-          <p className="mt-4 font-sans text-body-l text-black-900/70">
-            Showcasing talent skill sets across:
+          <p className="mt-4 font-sans text-base text-black-900/70">
+            Live from the Zone01 service catalogue — the languages, frameworks
+            and specialisations behind the work.
           </p>
         </div>
 
@@ -60,23 +61,23 @@ const Technologies = ({ groups }) => {
 
           return (
             <div key={category.key} className="mt-14">
-              <h3 className="text-center font-sans text-xl font-bold text-secondary">
+              <h3 className="text-center font-sans text-lg font-bold text-secondary">
                 {category.title}
               </h3>
 
-              <ul className="mt-8 grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3">
+              <ul className="mx-auto mt-7 flex max-w-4xl flex-wrap justify-center gap-3">
                 {category.items.slice(0, shown).map((technology) => (
-                  <li key={technology.id || technology.name} className="w-full">
-                    <div className="flex w-full items-center justify-center gap-3 rounded-2xl border border-secondary/10 bg-white px-5 py-6 font-sans text-body-l font-medium text-black-900/80 shadow-sm">
+                  <li key={technology.id || technology.name}>
+                    <div className="flex items-center gap-2.5 rounded-full border border-secondary/10 bg-white px-5 py-2.5 font-sans text-body-m font-medium text-black-900/80 shadow-sm transition-colors hover:border-primary/40">
                       {technology.image ? (
                         <img
                           src={technology.image}
                           alt=""
                           aria-hidden="true"
-                          className="h-6 w-6"
+                          className="h-5 w-5"
                         />
                       ) : (
-                        <Code2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                        <Code2 className="h-4 w-4 text-primary" aria-hidden="true" />
                       )}
                       {technology.name}
                     </div>
@@ -94,7 +95,7 @@ const Technologies = ({ groups }) => {
                         [category.key]: shown + PAGE_SIZE,
                       }))
                     }
-                    className="rounded-full px-10"
+                    className="rounded-full px-10 !font-sans"
                   >
                     Show more
                   </Button>
