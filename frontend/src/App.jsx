@@ -9,6 +9,7 @@ import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import Register from './pages/Register.jsx';
 import Hire from './pages/Hire.jsx';
+import Impact from './pages/Impact.jsx';
 
 function App() {
   return (
@@ -66,7 +67,17 @@ function App() {
         }
       />
 
-      {['/impact', '/donate', '*'].map((path) => (
+      {/* Our Impact — cross-zoom hero, headline results and geographic reach */}
+      <Route
+        path="/impact"
+        element={
+          <Layout>
+            <Impact />
+          </Layout>
+        }
+      />
+
+      {['/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}
