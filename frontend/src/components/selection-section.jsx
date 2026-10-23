@@ -40,7 +40,7 @@ import React from 'react';
  * Edit figures or copy here without modifying the presentation markup.
  * @type {SelectionData}
  */
-export const SELECTION_DATA = {
+const SELECTION_DATA = {
   heading: {
     prefix: 'Selection, ',
     highlight: 'employment',

@@ -162,8 +162,14 @@ export default function ImpactCrossZoom({
         onLeaveBack: () => masterTl.pause(),
       });
 
-      if (!st.isActive) {
-        masterTl.pause();
+      // Ensure timeline plays on initial load if in viewport
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          masterTl.play();
+        } else if (!st.isActive) {
+          masterTl.pause();
+        }
       }
 
       // Browser tab visibility: pause when tab is inactive, resume when active

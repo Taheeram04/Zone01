@@ -1,133 +1,83 @@
 // components/headline-results.data.js
 
 /**
- * ============================================================================
- * Items Requiring User Confirmation (Defined as Constants per Specification)
- * ============================================================================
+ * Headline Results Data
+ * Configurable data object powering the Headline Results bento grid.
+ * All figures, copy, and layout metadata editable in one place.
  */
-
-// TODO: Confirm wording with user. In the reference mock, this label duplicated
-// "Inaugural cohort apprentices", which is likely a placeholder for total applicants/reach.
-export const LABEL_28K_PLUS = 'Inaugural cohort apprentices';
-
-// Gender equity metric confirmed per specification:
-export const LABEL_TWO_WOMEN = 'Earning more than $2,300 per month';
-
-/**
- * ============================================================================
- * Statistics Data Array (All statistics editable in one place)
- * Strictly two themes: 'blue' (1/3 of cards) and 'white' (2/3 of cards).
- * Currency is represented using '$' as unit symbol with zero occurrences of the old currency code.
- * ============================================================================
- */
-export const HEADLINE_STATISTICS = [
-  {
-    id: 'employment-rate',
-    numericValue: 90,
-    hasComma: false,
-    prefix: '',
-    suffix: '%',
-    formattedDisplay: '90%',
-    label: 'Employment rate',
-    eyebrow: 'Key Outcome',
-    theme: 'blue', // Hero solid brand-blue card
-    gridClass: 'lg:col-span-5 lg:row-span-2 md:col-span-2',
-    isHero: true,
+export const HEADLINE_DATA = {
+  header: {
+    title: 'Headline results.',
+    dateBadge: 'As of August 2026',
   },
-  {
+  keyOutcome: {
+    id: 'employment-rate',
+    eyebrow: 'Key outcome',
+    numericValue: 89,
+    formattedDisplay: '89%',
+    label: 'Employment rate',
+    sublabel: 'In paid work',
+    remainderLabel: 'Are not yet in paid work',
+    remainderRaw: 11,
+    theme: 'blue',
+  },
+  placement: {
     id: 'paid-work',
+    eyebrow: 'Placement',
     numericValue: 86,
-    hasComma: false,
-    prefix: '',
-    suffix: '',
     formattedDisplay: '86',
     label: 'Apprentices and graduates in paid work',
-    eyebrow: 'Placement',
+    totalDots: 97,
+    employedDots: 86,
     theme: 'white',
-    gridClass: 'lg:col-span-4 md:col-span-1',
   },
-  {
+  speed: {
     id: 'time-to-employment',
-    numericValue: 6,
-    hasComma: false,
-    prefix: '',
-    suffix: ' weeks',
-    formattedDisplay: '6 weeks',
-    label: 'Median time to employment after graduation',
     eyebrow: 'Speed',
+    numericValue: 6,
+    prefix: '~',
+    suffix: 'weeks',
+    formattedDisplay: '~6 weeks',
+    label: 'Median time to employment after graduation',
     theme: 'white',
-    gridClass: 'lg:col-span-3 md:col-span-1',
   },
-  {
+  cohort: {
     id: 'inaugural-cohort',
+    eyebrow: 'Cohort',
     numericValue: 97,
-    hasComma: false,
-    prefix: '',
-    suffix: '',
     formattedDisplay: '97',
     label: 'Inaugural cohort apprentices',
-    eyebrow: 'Cohort',
     theme: 'white',
-    gridClass: 'lg:col-span-3 md:col-span-1',
   },
-  {
-    id: 'applicants-reach',
+  demand: {
+    id: 'applications-received',
+    eyebrow: 'Demand',
     numericValue: 28000,
     hasComma: true,
-    prefix: '',
     suffix: '+',
     formattedDisplay: '28,000+',
-    label: LABEL_28K_PLUS,
-    eyebrow: 'Reach',
-    theme: 'blue', // Alternating blue card
-    gridClass: 'lg:col-span-4 md:col-span-1',
+    label: 'Applications received',
+    theme: 'blue',
   },
-  {
-    id: 'top-income',
-    numericValue: 2500,
-    hasComma: true,
-    prefix: '$',
-    suffix: '',
-    formattedDisplay: '$2,500',
-    label: 'Top monthly income',
-    eyebrow: 'Income',
+  incomeTrajectory: {
+    id: 'income-trajectory',
+    eyebrow: 'Earnings trajectory',
+    badge: '$7,200 average annual income',
+    bars: [
+      { id: 'intake', value: '$60', raw: 60, heightPct: 24, label: 'At intake' },
+      { id: 'first-paid', value: '$320', raw: 320, heightPct: 46, label: 'First paid engagement' },
+      { id: 'current-avg', value: '$600', raw: 600, heightPct: 68, label: 'Current average' },
+      { id: 'top-earners', value: '$2,500', raw: 2500, heightPct: 100, label: 'Top earners' },
+    ],
     theme: 'white',
-    gridClass: 'lg:col-span-3 md:col-span-1',
   },
-  {
-    id: 'average-income',
-    numericValue: 600,
-    hasComma: false,
-    prefix: '$',
-    suffix: '',
-    formattedDisplay: '$600',
-    label: 'Average monthly income',
-    eyebrow: 'Income',
-    theme: 'white',
-    gridClass: 'lg:col-span-3 md:col-span-1',
-  },
-  {
-    id: 'annual-income',
-    numericValue: 7200,
-    hasComma: true,
-    prefix: '$',
-    suffix: '',
-    formattedDisplay: '$7,200',
-    label: 'Average annual income',
-    eyebrow: 'Income',
-    theme: 'white',
-    gridClass: 'lg:col-span-3 md:col-span-1',
-  },
-  {
-    id: 'women-earners',
+  genderEquity: {
+    id: 'gender-equity',
+    eyebrow: 'Gender equity',
     numericValue: 2,
-    hasComma: false,
-    prefix: '',
     suffix: ' women',
     formattedDisplay: '2 women',
-    label: LABEL_TWO_WOMEN,
-    eyebrow: 'Gender Equity',
-    theme: 'blue', // Alternating blue card
-    gridClass: 'lg:col-span-3 md:col-span-1',
+    label: 'Earning more than $2,300 per month',
+    theme: 'blue',
   },
-];
+};
