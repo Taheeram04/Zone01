@@ -2,6 +2,8 @@ from django.apps import AppConfig
 
 
 class ApplicantsConfig(AppConfig):
-    default_auto_field = "django.db.models.AutoField"
+    default_auto_field = "django.db.models.BigAutoField"
     name = "applicants"
-    verbose_name = "Applicants"
+
+    def ready(self):
+        import applicants.signals  # noqa: F401
