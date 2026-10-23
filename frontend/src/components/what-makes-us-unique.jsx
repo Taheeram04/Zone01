@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { hireContactUrl } from '../constants.js';
-import panelBackground from '../assets/service-hero.jpg';
+import panelBackground from '../assets/service-hero.webp';
 
 /**
  * Closing employer panel for /hire: the "What Makes Us Unique" copy over the

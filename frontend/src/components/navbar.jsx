@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { APPLICATION_URL } from '../constants.js';
-import mainLogo from '../assets/mainlogo.png';
-import whiteLogo from '../assets/whitelogo.png';
+import mainLogo from '../assets/mainlogo.webp';
+import whiteLogo from '../assets/whitelogo.webp';
 
 const navLinks = [
   { label: 'Home', href: '/' },

@@ -4,7 +4,7 @@ import { ArrowDown } from 'lucide-react';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { hireContactUrl } from '../constants.js';
-import serviceHero from '../assets/service-hero.jpg';
+import serviceHero from '../assets/service-hero.webp';
 
 /**
  * Full-bleed employer hero for /hire, using the Zone01 service photograph with
