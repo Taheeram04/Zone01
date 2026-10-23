@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+// The frontend can be hosted separately from the Django API (see render.yaml),
+// so use the same build-time base URL as the rest of the site.
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 const TRACKS = [
   { value: 'fullstack', label: 'Full-Stack Development' },
   { value: 'data', label: 'Data & AI' },
@@ -29,20 +33,30 @@ export default function ApplicationForm() {
     setStatus('submitting');
     setErrors({});
     try {
-      const res = await fetch('/api/applicants/', {
+      const res = await fetch(`${API_BASE}/api/applicants/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setErrors(data.errors || { general: data.error || 'Submission failed.' });
+        const fieldErrors = Object.fromEntries(
+          Object.entries(data.errors || {}).map(([field, messages]) => [
+            field,
+            Array.isArray(messages) ? messages.join(' ') : messages,
+          ]),
+        );
+        setErrors(
+          Object.keys(fieldErrors).length
+            ? fieldErrors
+            : { general: data.error || 'Submission failed.' },
+        );
         setStatus('error');
         return;
       }
       setStatus('success');
       setForm({ name: '', email: '', phone: '', choice: '', motivation: '' });
-    } catch (err) {
+    } catch {
       setErrors({ general: 'Network error. Please try again.' });
       setStatus('error');
     }

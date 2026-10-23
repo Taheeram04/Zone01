@@ -2,6 +2,8 @@
 
 from django.db import models
 
+from core.indexes import GinTrigramIndex
+
 
 class Applicant(models.Model):
     """A person applying to a Zone01 programme."""
@@ -30,6 +32,13 @@ class Applicant(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            # One GIN/trigram index per admin search field: see core.indexes.
+            GinTrigramIndex(fields=["name"], name="applicant_name_trgm"),
+            GinTrigramIndex(fields=["email"], name="applicant_email_trgm"),
+            GinTrigramIndex(fields=["phone"], name="applicant_phone_trgm"),
+            GinTrigramIndex(fields=["motivation"], name="applicant_motivation_trgm"),
+        ]
 
     def __str__(self):
         return f"{self.name} <{self.email}>"

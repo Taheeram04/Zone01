@@ -1,30 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout.jsx';
-import Hero from './components/hero.jsx';
-import Stats from './components/stats.jsx';
-import WhoCanApply from './components/whocanapply.jsx';
-import WhoIsItFor from './components/whoisitfor.jsx';
-import WhyOurCampus from './components/whyourcampus.jsx';
 import ComingSoon from './components/coming-soon.jsx';
-import AboutHero from './components/about-hero.jsx';
-import KnowUs from './components/know-us.jsx';
-import OurModelSection from './components/our-model-section.jsx';
-import HowToApply from './components/how-to-apply.jsx';
-import Careers from './components/careers.jsx';
 import Community from './components/community.jsx';
 import OurStaff from './components/our-staff.jsx';
+import CommunityFeed from './components/community-feed.jsx';
 import Faqs from './components/faqs.jsx';
+import Home from './pages/Home.jsx';
+import About from './pages/About.jsx';
 import Register from './pages/Register.jsx';
-
-const Home = () => (
-  <>
-    <Hero />
-    <Stats />
-    <WhoCanApply />
-    <WhoIsItFor />
-    <WhyOurCampus />
-  </>
-);
+import Hire from './pages/Hire.jsx';
 
 function App() {
   return (
@@ -45,22 +29,19 @@ function App() {
         path="/about"
         element={
           <Layout>
-            <AboutHero />
-            <KnowUs />
-            <OurModelSection />
-            <HowToApply />
-            <Careers />
+            <About />
           </Layout>
         }
       />
 
-      {/* Community — partners hero + 3D glowing staff carousel */}
+      {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
       <Route
         path="/community"
         element={
           <Layout>
             <Community />
             <OurStaff />
+            <CommunityFeed />
           </Layout>
         }
       />
@@ -75,7 +56,17 @@ function App() {
         }
       />
 
-      {['/impact', '/hire', '/donate', '*'].map((path) => (
+      {/* Hire Talent — service catalogue, technologies and employer CTA */}
+      <Route
+        path="/hire"
+        element={
+          <Layout>
+            <Hire />
+          </Layout>
+        }
+      />
+
+      {['/impact', '/donate', '*'].map((path) => (
         <Route
           key={path}
           path={path}
