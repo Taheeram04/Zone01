@@ -1,7 +1,7 @@
 // components/about-hero.jsx
 import { motion } from 'framer-motion';
 import { Container } from './layout.jsx';
-import aboutHeroImg from '../assets/US Embassy at Zone001.jpg';
+import aboutHeroImg from '../assets/US Embassy at Zone001.webp';
 
 /**
  * AboutHero
