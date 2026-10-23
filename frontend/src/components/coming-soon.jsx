@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import maintenanceMascot from '../assets/Cartoon2.avif';
+import maintenanceMascot from '../assets/Cartoon2.webp';
 
 const PAGE_TITLES = {
   '/about': 'About Us',

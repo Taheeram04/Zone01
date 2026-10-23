@@ -1,0 +1,23 @@
+{
+  "name": "Zone01 Kisumu",
+  "short_name": "Zone01",
+  "description": "Zone01 Kisumu trains top-potential talent into high-income, AI-ready software engineers. Tuition-free, no experience required.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0063F9",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

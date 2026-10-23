@@ -1,11 +1,11 @@
 // components/our-model.data.js
 // Shared "Our Model Works" step data — used by the carousel page and the
 // static Know Us gallery so both read from a single source of truth.
-import photo1 from '../assets/knoeus02.jpg';
-import photo2 from '../assets/knowus01.jpg';
-import photo3 from '../assets/knowus03.jpeg';
-import photo4 from '../assets/knowus04.jpeg';
-import photo5 from '../assets/Know us.JPG';
+import photo1 from '../assets/knoeus02.webp';
+import photo2 from '../assets/knowus01.webp';
+import photo3 from '../assets/knowus03.webp';
+import photo4 from '../assets/knowus04.webp';
+import photo5 from '../assets/Know us.webp';
 
 export const STEPS = [
   {

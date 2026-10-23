@@ -6,9 +6,9 @@ import { Container } from './layout.jsx';
 import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
-import heroImg1 from '../assets/001.jpeg';
-import heroImg2 from '../assets/002.jpeg';
-import heroImg3 from '../assets/003.jpeg';
+import heroImg1 from '../assets/001.webp';
+import heroImg2 from '../assets/002.webp';
+import heroImg3 from '../assets/003.webp';
 
 const heroImages = [heroImg1, heroImg2, heroImg3];
 const GRID_COLS = 14;

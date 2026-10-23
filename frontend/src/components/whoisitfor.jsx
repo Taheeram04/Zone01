@@ -3,9 +3,9 @@ import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { KineticHeading, TypewriterText } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
-import whoIsItFor1 from '../assets/whoisitfor1.png';
-import whoIsItFor2 from '../assets/whoisitfor2.png';
-import whoIsItFor3 from '../assets/whoisitfor3.png';
+import whoIsItFor1 from '../assets/whoisitfor1.webp';
+import whoIsItFor2 from '../assets/whoisitfor2.webp';
+import whoIsItFor3 from '../assets/whoisitfor3.webp';
 
 const targetAudience = [
   {

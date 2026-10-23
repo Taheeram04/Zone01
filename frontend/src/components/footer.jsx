@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPhone } from 'react-icons/fa6';
 import { SOCIAL_LINKS } from '../social.js';
-import logo from '../assets/whitelogo.png';
+import logo from '../assets/whitelogo.webp';
 
 // Footer navigation links, laid out in a single aligned grid.
 const footerLinks = [

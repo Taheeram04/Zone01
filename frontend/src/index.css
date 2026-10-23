@@ -1,5 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap');
 @import "tailwindcss";
+
+/* Self-hosted fonts: the exact same files are served to macOS, Windows and
+   Linux, so type metrics do not change when Google Fonts is blocked or when a
+   platform falls back to its own system font. */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('./assets/fonts/montserrat-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/plex-mono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/plex-mono-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./assets/fonts/plex-mono-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/plex-mono-700.woff2') format('woff2');
+}
 
 @theme {
   /* Fonts */
@@ -14,6 +52,7 @@
   --color-black-900: #000000;
   --color-white: #FFFFFF;
   --color-tint-blue: #EAF2FF;
+  --color-powder-blue: #D4E2FA;
   --color-campus-bg: #F4F8FD;
   --color-blob-blue: #99C2FF;
   --color-periwinkle-bg: #BFD8FD;
@@ -38,6 +77,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   /* Keep in-page anchors clear of the fixed navbar. */
   scroll-padding-top: 5.5rem;
   overflow-x: clip;
@@ -45,6 +85,11 @@ html {
 
 body {
   font-family: var(--font-sans);
+  /* Normalise text rendering so macOS does not look larger/heavier than
+     Windows or Linux. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
   -webkit-tap-highlight-color: transparent;
   overflow-x: clip;
 }
@@ -62,6 +107,17 @@ button, a, input, label {
 
 img, video, canvas, svg {
   max-width: 100%;
+}
+
+/* Keep photographs identical across platforms: honour embedded orientation
+   and use the browser's standard scaling. Kept in the base layer so Tailwind
+   height utilities (h-full, h-10, …) still win. */
+@layer base {
+  img {
+    height: auto;
+    image-orientation: from-image;
+    image-rendering: auto;
+  }
 }
 
 @keyframes fade-in {
@@ -94,6 +150,7 @@ img, video, canvas, svg {
   0%, 100% { opacity: 0.15; }
   50% { opacity: 0.9; }
 }
+
 
 .animate-kenburns {
   animation: kenburns 5.5s ease-out forwards;

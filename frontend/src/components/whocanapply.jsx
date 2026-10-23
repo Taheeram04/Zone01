@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import defaultImage from '../assets/whocanapply.jpg';
+import defaultImage from '../assets/whocanapply.webp';
 
 /**
  * TypewriterText Component

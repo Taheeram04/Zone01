@@ -71,8 +71,26 @@ export default function ApplicationForm() {
     );
   }
 
+  const formStyle = {
+    background: '#0b3d2e',
+    color: '#f5f5f5',
+    padding: '2rem',
+    borderRadius: '12px',
+    maxWidth: '520px',
+    margin: '0 auto',
+  };
+  const buttonStyle = {
+    background: '#ff8c00',
+    color: '#0b3d2e',
+    border: 'none',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '8px',
+    fontWeight: 700,
+    cursor: 'pointer',
+  };
+
   return (
-    <form className="application-form" onSubmit={handleSubmit} noValidate>
+    <form className="application-form" style={formStyle} onSubmit={handleSubmit} noValidate>
       <h2>Apply to Zone01</h2>
 
       <label>
@@ -112,7 +130,7 @@ export default function ApplicationForm() {
 
       {errors.general && <p className="form-error">{errors.general}</p>}
 
-      <button type="submit" disabled={status === 'submitting'}>
+      <button type="submit" style={buttonStyle} disabled={status === 'submitting'}>
         {status === 'submitting' ? 'Submitting...' : 'Submit Application'}
       </button>
     </form>
