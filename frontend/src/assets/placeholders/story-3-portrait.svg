@@ -1,0 +1,6 @@
+<svg width="800" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="1000" fill="#BFD8FD"/>
+  <circle cx="400" cy="420" r="120" fill="#0063F9" opacity="0.25"/>
+  <rect x="320" y="560" width="160" height="40" rx="8" fill="#0063F9" opacity="0.4"/>
+  <text x="400" y="760" font-family="Montserrat, Arial, sans-serif" font-size="28" fill="#000000" text-anchor="middle">Replace me: story-3-portrait.jpg</text>
+</svg>

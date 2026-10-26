@@ -1,0 +1,5 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#EAF2FF"/>
+  <rect x="300" y="250" width="200" height="100" rx="12" fill="#0063F9" opacity="0.25"/>
+  <text x="400" y="480" font-family="Montserrat, Arial, sans-serif" font-size="24" fill="#000000" text-anchor="middle">Replace me: startup-3-image.jpg</text>
+</svg>
