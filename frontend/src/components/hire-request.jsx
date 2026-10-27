@@ -220,7 +220,7 @@ const HireRequest = () => {
             <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-white sm:text-section-headline">
               Request a talent shortlist.
             </h2>
-            <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-white sm:text-body-l">
+            <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-white/70 sm:text-body-l">
               Tell us what you are hiring for. Shortlist requests are typically
               answered within five working days by the talent team.
             </p>
@@ -244,7 +244,7 @@ const HireRequest = () => {
                   <span className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white/10 text-white">
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </span>
-                  <span className="font-sans text-body-m leading-relaxed text-white">
+                  <span className="font-sans text-body-m leading-relaxed text-white/75">
                     {text}
                   </span>
                 </li>
@@ -254,7 +254,7 @@ const HireRequest = () => {
             <div className="mt-9 space-y-3 border-t border-white/15 pt-6">
               <a
                 href={`mailto:${HIRE_EMAIL}`}
-                className="flex items-center gap-3 font-mono text-body-m text-white transition-colors hover:text-white/80"
+                className="flex items-center gap-3 font-mono text-body-m text-white/80 transition-colors hover:text-white"
               >
                 <Mail className="h-4 w-4 text-white" aria-hidden="true" />
                 {HIRE_EMAIL}
@@ -265,7 +265,7 @@ const HireRequest = () => {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 font-mono text-body-m text-white transition-colors hover:text-white/80"
+                className="flex items-center gap-3 font-mono text-body-m text-white/80 transition-colors hover:text-white"
               >
                 <MessageCircle className="h-4 w-4 text-white" aria-hidden="true" />
                 WhatsApp the talent team
@@ -345,7 +345,7 @@ const HireRequest = () => {
                       {copied ? 'Brief copied' : 'Copy the brief'}
                     </span>
                   </button>
-                  <span className="font-mono text-body-s text-black-900/70">
+                  <span className="font-mono text-body-s text-black-900/45">
                     Same text as the WhatsApp message
                   </span>
                 </div>
@@ -587,7 +587,7 @@ const HireRequest = () => {
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
 
-                <p className="mt-3 text-center font-sans text-[11px] leading-relaxed text-black-900/70">
+                <p className="mt-3 text-center font-sans text-[11px] leading-relaxed text-black-900/45">
                   Submitting opens WhatsApp with your brief pre-filled, so you can
                   review it before sending. We only use these details to respond
                   to your request.
