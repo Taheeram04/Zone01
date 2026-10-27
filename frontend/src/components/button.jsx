@@ -30,6 +30,7 @@ const Button = ({
         rounded-md
         flex items-center justify-center
         transition-all duration-200
+        active:scale-[0.98]
         disabled:cursor-not-allowed
         focus:outline-none focus:ring-2 focus:ring-primary/50
       `.replace(/\s+/g, ' ').trim();
