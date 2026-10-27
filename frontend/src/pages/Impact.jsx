@@ -5,11 +5,10 @@ import ImpactCTA from '../components/impact/ImpactCTA.jsx';
 
 const Impact = () => {
   return (
-    <>
-      <ImpactPage />
+    <ImpactPage>
       <GeographicReachSection />
       <ImpactCTA />
-    </>
+    </ImpactPage>
   );
 };
 

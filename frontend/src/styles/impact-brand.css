@@ -1,0 +1,631 @@
+/* ==========================================================================
+   Brand baseline applied to the Impact page — starting at "Headline results"
+   (the hero keeps its existing art direction; everything from #headline
+   onward follows the brand tokens in styles/brand-tokens.css)
+   ========================================================================== */
+
+/* ---- Scope: sections from Headline results to the closing CTA ----------- */
+.impact-page :is(#headline, #headline ~ section) {
+  font-family: var(--brand-font-sans);
+}
+
+/* ---- Backgrounds -------------------------------------------------------- */
+.impact-page #headline {
+  background: var(--brand-tint);
+  padding-top: 56px;
+}
+
+.impact-page #headline .impact-results-veil {
+  background:
+    radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(180deg, var(--brand-white), var(--brand-tint));
+}
+
+.impact-page #headline::before {
+  background-image: radial-gradient(rgba(0, 99, 249, 0.16) 1.2px, transparent 1.2px);
+  opacity: 0.22;
+}
+
+/* ---- Type hierarchy ----------------------------------------------------- */
+.impact-page :is(#headline, #headline ~ section) :is(h1, h2, h3) {
+  font-family: var(--brand-font-sans);
+}
+
+.impact-page :is(#headline, #headline ~ section)
+  :is(.impact-section-title, .impact-startups-title, .impact-women-title, .ri-stories-title, .brand-section-title) {
+  margin-top: var(--brand-space-4);
+  font-size: var(--brand-section-size);
+  font-weight: var(--brand-weight-black);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--brand-black);
+}
+
+/* Stat numbers: IBM Plex Mono Medium 40/48 */
+.impact-page :is(#headline, #headline ~ section) :is(.impact-statn, .impact-women-badge-number) {
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-stat-size);
+  font-weight: var(--brand-weight-medium);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.impact-page #headline .impact-statn {
+  color: var(--brand-black);
+}
+
+/* Labels, evidence, metadata, captions */
+.impact-page :is(#headline, #headline ~ section) :is(.impact-mono, .impact-monoc) {
+  font-family: var(--brand-font-mono);
+  font-weight: var(--brand-weight-medium);
+  letter-spacing: 0.08em;
+}
+
+.impact-page :is(#headline, #headline ~ section) .impact-mono {
+  text-transform: uppercase;
+}
+
+.impact-page :is(#headline, #headline ~ section) :is(.impact-mono, .impact-monoc, .impact-stat-note, .impact-funnel-note, .impact-funnel-caption, .startup-card-co-badge, .ri-story-author, .ri-story-category) {
+  font-size: var(--brand-caption);
+  line-height: 1.5;
+}
+
+/* Body copy */
+.impact-page :is(#headline, #headline ~ section) :is(.impact-section-body, .impact-results-sub, .ri-stories-description) {
+  margin-top: var(--brand-space-5);
+  font-size: var(--brand-body);
+  font-weight: var(--brand-weight-regular);
+  line-height: 1.6;
+  color: var(--brand-slate);
+}
+
+.impact-page :is(#headline, #headline ~ section) :is(.startup-card-desc, .ri-story-text) {
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm);
+  font-weight: var(--brand-weight-regular);
+  line-height: 1.6;
+}
+
+.impact-page :is(#headline, #headline ~ section) .ri-story-headline {
+  font-size: var(--brand-cta-size);
+  font-weight: var(--brand-weight-black);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* Stories: tighter vertical rhythm, wider canvas so cards get wider and shorter */
+.impact-page .ri-stories-section {
+  padding: 32px 0 80px;
+}
+
+.impact-page .ri-stories-section .ri-stories-header {
+  text-align: center;
+}
+
+.impact-page .ri-stories-section .ri-stories-title {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.impact-page .ri-stories-section .ri-stories-description {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.impact-page .ri-stories-section .impact-wrap {
+  max-width: 1600px;
+  padding-inline: clamp(16px, 3.5vw, 56px);
+}
+
+.impact-page .ri-stories-section .ri-story-thumbnail-wrap {
+  max-height: 300px;
+}
+
+.impact-page .ri-stories-section .ri-story-card-body {
+  padding: 26px 24px 22px;
+}
+
+/* ---- 12-column layout --------------------------------------------------- */
+.impact-page #headline .impact-stats-grid {
+  grid-template-columns: repeat(var(--brand-columns), minmax(0, 1fr));
+  gap: var(--brand-gutter);
+}
+
+.impact-page #headline .impact-stats-grid > * {
+  grid-column: span 4;
+}
+
+.impact-page #headline ~ section .impact-startups-grid {
+  grid-template-columns: repeat(var(--brand-columns), minmax(0, 1fr));
+  gap: var(--brand-space-10);
+}
+
+.impact-page #headline ~ section .impact-startups-grid > * {
+  grid-column: span 4;
+}
+
+
+/* ---- Cards, surfaces and controls -------------------------------------- */
+.impact-page :is(#headline, #headline ~ section)
+  :is(.impact-stat, .startup-card, .ri-story-card, .ri-story-modal-box, .impact-women-badge) {
+  border-radius: var(--brand-radius-lg);
+}
+
+.impact-page #headline .impact-stat {
+  border-left: 3px solid var(--brand-primary);
+  padding: var(--brand-space-4) var(--brand-space-6);
+}
+
+.impact-page :is(#headline, #headline ~ section) :is(.impact-stat, .ri-story-card) {
+  background: var(--brand-white);
+  border-color: var(--brand-line);
+}
+
+.impact-page :is(#headline, #headline ~ section) :is(.startup-sector-pill, .startup-featured-badge) {
+  border-radius: var(--brand-radius-sm);
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-caption);
+  font-weight: var(--brand-weight-medium);
+  letter-spacing: 0.08em;
+}
+
+.impact-page :is(#headline, #headline ~ section) .startup-featured-badge {
+  background: var(--brand-mint);
+  color: var(--brand-mint-ink);
+  box-shadow: none;
+}
+
+.impact-page :is(#headline, #headline ~ section) :is(.impact-btn, .ri-story-readmore, .startup-card-btn) {
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm);
+  font-weight: var(--brand-weight-bold);
+  letter-spacing: 0;
+  border-radius: var(--brand-radius-lg);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.impact-page :is(#headline, #headline ~ section) .impact-btn-primary {
+  background: var(--brand-primary);
+  color: var(--brand-white);
+}
+
+.impact-page :is(#headline, #headline ~ section) .impact-btn-primary:hover {
+  background: var(--brand-primary-hover);
+}
+
+/* Photography: ink — transparent over images */
+.impact-page :is(#headline, #headline ~ section) .startup-card-overlay {
+  background: var(--brand-ink-gradient);
+}
+
+/* Funnel annotations stay inside the narrowing shape on small screens */
+@media (max-width: 720px) {
+  .impact-page #headline .impact-funnel-step {
+    width: 100% !important;
+    clip-path: none !important;
+    padding: 24px 16px !important;
+    border-radius: var(--brand-radius-lg);
+  }
+
+  .impact-page #headline .impact-funnel-note {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+}
+
+/* ---- Responsive grid ---------------------------------------------------- */
+@media (max-width: 980px) {
+  .impact-page #headline .impact-stats-grid > *,
+  .impact-page #headline ~ section .impact-startups-grid > * {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 720px) {
+  .impact-page #headline .impact-stats-grid > *,
+  .impact-page #headline ~ section .impact-startups-grid > * {
+    grid-column: span 12;
+  }
+
+  .impact-page #headline ~ section .impact-startups-grid {
+    gap: var(--brand-space-4);
+  }
+}
+
+/* Ventures: centered header, wider canvas, shorter cards */
+.impact-page .impact-startups-section {
+  padding: 64px 0 80px;
+}
+
+.impact-page .impact-startups-section .impact-wrap {
+  max-width: 1600px;
+  padding-inline: clamp(16px, 3.5vw, 56px);
+}
+
+.impact-page .impact-startups-section .impact-startups-header {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--brand-space-4);
+  margin-bottom: var(--brand-space-10);
+  text-align: center;
+}
+
+.impact-page .impact-startups-section .impact-startups-title {
+  margin-inline: auto;
+}
+
+.impact-page .impact-startups-section .startup-card-banner {
+  height: 280px;
+}
+
+.impact-page .impact-startups-section .startup-card-body {
+  padding: 24px 22px 20px;
+}
+
+.impact-page .impact-startups-section .startup-card-desc {
+  margin-top: 10px;
+}
+
+.impact-page .impact-startups-section .startup-card-footer {
+  margin-top: var(--brand-space-4);
+}
+
+/* ==========================================================================
+   Shared card system — Ventures + Stories
+   One surface, one type hierarchy, one image crop, one footer action.
+   ========================================================================== */
+
+/* Card skin */
+.impact-page #startups .startup-card,
+.impact-page #stories .ri-story-card {
+  background: var(--brand-white);
+  color: var(--brand-black);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--brand-radius-lg);
+  box-shadow: 0 4px 18px -10px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.impact-page #startups .startup-card:hover,
+.impact-page #stories .ri-story-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--brand-primary);
+  box-shadow: 0 18px 36px -18px rgba(0, 99, 249, 0.35);
+}
+
+/* Featured venture keeps its badge but shares the same card surface */
+.impact-page #startups .startup-card-featured {
+  background: var(--brand-white);
+  color: var(--brand-black);
+  border: 1px solid var(--brand-line);
+  box-shadow: 0 4px 18px -10px rgba(0, 0, 0, 0.18);
+  transform: none;
+}
+
+.impact-page #startups .startup-card-featured:hover {
+  transform: translateY(-4px);
+  border-color: var(--brand-primary);
+  box-shadow: 0 18px 36px -18px rgba(0, 99, 249, 0.35);
+}
+
+.impact-page #startups .startup-card-featured .startup-card-name,
+.impact-page #startups .startup-card-featured .startup-card-desc,
+.impact-page #startups .startup-card-featured .startup-card-co-badge {
+  color: var(--brand-black);
+}
+
+.impact-page #startups .startup-card-featured .startup-card-desc,
+.impact-page #startups .startup-card-featured .startup-card-co-badge {
+  color: var(--brand-slate);
+  opacity: 1;
+}
+
+.impact-page #startups .startup-card-featured .startup-card-footer {
+  border-top-color: var(--brand-line);
+}
+
+/* Photography: identical crop height + ink treatment */
+.impact-page #startups .startup-card-banner,
+.impact-page #stories .ri-story-thumbnail-wrap {
+  width: 100%;
+  height: 280px;
+  max-height: none;
+  aspect-ratio: auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.impact-page #stories .ri-story-thumbnail-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.38) 100%);
+  pointer-events: none;
+}
+
+/* Body rhythm */
+.impact-page #startups .startup-card-body,
+.impact-page #stories .ri-story-card-body {
+  padding: var(--brand-space-6);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Category / metadata */
+.impact-page #stories .ri-story-category {
+  margin: 0 0 var(--brand-space-3);
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-caption);
+  font-weight: var(--brand-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+}
+
+/* CTA headline 24px Black 900 */
+.impact-page #startups .startup-card-name,
+.impact-page #stories .ri-story-headline {
+  margin: 0;
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-cta-size);
+  font-weight: var(--brand-weight-black);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--brand-black);
+}
+
+/* Default card copy 14px */
+.impact-page #startups .startup-card-desc,
+.impact-page #stories .ri-story-text {
+  margin: var(--brand-space-2) 0 0;
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm);
+  font-weight: var(--brand-weight-regular);
+  line-height: 1.6;
+  color: var(--brand-slate);
+  opacity: 1;
+}
+
+/* Footers: meta left, one primary action right */
+.impact-page #startups .startup-card-footer,
+.impact-page #stories .ri-story-footer {
+  margin-top: auto;
+  padding-top: var(--brand-space-4);
+  border-top: 1px solid var(--brand-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brand-space-3);
+}
+
+.impact-page #stories .ri-story-footer .ri-story-author {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-caption);
+  font-weight: var(--brand-weight-regular);
+  color: var(--brand-slate);
+}
+
+/* Identical primary card action */
+.impact-page #startups .startup-card-btn,
+.impact-page #stories .ri-story-readmore {
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--brand-radius-lg);
+  background: var(--brand-primary);
+  color: var(--brand-white);
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm);
+  font-weight: var(--brand-weight-bold);
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.impact-page #startups .startup-card-btn:hover,
+.impact-page #stories .ri-story-readmore:hover {
+  background: var(--brand-primary-hover);
+  color: var(--brand-white);
+  transform: translateY(-1px);
+}
+
+.impact-page #stories .ri-story-readmore-plus {
+  font-size: var(--brand-body-sm);
+  font-weight: var(--brand-weight-bold);
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  .impact-page #startups .startup-card-banner,
+  .impact-page #stories .ri-story-thumbnail-wrap {
+    height: 240px;
+  }
+}
+
+/* ==========================================================================
+   Card detail modals — same brand text hierarchy as the cards
+   ========================================================================== */
+
+.impact-page :is(#startups, #stories) .ri-story-modal-body {
+  font-family: var(--brand-font-sans);
+}
+
+.impact-page :is(#startups, #stories) .ri-story-modal-body .ri-story-category {
+  margin: 0;
+  color: var(--brand-primary) !important;
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-caption) !important;
+  font-weight: var(--brand-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.impact-page :is(#startups, #stories) .ri-story-modal-body .ri-story-headline {
+  color: var(--brand-black) !important;
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-cta-size) !important;
+  font-weight: var(--brand-weight-black);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* Body copy inside the modal = 14px card copy */
+.impact-page :is(#startups, #stories) .ri-story-modal-body p {
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm) !important;
+  font-weight: var(--brand-weight-regular);
+  line-height: 1.6 !important;
+  color: var(--brand-slate) !important;
+}
+
+/* Labels, evidence, metadata = mono caption */
+.impact-page :is(#startups, #stories) .ri-story-modal-body :is(.impact-mono, .impact-monoc) {
+  font-family: var(--brand-font-mono) !important;
+  font-size: var(--brand-caption) !important;
+  font-weight: var(--brand-weight-medium) !important;
+  letter-spacing: 0.08em;
+  color: var(--brand-slate) !important;
+}
+
+/* Tech chips / pills = 3px corners */
+.impact-page :is(#startups, #stories) .ri-story-modal-body span.impact-mono {
+  padding: 4px 8px !important;
+  background: var(--brand-tint) !important;
+  color: var(--brand-primary) !important;
+  border: 1px solid var(--brand-line) !important;
+  border-radius: var(--brand-radius-sm) !important;
+  font-weight: 600 !important;
+}
+
+/* Traction metric = stat number */
+.impact-page :is(#startups, #stories) .ri-story-modal-body .modal-stat {
+  margin-top: var(--brand-space-2);
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-stat-sm);
+  font-weight: var(--brand-weight-medium);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--brand-black);
+}
+
+/* Journey values */
+.impact-page #stories .ri-story-modal-body .journey-value {
+  margin-top: var(--brand-space-1);
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.impact-page #stories .ri-story-modal-body .journey-value--before { color: var(--brand-slate); }
+.impact-page #stories .ri-story-modal-body .journey-value--during { color: var(--brand-primary); }
+.impact-page #stories .ri-story-modal-body .journey-value--now { color: var(--brand-mint-ink); }
+
+/* ==========================================================================
+   Hero — brand baseline typography
+   Display 48/72/96 Black 900 · body 16/18 Regular 400 · mono stats 40/48
+   ========================================================================== */
+
+.impact-page .impact-hero-title {
+  margin-top: var(--brand-space-6, 24px);
+  font-family: var(--brand-font-sans);
+  font-size: clamp(var(--brand-display-sm, 48px), 7vw, var(--brand-display-lg, 96px));
+  font-weight: var(--brand-weight-black, 900);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.impact-page .impact-hero-body {
+  margin-top: var(--brand-space-6, 24px);
+  max-width: 620px;
+  font-family: var(--brand-font-sans);
+  font-size: clamp(var(--brand-body, 16px), 1.3vw, var(--brand-body-lg, 18px));
+  font-weight: var(--brand-weight-regular, 400);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.impact-page .impact-hero-actions {
+  gap: var(--brand-space-4, 16px);
+  margin-top: var(--brand-space-8, 32px);
+}
+
+.impact-page .impact-hero-btn-primary,
+.impact-page .impact-hero-btn-secondary {
+  padding: var(--brand-space-4, 16px) var(--brand-space-7, 28px);
+  border-radius: var(--brand-radius-lg, 6px);
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-body-sm, 14px);
+  font-weight: var(--brand-weight-bold, 700);
+}
+
+.impact-page .impact-hero-tagline {
+  border-radius: var(--brand-radius-lg, 6px);
+  padding: var(--brand-space-5, 20px) var(--brand-space-6, 24px);
+  font-family: var(--brand-font-sans);
+  font-size: var(--brand-cta-size, 24px);
+  font-weight: var(--brand-weight-black, 900);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.impact-page .impact-hero-metric-value {
+  font-family: var(--brand-font-mono);
+  font-size: clamp(28px, 2.8vw, var(--brand-stat-sm, 40px));
+  font-weight: var(--brand-weight-medium, 500);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.impact-page .impact-hero-metric-label {
+  margin-top: var(--brand-space-2, 8px);
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-caption, 12px);
+  font-weight: var(--brand-weight-regular, 400);
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.impact-page {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   Selection, employment & income — blue-palette funnel + employment card
+   ========================================================================== */
+
+.impact-page #headline .impact-progress-ring-value {
+  font-family: var(--brand-font-mono);
+  font-size: var(--brand-stat-sm, 40px);
+  font-weight: var(--brand-weight-medium, 500);
+  letter-spacing: -0.02em;
+}
+
+.impact-page #headline .impact-progress-ring-label .impact-mono {
+  font-size: var(--brand-caption, 12px);
+  letter-spacing: 0.06em;
+  color: var(--brand-tint-strong, #bbd6ff);
+}
+
+.impact-page #headline .impact-funnel-note {
+  font-size: var(--brand-caption, 12px);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.74);
+}
