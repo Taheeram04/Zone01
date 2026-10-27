@@ -173,6 +173,12 @@ class FaqMatcher:
 _cache: dict[str, object] = {"built": 0.0, "matcher": None}
 
 
+def clear_cache():
+    """Drop the cached matcher so FAQ edits are picked up immediately."""
+    _cache["matcher"] = None
+    _cache["built"] = 0.0
+
+
 def get_matcher(force: bool = False) -> FaqMatcher:
     """Build (and briefly cache) a matcher over the active FAQ items."""
     now = time.monotonic()

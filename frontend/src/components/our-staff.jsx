@@ -193,7 +193,7 @@ const OurStaff = () => {
         </div>
 
         {/* Index dots */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2 md:mt-10">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-1 md:mt-10">
           {STAFF.map((member, i) => (
             <button
               key={member.name}
@@ -201,12 +201,16 @@ const OurStaff = () => {
               onClick={() => setActive(i)}
               aria-label={`Show ${member.name}`}
               aria-pressed={i === active}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === active
-                  ? 'w-7 bg-primary shadow-[0_0_12px_rgba(0,99,249,0.8)]'
-                  : 'w-2 bg-white/30 hover:bg-white/60'
-              }`}
-            />
+              className="flex h-6 w-6 items-center justify-center"
+            >
+              <span
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? 'w-7 bg-primary shadow-[0_0_12px_rgba(0,99,249,0.8)]'
+                    : 'w-2 bg-white/30 hover:bg-white/60'
+                }`}
+              />
+            </button>
           ))}
         </div>
       </Container>

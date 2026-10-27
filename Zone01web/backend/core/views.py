@@ -1,5 +1,8 @@
 """Operational endpoints for liveness and connectivity checks."""
 
+import base64
+import hashlib
+import re
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -98,6 +101,35 @@ def frontend_status(request):
     return render(request, "admin/frontend_status.html", context)
 
 
+def _content_security_policy(html):
+    """CSP for the SPA, allowing the inline JSON-LD block by its hash.
+
+    React/framer-motion use inline ``style`` attributes and the public pages
+    have no inline event handlers, so styles allow ``unsafe-inline`` while
+    scripts stay limited to the bundle plus the exact structured-data hash.
+    """
+    hash_part = ""
+    match = re.search(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+    if match:
+        digest = hashlib.sha256(match.group(1).encode("utf-8")).digest()
+        hash_part = f" 'sha256-{base64.b64encode(digest).decode()}'"
+
+    return (
+        "default-src 'self'; "
+        "base-uri 'self'; "
+        "object-src 'none'; "
+        f"script-src 'self'{hash_part}; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: blob: https:; "
+        "font-src 'self' data:; "
+        "media-src 'self' blob:; "
+        "connect-src 'self' https:; "
+        "worker-src 'self' blob:; "
+        "frame-ancestors 'self'; "
+        "form-action 'self' mailto:"
+    )
+
+
 def spa(request, path=""):
     """Serve the built React app's ``index.html`` for client-side routes.
 
@@ -113,9 +145,36 @@ def spa(request, path=""):
             "Frontend build not found. Run `make frontend` (or build the "
             "frontend with VITE_BASE=/static/) and try again."
         ) from None
-    return HttpResponse(html, content_type="text/html")
+    response = HttpResponse(html, content_type="text/html")
+    response["Content-Security-Policy"] = _content_security_policy(html)
+    return response
 
 
 def api_not_found(request):
     """JSON 404 for unknown ``/api/`` paths, instead of falling through to the SPA."""
     return JsonResponse({"detail": "Not found"}, status=404)
+
+
+@require_GET
+def robots_txt(request):
+    """Serve ``robots.txt`` from the built frontend, with a safe fallback."""
+    path = settings.FRONTEND_DIST / "robots.txt"
+    try:
+        body = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        body = "User-agent: *\nAllow: /\n"
+    return HttpResponse(body, content_type="text/plain")
+
+
+@require_GET
+def sitemap_xml(request):
+    """Serve the generated sitemap from the built frontend."""
+    path = settings.FRONTEND_DIST / "sitemap.xml"
+    try:
+        body = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        body = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>'
+        )
+    return HttpResponse(body, content_type="application/xml")

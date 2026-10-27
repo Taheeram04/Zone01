@@ -134,7 +134,7 @@ const Stats = () => {
           variants={containerVariants}
         >
           <KineticHeading
-            as="p"
+            as="h2"
             className="font-mono font-bold text-sm md:text-base text-white uppercase tracking-wide mb-8 md:mb-10"
             text="Our Impact"
             delay={0.05}

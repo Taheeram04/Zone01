@@ -36,6 +36,15 @@ if RENDER_EXTERNAL_HOSTNAME:
 # TLS is terminated by the hosting proxy (e.g. Fly.io), which forwards the
 # original scheme in X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Cross-platform security headers. HSTS is only enabled outside DEBUG so local
+# HTTP development is never pinned; Render/Fly terminate TLS in production.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
@@ -293,3 +302,17 @@ WHATSAPP_FALLBACK_MESSAGE = env(
         "contact the Zone01 Kisumu team directly and we'll help you."
     ),
 )
+
+# AI answers grounded in the same FAQ rows. Any OpenAI-compatible
+# /chat/completions endpoint works; leave the key empty to keep using the
+# deterministic keyword matcher only. See whatsapp_bot/ai.py.
+WHATSAPP_AI_ENABLED = env.bool("WHATSAPP_AI_ENABLED", default=True)
+WHATSAPP_AI_API_KEY = env("WHATSAPP_AI_API_KEY", default="")
+WHATSAPP_AI_BASE_URL = env("WHATSAPP_AI_BASE_URL", default="https://api.openai.com/v1")
+WHATSAPP_AI_MODEL = env("WHATSAPP_AI_MODEL", default="gpt-4o-mini")
+WHATSAPP_AI_TIMEOUT = env.float("WHATSAPP_AI_TIMEOUT", default=20.0)
+WHATSAPP_AI_MAX_TOKENS = env.int("WHATSAPP_AI_MAX_TOKENS", default=300)
+WHATSAPP_AI_TEMPERATURE = env.float("WHATSAPP_AI_TEMPERATURE", default=0.2)
+# Optional custom system prompt. Use {faqs} to place the FAQ block yourself;
+# otherwise the FAQ knowledge base is appended automatically.
+WHATSAPP_AI_SYSTEM_PROMPT = env("WHATSAPP_AI_SYSTEM_PROMPT", default="")

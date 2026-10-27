@@ -1,3 +1,4 @@
+@import "./styles/brand-tokens.css";
 @import "tailwindcss";
 
 /* Self-hosted fonts: the exact same files are served to macOS, Windows and
@@ -55,6 +56,20 @@
   --color-powder-blue: #D4E2FA;
   --color-campus-bg: #F4F8FD;
   --color-blob-blue: #99C2FF;
+  --color-periwinkle-bg: #BFD8FD;
+  --color-card-blue: #3A86FA;
+
+  /* Brand baseline aliases */
+  --color-brand-primary: #0063F9;
+  --color-brand-black: #000000;
+  --color-brand-white: #FFFFFF;
+  --color-navy: #0A2E7A;
+  --color-navy-deep: #061B33;
+  --color-mint: #2BE4B5;
+  --color-mint-hover: #16CBA0;
+  --color-mint-ink: #032B22;
+  --color-slate-body: #35507F;
+  --color-brand-line: #DCE9FF;
 
   /* Font sizes */
   --text-hero-h1: 96px;
@@ -65,9 +80,23 @@
   --text-body-s: 12px;
   --text-stat-number: 48px;
 
+  /* Brand display scale */
+  --text-display-sm: 48px;
+  --text-display-sm--line-height: 0.95;
+  --text-display-md: 72px;
+  --text-display-md--line-height: 0.95;
+  --text-display-lg: 96px;
+  --text-display-lg--line-height: 0.95;
+  --text-stat-sm: 40px;
+  --text-stat-lg: 48px;
+
   /* Border radius */
   --radius-sm: 3px;
   --radius-md: 6px;
+  --radius-brand: 6px;
+
+  /* Layout */
+  --container-brand: 1400px;
 
   /* Spacing base unit */
   --spacing: 4px;

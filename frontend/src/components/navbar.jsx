@@ -118,7 +118,9 @@ export default function Navbar() {
               <img
                 src={useWhiteLogo ? whiteLogo : mainLogo}
                 alt="Zone01 Kisumu"
-                className="h-8 md:h-10 transition-opacity duration-300"
+                width="311"
+                height="118"
+                className="h-8 w-auto md:h-10 transition-opacity duration-300"
               />
             </Link>
 
