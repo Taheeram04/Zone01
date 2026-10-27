@@ -166,7 +166,7 @@ const Stats = () => {
               ))}
             </div>
 
-            <div className="mt-5 flex items-center justify-center gap-2">
+            <div className="mt-5 flex items-center justify-center gap-1">
               {mobileStats.map((stat, statIndex) => (
                 <button
                   key={stat.label}
@@ -174,10 +174,14 @@ const Stats = () => {
                   onClick={() => goToMobileStat(statIndex)}
                   aria-label={`Show ${stat.label}`}
                   aria-current={statIndex === mobileIndex}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    statIndex === mobileIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
-                  }`}
-                />
+                  className="flex h-6 w-6 items-center justify-center"
+                >
+                  <span
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      statIndex === mobileIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>
@@ -263,18 +267,6 @@ const Stats = () => {
               </p>
             </motion.div>
           </div>
-
-          <motion.p
-            variants={statItemVariants}
-            className="hidden md:block font-mono text-body-s text-white/70 text-center mt-10 sm:mt-14"
-          >
-          {' '}
-            <a
-              href="/impact"
-              className="underline hover:text-accent transition-colors duration-200 inline-block hover:scale-105"
-            >
-            </a>
-          </motion.p>
         </motion.div>
       </Container>
     </section>

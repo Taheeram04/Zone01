@@ -39,7 +39,7 @@ const targetAudience = [
     smallWidth: 360,
     title: 'EXPERIENCED PROFESSIONALS',
     description:
-      'Having a wealth of experience but looking to re-skill to keep up with global digital transformation and trends?',
+      'Having a wealth of experience but looking to re-skill to keep up with global digital trends?',
     alt: 'Experienced professional learner at Zone01 Kisumu',
   },
 ];
@@ -132,7 +132,7 @@ const WhoIsItFor = () => {
         </motion.div>
 
         {/* Mobile pagination */}
-        <div className="mt-5 flex items-center justify-center gap-2 md:hidden">
+        <div className="mt-5 flex items-center justify-center gap-1 md:hidden">
           {targetAudience.map((item, i) => (
             <button
               key={item.title}
@@ -140,10 +140,14 @@ const WhoIsItFor = () => {
               onClick={() => goTo(i)}
               aria-label={`Show ${item.title}`}
               aria-current={i === index}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? 'w-6 bg-primary' : 'w-1.5 bg-secondary/20'
-              }`}
-            />
+              className="flex h-6 w-6 items-center justify-center"
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === index ? 'w-6 bg-primary' : 'w-1.5 bg-secondary/20'
+                }`}
+              />
+            </button>
           ))}
         </div>
 
