@@ -3,36 +3,37 @@ import { ArrowRight } from 'lucide-react';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { hireContactUrl } from '../constants.js';
-import panelBackground from '../assets/service-hero.jpg';
+import panelBackground from '../assets/unique-hero.webp';
 
 /**
  * Closing employer panel for /hire: the "What Makes Us Unique" copy over the
- * campus photograph, plus a direct line to the hiring team.
+ * GopherCon Africa photograph, plus a direct line to the hiring team.
  */
 const WhatMakesUsUnique = () => (
-  <section id="why-us" data-nav-theme="light" className="bg-white py-20">
+  <section id="why-us" data-nav-theme="light" className="bg-white pb-6 pt-6">
     <Container>
-      <div className="relative flex min-h-[320px] items-center overflow-hidden rounded-3xl md:min-h-[380px]">
+      <div className="relative flex min-h-[320px] items-center overflow-hidden rounded-3xl md:min-h-[520px]">
         <img
           src={panelBackground}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_18%]"
         />
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(90deg, rgba(6,43,92,0.96) 0%, rgba(8,59,122,0.86) 55%, rgba(0,99,249,0.45) 100%)',
+              'linear-gradient(180deg, rgba(2,13,32,0.1) 0%, rgba(2,13,32,0) 50%, rgba(2,13,32,0.28) 100%), linear-gradient(100deg, rgba(4,32,72,0.36) 0%, rgba(6,50,110,0.62) 42%, rgba(2,13,33,0.9) 100%)',
           }}
         />
+        <div aria-hidden="true" className="absolute inset-0 bg-[#041d42]/40 md:hidden" />
 
         <div className="relative z-10 w-full p-7 sm:p-10 md:ml-auto md:w-[58%] md:p-12">
-          <h2 className="font-sans text-[clamp(1.6rem,3vw,2.25rem)] font-black tracking-tight text-white">
+          <h2 className="font-sans text-[1.875rem] font-black tracking-tight text-white sm:text-section-headline">
             What Makes Us Unique
           </h2>
-          <p className="mt-4 font-sans text-body-m leading-relaxed text-white/85 sm:text-base">
+          <p className="mt-4 font-sans text-body-m leading-relaxed text-white/85">
             We are unlike any tech talent agency in the market. Our talents are
             multi-faceted, rooted in African contexts while providing homegrown
             solutions to the global tech market. They work at the cutting edge of
@@ -45,7 +46,7 @@ const WhatMakesUsUnique = () => (
             href={hireContactUrl()}
             target="_blank"
             rel="noopener noreferrer"
-            className="group mt-6 inline-flex items-center gap-2 font-sans text-body-m font-semibold text-accent transition-colors hover:text-white"
+            className="group mt-6 inline-flex items-center gap-2 font-sans text-body-m font-semibold text-white transition-colors hover:text-accent"
           >
             Improve your workflow
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -59,7 +60,7 @@ const WhatMakesUsUnique = () => (
           href={hireContactUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-full px-8"
+          className="rounded-full px-8 !font-sans"
         >
           Talk to an expert
         </Button>

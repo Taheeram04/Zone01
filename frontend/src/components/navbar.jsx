@@ -1,12 +1,12 @@
 // components/navbar.jsx
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
 import { APPLICATION_URL } from '../constants.js';
-import mainLogo from '../assets/mainlogo.png';
-import whiteLogo from '../assets/whitelogo.png';
+import mainLogo from '../assets/mainlogo.webp';
+import whiteLogo from '../assets/whitelogo.webp';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -22,6 +22,7 @@ export const DONATE_URL =
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
 
   // Navbar flips between dark and light as sections scroll behind it.
   const [navTheme, setNavTheme] = useState('dark');
@@ -117,7 +118,9 @@ export default function Navbar() {
               <img
                 src={useWhiteLogo ? whiteLogo : mainLogo}
                 alt="Zone01 Kisumu"
-                className="h-8 md:h-10 transition-opacity duration-300"
+                width="311"
+                height="118"
+                className="h-8 w-auto md:h-10 transition-opacity duration-300"
               />
             </Link>
 
@@ -132,7 +135,14 @@ export default function Navbar() {
                   <li key={link.href}>
                     <Link
                       to={link.href}
-                      className="hover:text-primary transition-colors whitespace-nowrap"
+                      aria-current={location.pathname === link.href ? 'page' : undefined}
+                      className={`transition-colors whitespace-nowrap ${
+                        location.pathname === link.href
+                          ? useWhiteLogo
+                            ? 'text-accent'
+                            : 'text-primary'
+                          : 'hover:text-primary'
+                      }`}
                     >
                       {link.label}
                     </Link>
@@ -201,7 +211,12 @@ export default function Navbar() {
                     <li key={link.href}>
                       <Link
                         to={link.href}
-                        className="flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 text-white active:bg-white/10 transition-colors"
+                        aria-current={location.pathname === link.href ? 'page' : undefined}
+                        className={`flex min-h-[48px] items-center gap-2 rounded-lg px-3 -mx-1 transition-colors active:bg-white/10 ${
+                          location.pathname === link.href
+                            ? 'text-accent'
+                            : 'text-white'
+                        }`}
                         onClick={() => setMenuOpen(false)}
                       >
                         {link.label}

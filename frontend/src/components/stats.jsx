@@ -3,6 +3,7 @@ import { motion, useInView, useMotionValue, useTransform, animate } from 'framer
 import { useRef, useEffect } from 'react';
 import { Container } from './layout.jsx';
 import { KineticHeading } from './whocanapply.jsx';
+import { useSnapCarousel } from '../hooks/useSnapCarousel.js';
 
 // Headline figure kept in the white card.
 const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
@@ -115,6 +116,13 @@ const CountUp = ({
 const Stats = () => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const mobileStats = [primaryStat, ...statColumns.flat(), featuredStat];
+  const {
+    trackRef: mobileTrackRef,
+    index: mobileIndex,
+    handleScroll: handleMobileScroll,
+    goTo: goToMobileStat,
+  } = useSnapCarousel(mobileStats.length);
 
   return (
     <section ref={sectionRef} data-nav-theme="dark" className="relative bg-primary overflow-hidden py-16 md:py-24">
@@ -126,13 +134,59 @@ const Stats = () => {
           variants={containerVariants}
         >
           <KineticHeading
-            as="p"
+            as="h2"
             className="font-mono font-bold text-sm md:text-base text-white uppercase tracking-wide mb-8 md:mb-10"
             text="Our Impact"
             delay={0.05}
           />
 
-          <div className="flex flex-col lg:flex-row lg:items-stretch gap-10 md:gap-12 lg:gap-8 xl:gap-12">
+          {/* Mobile: swipeable impact cards */}
+          <div className="md:hidden">
+            <div
+              ref={mobileTrackRef}
+              onScroll={handleMobileScroll}
+              className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {mobileStats.map((stat, statIndex) => (
+                <div
+                  key={stat.label}
+                  className="w-[78%] flex-none snap-center rounded-2xl bg-white p-6 shadow-[0_24px_45px_-24px_rgba(0,0,0,0.45)]"
+                >
+                  <CountUp
+                    value={stat.value}
+                    duration={1.8}
+                    delay={0.1 + statIndex * 0.05}
+                    inView={isInView}
+                    className="block font-sans font-extrabold text-primary text-[2.75rem] leading-none whitespace-nowrap"
+                  />
+                  <p className="mt-3 font-mono text-sm font-bold text-secondary">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center justify-center gap-1">
+              {mobileStats.map((stat, statIndex) => (
+                <button
+                  key={stat.label}
+                  type="button"
+                  onClick={() => goToMobileStat(statIndex)}
+                  aria-label={`Show ${stat.label}`}
+                  aria-current={statIndex === mobileIndex}
+                  className="flex h-6 w-6 items-center justify-center"
+                >
+                  <span
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      statIndex === mobileIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden md:flex flex-col lg:flex-row lg:items-stretch gap-10 md:gap-12 lg:gap-8 xl:gap-12">
             {/* Headline card */}
             <motion.div
               variants={cardVariants}
@@ -213,18 +267,6 @@ const Stats = () => {
               </p>
             </motion.div>
           </div>
-
-          <motion.p
-            variants={statItemVariants}
-            className="font-mono text-body-s text-white/70 text-center mt-10 sm:mt-14"
-          >
-          {' '}
-            <a
-              href="/impact"
-              className="underline hover:text-accent transition-colors duration-200 inline-block hover:scale-105"
-            >
-            </a>
-          </motion.p>
         </motion.div>
       </Container>
     </section>

@@ -15,12 +15,20 @@ class Applicant(models.Model):
         CYBERSECURITY = "cybersecurity", "Cybersecurity"
         OTHER = "other", "Other"
 
+    class Status(models.TextChoices):
+        SUBMITTED = "submitted", "Submitted"
+        REVIEWING = "reviewing", "Reviewing"
+        ACCEPTED = "accepted", "Accepted"
+        REJECTED = "rejected", "Rejected"
+
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=30, blank=True)
     choice = models.CharField(max_length=30, choices=Track.choices)
     motivation = models.TextField()
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.SUBMITTED)
     created_at = models.DateTimeField(auto_now_add=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["-created_at"]

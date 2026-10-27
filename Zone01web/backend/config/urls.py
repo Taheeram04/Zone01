@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
 
-from core.views import api_not_found, frontend_status, health, spa
+from core.views import api_not_found, frontend_status, health, robots_txt, sitemap_xml, spa
 
 admin.site.site_header = "Zone01 CMS"
 admin.site.site_title = "Zone01 CMS"
@@ -45,6 +45,13 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Crawler files must live at the domain root, before the SPA catch-all. The
+# built frontend ships both files; the views read them from FRONTEND_DIST.
+urlpatterns += [
+    path("robots.txt", robots_txt, name="robots-txt"),
+    path("sitemap.xml", sitemap_xml, name="sitemap"),
+]
 
 # The SPA is the catch-all and must be registered last: it owns every remaining
 # public path (client-side routing). Assets are requested under /static/, which

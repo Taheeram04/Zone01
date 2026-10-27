@@ -3,12 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from './button.jsx';
 import { Container } from './layout.jsx';
-import MagneticCursor from './magnetic-cursor.jsx';
 import { KineticHeading } from './whocanapply.jsx';
 import { APPLICATION_URL } from '../constants.js';
-import heroImg1 from '../assets/001.jpeg';
-import heroImg2 from '../assets/002.jpeg';
-import heroImg3 from '../assets/003.jpeg';
+import heroImg1 from '../assets/001.webp';
+import heroImg2 from '../assets/002.webp';
+import heroImg3 from '../assets/003.webp';
 
 const heroImages = [heroImg1, heroImg2, heroImg3];
 const GRID_COLS = 14;
@@ -81,11 +80,30 @@ const formatTimeLeft = (ms) => {
   };
 };
 
+const DesktopOnly = ({ children }) => {
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(min-width: 640px)').matches
+      : true,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 640px)');
+    const update = () => setIsDesktop(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+
+  return isDesktop ? children : null;
+};
+
 /**
  * PiscineCountdown Component
  * Minimalist, frameless live ticking countdown timer positioned inside the Hero
  * canvas. The target date comes from the Django CMS (/api/piscine/) and the
- * countdown removes itself automatically once D-day arrives.
+ * countdown removes itself automatically once D-day arrives. It is only
+ * mounted from the `sm` breakpoint up, so phones skip the fetch and timer.
  */
 const PiscineCountdown = () => {
   const [config, setConfig] = useState(null);
@@ -229,7 +247,8 @@ const Hero = () => {
       className="relative w-full min-h-screen flex items-end overflow-hidden"
       style={{ filter: 'saturate(0.75)', minHeight: '100svh' }}
     >
-      <MagneticCursor containerRef={sectionRef} />
+      {/* Preload the first hero image so the Ken Burns background paints early */}
+      <link rel="preload" as="image" href={heroImages[0]} fetchPriority="high" />
 
       {/* Spring-crossfading, Ken Burns background */}
       <AnimatePresence>
@@ -249,7 +268,7 @@ const Hero = () => {
       </AnimatePresence>
 
       <div
-        className="absolute inset-0 z-[5] pointer-events-none"
+        className="absolute inset-0 z-[5] pointer-events-none hidden md:block"
         style={{
           mixBlendMode: 'screen',
           opacity: 0.18,
@@ -297,29 +316,23 @@ const Hero = () => {
             as="h1"
             text={"Talent is everywhere.\nOpportunity is not."}
             className="font-sans font-black text-white leading-[1.06] tracking-tight text-[30px] sm:text-[44px] md:text-[54px] lg:text-[66px] xl:text-[76px] 2xl:text-hero-h1 mb-3 sm:mb-4 md:mb-5"
-            delay={0.15}
-            stagger={0.025}
+            delay={0.05}
+            stagger={0.02}
           />
 
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="font-mono text-white/90 text-sm sm:text-base lg:text-[17px] mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed"
-          >
+          <p className="font-mono text-white/90 text-sm sm:text-base lg:text-[17px] mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed">
             We identify <span className="font-semibold text-white">top-potential</span> talent, overlooked
             by traditional systems, and transform them into{' '}
             <span className="font-semibold text-white">high-income, AI-ready software engineers</span> at scale
-          </motion.p>
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4"
           >
             <Button
-              data-magnetic
               variant="primary"
               href={APPLICATION_URL}
               target="_blank"
@@ -329,7 +342,6 @@ const Hero = () => {
               Apply Now
             </Button>
             <Button
-              data-magnetic
               variant="outline"
               onClick={() => navigate('/hire')}
               className="w-full sm:w-auto !bg-transparent !border-white !text-white hover:!bg-white hover:!text-black-900"
@@ -341,7 +353,9 @@ const Hero = () => {
       </Container>
 
       {/* Live Frameless White Piscine Countdown floating above WhatsApp chatbot */}
-      <PiscineCountdown />
+      <DesktopOnly>
+        <PiscineCountdown />
+      </DesktopOnly>
     </section>
   );
 };

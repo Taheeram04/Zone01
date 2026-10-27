@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import defaultImage from '../assets/whocanapply.jpg';
+import defaultImage from '../assets/whocanapply.webp';
+import defaultImageSmall from '../assets/whocanapply-700.webp';
 
 /**
  * TypewriterText Component
@@ -15,13 +16,20 @@ export const TypewriterText = ({
   as: Tag = 'p',
   cursorColor = 'text-primary',
 }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  // Phones (and reduced-motion users) get the finished sentence immediately;
+  // the typewriter uses dozens of timers and reflows, which is wasted work on
+  // a small screen.
+  const staticMode =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)')
+      .matches;
+  const [displayedText, setDisplayedText] = useState(staticMode ? text : '');
+  const [isTypingComplete, setIsTypingComplete] = useState(staticMode);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.4 });
 
   useEffect(() => {
-    if (!isInView) return;
+    if (staticMode || !isInView) return;
 
     let timeout;
     let index = 0;
@@ -44,7 +52,15 @@ export const TypewriterText = ({
       clearTimeout(delayTimeout);
       clearInterval(timeout);
     };
-  }, [isInView, text, speed, delay]);
+  }, [staticMode, isInView, text, speed, delay]);
+
+  if (staticMode) {
+    return (
+      <Tag ref={ref} className={className}>
+        <span>{text}</span>
+      </Tag>
+    );
+  }
 
   return (
     <Tag ref={ref} className={className}>
@@ -77,6 +93,26 @@ export const KineticHeading = ({
 }) => {
   const content = typeof children === 'string' ? children : text || '';
   const lines = content.split('\n');
+
+  // On phones (and for reduced-motion users) render plain, immediately
+  // readable text instead of one animated span per character. This removes
+  // hundreds of animation nodes from the mobile main thread.
+  const staticMode =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)')
+      .matches;
+
+  if (staticMode) {
+    return (
+      <Tag id={id} className={className}>
+        {lines.map((line, lineIdx) => (
+          <span key={lineIdx} className="block">
+            {line}
+          </span>
+        ))}
+      </Tag>
+    );
+  }
 
   const containerVariants = {
     hidden: {},
@@ -226,7 +262,6 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               <motion.p variants={paragraphVariants}>
                 The Zone01 Kisumu digital training is open to anyone over 18 years
                 old.{' '}
-                <p className="hidden sm:inline" />
                 <span className="font-bold text-primary">No prior programming experience</span> or{' '}
                 <span className="font-bold text-primary">academic qualifications</span> are required to apply.
               </motion.p>
@@ -234,7 +269,6 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               <motion.p variants={paragraphVariants}>
                 Diversity and inclusion are key elements of Zone01 Kisumu&apos;s mission.
                 We therefore particularly encourage{' '}
-                <p className="hidden xl:inline" />
                 women, refugees, ethnic minorities and people from disadvantaged
                 backgrounds to apply.
               </motion.p>
@@ -257,6 +291,12 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           >
             <motion.img
               src={image}
+              srcSet={
+                image === defaultImage
+                  ? `${defaultImageSmall} 700w, ${defaultImage} 1280w`
+                  : undefined
+              }
+              sizes="(min-width: 768px) 45vw, 100vw"
               alt="Students collaborating at Zone01 Kisumu"
               className="w-full h-full object-cover object-center"
               loading="lazy"

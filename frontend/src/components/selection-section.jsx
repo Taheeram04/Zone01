@@ -400,7 +400,7 @@ export default function SelectionSection() {
           <div
             role="region"
             aria-label={accessibility.chart}
-            className="selection-card-col bg-[#3A86FA] rounded-[41px] overflow-hidden"
+            className="selection-card-col bg-[#1A66D6] rounded-[41px] overflow-hidden"
             style={{ containerType: 'inline-size' }}
           >
             {/* Large Dark Blue Circle with Stipple Grain Noise: Cropped off Card's Right Edge */}

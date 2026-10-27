@@ -36,6 +36,15 @@ if RENDER_EXTERNAL_HOSTNAME:
 # TLS is terminated by the hosting proxy (e.g. Fly.io), which forwards the
 # original scheme in X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Cross-platform security headers. HSTS is only enabled outside DEBUG so local
+# HTTP development is never pinned; Render/Fly terminate TLS in production.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 

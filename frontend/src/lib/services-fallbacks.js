@@ -30,7 +30,7 @@ export const FALLBACK_SERVICES = [
   ),
   service(
     'Developers on Demand',
-    'Full-time, part-time or project-based work — immediate access to proficient developers for flexible hiring in fintech, AI, blockchain and cybersecurity.',
+    'Full-time, part-time or project-based work, immediate access to proficient developers for flexible hiring in fintech, AI, blockchain and cybersecurity.',
     3,
   ),
   service(

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPhone } from 'react-icons/fa6';
 import { SOCIAL_LINKS } from '../social.js';
-import logo from '../assets/whitelogo.png';
+import logo from '../assets/whitelogo.webp';
 
 // Footer navigation links, laid out in a single aligned grid.
 const footerLinks = [
@@ -47,6 +47,8 @@ const Footer = () => {
               <img
                 src={logo}
                 alt="Zone01 Kisumu"
+                width="311"
+                height="118"
                 className="w-[140px] sm:w-[170px] xl:w-[200px] max-w-full h-auto object-contain"
               />
             </Link>

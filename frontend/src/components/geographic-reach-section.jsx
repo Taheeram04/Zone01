@@ -974,7 +974,7 @@ export default function GeographicReachSection() {
         />
 
         {/* Desktop Overlay: Dynamic white rounded cards with monospace labels and tracking */}
-        <div className="reach-desktop-cards" aria-hidden="true">
+        <div className="reach-desktop-cards">
           {regions.map((region) => {
             const isHovered = activeRegionId === region.id;
             const def = region.defaultDesktopPos;
