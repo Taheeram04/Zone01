@@ -1,14 +1,17 @@
 # WhatsApp FAQ assistant
 
 An automated WhatsApp agent for Zone01 Kisumu. When someone messages the
-Zone01 WhatsApp number, the agent reads the text, finds the closest answer in
-the FAQ knowledge base and replies with it. If nothing matches closely enough,
-it sends a friendly fallback message.
+Zone01 WhatsApp number, the agent reads the text, sends it to an AI model
+together with the active FAQ knowledge base, and replies with an answer grounded
+in those FAQs. If the AI layer is not configured (or the provider fails), it
+falls back to a deterministic keyword/IDF matcher, then to a friendly fallback
+message.
 
-There is **no external AI service**: matching is a deterministic keyword/IDF
-scorer that runs in-process (see `retrieval.py`), so it is cheap, private and
-easy to test. The design keeps a clean seam so an LLM re-ranking step could be
-added later without touching the webhook.
+The AI integration talks to any OpenAI-compatible `/chat/completions` endpoint
+(OpenAI, Azure gateways, Groq, OpenRouter, a local server, ...) and is
+configured with the `WHATSAPP_AI_*` variables. When `WHATSAPP_AI_API_KEY` is
+empty the bot uses keyword matching only, so everything keeps working without
+an external service.
 
 ## How it works
 
@@ -22,7 +25,8 @@ Meta WhatsApp Cloud API
 whatsapp_bot.views
     ├─ verify signature  (WHATSAPP_APP_SECRET)
     ├─ dedupe by message id
-    ├─ retrieval.get_matcher().best_match(text)   → content.FaqItem
+    ├─ ai.generate_reply(text, FAQs)   → grounded answer (when configured)
+    ├─ retrieval.get_matcher().best_match(text) → fallback answer + audit FAQ
     └─ client.send_text(...)         (or dry-run log)
     │  reply
     ▼
@@ -47,8 +51,10 @@ Afterwards, edit categories and questions in **Admin → FAQ categories / FAQ
 items**. The `keywords` field on each item is what makes free-text matching
 strong — add everyday phrases people actually type.
 
-Because the matcher caches for two minutes, admin edits are picked up within
-that window (or restart the process to apply immediately).
+Because the matcher caches for two minutes, admin edits normally take up to
+that long to appear. FAQ saves and deletes now invalidate the cache immediately
+(see `content/apps.py`), so new questions and answers are used on the next
+incoming message. The AI prompt is rebuilt from the active FAQs per request.
 
 ## 2. Configure the environment
 
@@ -64,6 +70,11 @@ Add these to `Zone01web/backend/.env` (see `.env.example`):
 | `WHATSAPP_DRY_RUN` | `true` (default) logs replies instead of sending them. |
 | `WHATSAPP_MATCH_THRESHOLD` | Minimum `0..1` match score before an answer is sent. |
 | `WHATSAPP_FALLBACK_MESSAGE` | Reply used when nothing matches. |
+| `WHATSAPP_AI_ENABLED` | `true` (default) uses the AI answer when a key is set. |
+| `WHATSAPP_AI_API_KEY` | Key for the AI provider. Empty = keyword matching only. |
+| `WHATSAPP_AI_BASE_URL` | OpenAI-compatible base URL (default `https://api.openai.com/v1`). |
+| `WHATSAPP_AI_MODEL` | Chat model name (default `gpt-4o-mini`). |
+| `WHATSAPP_AI_SYSTEM_PROMPT` | Optional custom prompt; `{faqs}` inserts the FAQ block. |
 
 > Keep `WHATSAPP_DRY_RUN=true` until the rest is wired up. Replies are then
 > stored and logged but not actually sent, so you can exercise the whole flow

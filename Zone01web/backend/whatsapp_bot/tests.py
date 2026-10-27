@@ -1,12 +1,14 @@
 """Tests for the WhatsApp FAQ assistant (matching + webhook)."""
 
 import json
+import urllib.error
+from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from content.models import FaqCategory, FaqItem
-from whatsapp_bot import retrieval
+from whatsapp_bot import ai, retrieval
 from whatsapp_bot.models import WhatsAppMessage
 from whatsapp_bot.retrieval import FaqMatcher, tokenize
 
@@ -195,3 +197,100 @@ class WebhookTests(TestCase):
         message["type"] = "image"
         self._post(payload)
         self.assertEqual(WhatsAppMessage.objects.count(), 0)
+
+
+@override_settings(
+    WHATSAPP_APP_SECRET="",
+    WHATSAPP_DRY_RUN=True,
+    WHATSAPP_AI_ENABLED=True,
+    WHATSAPP_AI_API_KEY="test-key",
+    WHATSAPP_AI_MODEL="test-model",
+    WHATSAPP_FALLBACK_MESSAGE="Fallback reply.",
+)
+class AIAnswerTests(TestCase):
+    def setUp(self):
+        retrieval.clear_cache()
+        self.category = FaqCategory.objects.create(
+            slug="application-progress",
+            title="Application Progress",
+        )
+        self.item = FaqItem.objects.create(
+            category=self.category,
+            question="How to apply?",
+            answer="Create an account via Join us, then take the cognitive tests.",
+            keywords="apply, sign up, register",
+        )
+
+    def _payload(self, text):
+        return {
+            "entry": [
+                {
+                    "changes": [
+                        {
+                            "value": {
+                                "contacts": [
+                                    {
+                                        "wa_id": "254700000002",
+                                        "profile": {"name": "AI Tester"},
+                                    }
+                                ],
+                                "messages": [
+                                    {
+                                        "from": "254700000002",
+                                        "id": "wamid.AI1",
+                                        "type": "text",
+                                        "text": {"body": text},
+                                    }
+                                ],
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+
+    def _post(self, text):
+        return self.client.post(
+            reverse("whatsapp_bot:webhook"),
+            data=json.dumps(self._payload(text)),
+            content_type="application/json",
+        )
+
+    def test_system_prompt_contains_the_faq_answers(self):
+        prompt = ai.build_system_prompt([self.item])
+        self.assertIn(self.item.question, prompt)
+        self.assertIn(self.item.answer, prompt)
+        self.assertIn("Zone01 Kisumu", prompt)
+
+    def test_ai_reply_is_used_when_configured(self):
+        fake = {"choices": [{"message": {"content": "Create an account via Join us."}}]}
+        with patch("whatsapp_bot.ai._post", return_value=fake) as post:
+            self._post("how do I get started?")
+
+        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
+        self.assertEqual(outbound.body, "Create an account via Join us.")
+        payload = post.call_args.args[0]
+        self.assertEqual(payload["model"], "test-model")
+        self.assertIn(self.item.answer, payload["messages"][0]["content"])
+        self.assertEqual(payload["messages"][1]["content"], "how do I get started?")
+
+    def test_ai_failure_falls_back_to_the_faq_answer(self):
+        with patch("whatsapp_bot.ai._post", side_effect=urllib.error.URLError("offline")):
+            self._post("how do i apply")
+
+        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
+        self.assertEqual(outbound.body, self.item.answer)
+
+    def test_ai_disabled_uses_keyword_match(self):
+        with override_settings(WHATSAPP_AI_ENABLED=False), patch("whatsapp_bot.ai._post") as post:
+            self._post("how do i apply")
+        post.assert_not_called()
+        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
+        self.assertEqual(outbound.body, self.item.answer)
+
+    def test_faq_edits_clear_the_matcher_cache(self):
+        retrieval.get_matcher()
+        self.assertIsNotNone(retrieval._cache["matcher"])
+        self.item.answer = "Updated answer."
+        self.item.save()
+        self.assertIsNone(retrieval._cache["matcher"])

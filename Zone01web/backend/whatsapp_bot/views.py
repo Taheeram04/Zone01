@@ -28,7 +28,7 @@ from django.http import (
 )
 from django.views.decorators.csrf import csrf_exempt
 
-from whatsapp_bot import client
+from whatsapp_bot import ai, client
 from whatsapp_bot.models import WhatsAppContact, WhatsAppMessage
 from whatsapp_bot.retrieval import get_matcher
 
@@ -102,8 +102,17 @@ def _process(payload):
 
 
 def _compose_reply(text, matcher):
-    """Return ``(reply_text, matched_faq | None, score)`` for an inbound message."""
+    """Return ``(reply_text, matched_faq | None, score)`` for an inbound message.
+
+    When the AI layer is configured it answers from the FAQ knowledge base with
+    a real language model; the keyword matcher still runs first so its best FAQ
+    is recorded for the audit trail and used as the fallback if the AI call
+    fails or is disabled.
+    """
     item, score = matcher.best_match(text)
+    ai_reply = ai.generate_reply(text, items=getattr(matcher, "items", None))
+    if ai_reply:
+        return ai_reply, item, score
     if item is not None:
         return item.answer, item, score
     return settings.WHATSAPP_FALLBACK_MESSAGE, None, score
