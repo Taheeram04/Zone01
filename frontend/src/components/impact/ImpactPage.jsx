@@ -308,8 +308,6 @@ export default function ImpactPage({ children }) {
                 ? 'startup-card startup-card-blue'
                 : 'startup-card startup-card-indigo';
 
-              const isFeatured = startup.theme === 'featured';
-
               return (
                 <motion.article
                   key={startup.id}
@@ -328,32 +326,7 @@ export default function ImpactPage({ children }) {
                       className="startup-card-img"
                       style={startup.imageKey === 'startup-1' ? { objectPosition: 'center 0%' } : undefined}
                     />
-                    <div className="startup-card-overlay">
-                      <div className="startup-card-tags">
-                        <span className="startup-sector-pill">{startup.sector}</span>
-                        {isFeatured ? (
-                          <span className="startup-featured-badge">★ Featured Venture</span>
-                        ) : (
-                          <span
-                            className="impact-mono"
-                            style={{
-                              fontSize: '11px',
-                              fontWeight: 700,
-                              color: startup.stageColor,
-                              background: startup.stageBg,
-                              padding: '4px 10px',
-                              borderRadius: 'var(--brand-radius-sm)',
-                            }}
-                          >
-                            {startup.stage}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                        <span className="impact-mono" style={{ fontSize: '11px', opacity: 0.9 }}>Founded {startup.founded}</span>
-                        <span className="impact-mono" style={{ fontSize: '11px', opacity: 0.9 }}>{startup.cohort}</span>
-                      </div>
-                    </div>
+                    <div className="startup-card-overlay" aria-hidden="true" />
                   </div>
 
                   <div className="startup-card-body">
