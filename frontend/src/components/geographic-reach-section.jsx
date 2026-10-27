@@ -650,7 +650,7 @@ export default function GeographicReachSection() {
         const deltaY = (dotY - initDotY) * 0.45;
 
         // Card opacity: fully visible when facing viewer, gently faded if on back side
-        const opacity = z2 >= 0 ? 1 : clamp(0.65 + z2 * 0.35, 0.4, 0.9);
+        const opacity = z2 >= 0 ? 1 : clamp(0.85 + z2 * 0.1, 0.85, 0.95);
 
         nextCardStates.push({
           id: r.id,
@@ -840,8 +840,9 @@ export default function GeographicReachSection() {
   return (
     <section
       id="geographic-reach"
+      data-nav-theme="light"
       aria-labelledby={`reach-heading-${sectionId}`}
-      className="relative w-full bg-[#BFD8FD] overflow-hidden py-4 sm:py-8 lg:py-10"
+      className="relative w-full bg-[#BFD8FD] overflow-hidden pb-4 sm:pb-8 lg:pb-10"
     >
       <style>{`
         /* Scoped styles ensuring spacious layout on desktop (>=900px) and responsive mobile stack (<900px) */
@@ -858,7 +859,7 @@ export default function GeographicReachSection() {
             position: absolute !important;
             left: 0 !important;
             right: 0 !important;
-            top: 72px !important;
+            top: 32px !important;
             font-size: clamp(34px, 3.2vw, 42px) !important;
             line-height: 1.15 !important;
             text-align: center !important;
@@ -881,12 +882,38 @@ export default function GeographicReachSection() {
           .reach-mobile-cards {
             display: none !important;
           }
+          .reach-summary {
+            position: absolute !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 16px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #0A3A9C;
+          }
+          .reach-summary strong {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0063F9;
+            margin-right: 4px;
+          }
+          .reach-summary-sep {
+            width: 1px;
+            height: 12px;
+            background: rgba(10, 58, 156, 0.3);
+          }
         }
 
         @media (max-width: 899px) {
           .reach-wrapper {
             width: 100%;
-            padding: 56px 20px 72px;
+            padding: 24px 20px 72px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -915,6 +942,9 @@ export default function GeographicReachSection() {
             width: 100%;
             max-width: 400px;
             margin-top: 36px;
+          }
+          .reach-summary {
+            display: none !important;
           }
         }
       `}</style>
@@ -1036,6 +1066,15 @@ export default function GeographicReachSection() {
             </li>
           ))}
         </ul>
+
+        {/* Bottom takeaway */}
+        <div className="reach-summary">
+          <span><strong>58%</strong> Kenya</span>
+          <span className="reach-summary-sep" aria-hidden="true" />
+          <span><strong>42%</strong> international employers &amp; clients</span>
+          <span className="reach-summary-sep" aria-hidden="true" />
+          <span><strong>5</strong> regions</span>
+        </div>
       </div>
     </section>
   );

@@ -1,0 +1,282 @@
+/* ==========================================================================
+   Zone01 brand baseline — design tokens
+   Core:  Electric Blue #0063F9 · Black #000000 · White #FFFFFF
+   UI:    Midnight Navy #0A2E7A · Bright Mint #2BE4B5
+   Type:  Montserrat (headings, body, nav, CTAs) · IBM Plex Mono (stats, code)
+   Grid:  12 columns · 1400px max · 4px spacing scale · 3–6px radii
+   ========================================================================== */
+
+:root {
+  /* ---- Core palette -------------------------------------------------- */
+  --brand-primary: #0063f9;
+  --brand-primary-hover: #0052d4;
+  --brand-black: #000000;
+  --brand-white: #ffffff;
+
+  /* ---- UI secondary + accent ----------------------------------------- */
+  --brand-navy: #0a2e7a; /* dark navy / midnight blue */
+  --brand-navy-deep: #061b33;
+  --brand-blue-700: #0740a4; /* mid-step between navy and primary */
+  --brand-blue-600: #0351ce;
+  --brand-mint: #2be4b5; /* bright teal / mint */
+  --brand-mint-hover: #16cba0;
+  --brand-mint-ink: #032b22;
+
+  /* ---- Tints & neutrals derived from the core palette ---------------- */
+  --brand-tint: #eaf2ff;
+  --brand-tint-strong: #bbd6ff;
+  --brand-line: #dce9ff;
+  --brand-slate: #35507f;
+  --brand-slate-soft: #5a739b;
+
+  /* ---- Gradients ------------------------------------------------------ */
+  /* Ink — transparent over images */
+  --brand-ink-gradient: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.45) 55%,
+    rgba(0, 0, 0, 0.82) 100%
+  );
+
+  /* ---- Typefaces ------------------------------------------------------ */
+  --brand-font-sans: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---- Type scale ----------------------------------------------------- */
+  --brand-display-sm: 48px;
+  --brand-display-md: 72px;
+  --brand-display-lg: 96px;
+  --brand-display-size: clamp(var(--brand-display-sm), 7vw, var(--brand-display-lg));
+
+  --brand-section-sm: 30px;
+  --brand-section-lg: 36px;
+  --brand-section-size: clamp(var(--brand-section-sm), 3.2vw, var(--brand-section-lg));
+
+  --brand-cta-size: 24px;
+
+  --brand-body-lg: 18px;
+  --brand-body: 16px;
+  --brand-body-sm: 14px;
+  --brand-caption: 12px;
+
+  --brand-stat-sm: 40px;
+  --brand-stat-lg: 48px;
+  --brand-stat-size: clamp(var(--brand-stat-sm), 3.4vw, var(--brand-stat-lg));
+
+  /* ---- Weights -------------------------------------------------------- */
+  --brand-weight-black: 900;
+  --brand-weight-bold: 700;
+  --brand-weight-medium: 500;
+  --brand-weight-regular: 400;
+
+  /* ---- Spacing — multiples of 4px ------------------------------------- */
+  --brand-space-1: 4px;
+  --brand-space-2: 8px;
+  --brand-space-3: 12px;
+  --brand-space-4: 16px;
+  --brand-space-5: 20px;
+  --brand-space-6: 24px;
+  --brand-space-7: 28px;
+  --brand-space-8: 32px;
+  --brand-space-10: 40px;
+  --brand-space-12: 48px;
+  --brand-space-14: 56px;
+  --brand-space-16: 64px;
+  --brand-space-20: 80px;
+  --brand-space-24: 96px;
+  --brand-space-28: 112px;
+  --brand-space-32: 128px;
+
+  /* ---- Radii ---------------------------------------------------------- */
+  --brand-radius-sm: 3px;
+  --brand-radius-md: 4px;
+  --brand-radius-lg: 6px;
+
+  /* ---- Layout --------------------------------------------------------- */
+  --brand-container: 1400px;
+  --brand-gutter: 24px;
+  --brand-columns: 12;
+}
+
+/* ==========================================================================
+   Brand primitives
+   ========================================================================== */
+
+.brand-container {
+  width: 100%;
+  max-width: var(--brand-container);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 5vw, 96px);
+  box-sizing: border-box;
+}
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--brand-columns), minmax(0, 1fr));
+  gap: var(--brand-gutter);
+}
+
+.brand-span-3 { grid-column: span 3; }
+.brand-span-4 { grid-column: span 4; }
+.brand-span-6 { grid-column: span 6; }
+.brand-span-8 { grid-column: span 8; }
+.brand-span-12 { grid-column: span 12; }
+
+/* Type hierarchy */
+.brand-display {
+  margin: 0;
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-black);
+  font-size: var(--brand-display-size);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.brand-section-title {
+  margin: 0;
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-black);
+  font-size: var(--brand-section-size);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--brand-black);
+}
+
+.brand-cta-title {
+  margin: 0;
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-black);
+  font-size: var(--brand-cta-size);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.brand-body-lg {
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-regular);
+  font-size: var(--brand-body-lg);
+  line-height: 1.6;
+}
+
+.brand-body {
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-regular);
+  font-size: var(--brand-body);
+  line-height: 1.6;
+}
+
+.brand-body-sm {
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-regular);
+  font-size: var(--brand-body-sm);
+  line-height: 1.55;
+}
+
+.brand-caption {
+  font-family: var(--brand-font-mono);
+  font-weight: var(--brand-weight-regular);
+  font-size: var(--brand-caption);
+  line-height: 1.5;
+}
+
+.brand-stat {
+  font-family: var(--brand-font-mono);
+  font-weight: var(--brand-weight-medium);
+  font-size: var(--brand-stat-size);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--brand-black);
+}
+
+.brand-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brand-space-2);
+  font-family: var(--brand-font-mono);
+  font-weight: var(--brand-weight-medium);
+  font-size: var(--brand-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+}
+
+/* Surfaces + actions */
+.brand-card {
+  background: var(--brand-white);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--brand-radius-lg);
+}
+
+.brand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--brand-space-2);
+  padding: var(--brand-space-3) var(--brand-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--brand-radius-lg);
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-bold);
+  font-size: var(--brand-body-sm);
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.brand-btn:hover { transform: translateY(-1px); }
+
+.brand-btn:focus-visible {
+  outline: 2px solid var(--brand-mint);
+  outline-offset: 2px;
+}
+
+.brand-btn--primary {
+  background: var(--brand-primary);
+  color: var(--brand-white);
+}
+
+.brand-btn--primary:hover { background: var(--brand-primary-hover); }
+
+.brand-btn--secondary {
+  background: transparent;
+  border-color: var(--brand-black);
+  color: var(--brand-black);
+}
+
+.brand-btn--secondary:hover {
+  background: var(--brand-black);
+  color: var(--brand-white);
+}
+
+.brand-btn--ghost {
+  background: transparent;
+  border-color: currentColor;
+  color: var(--brand-primary);
+}
+
+/* Ink overlay for photography */
+.brand-ink-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--brand-ink-gradient);
+  pointer-events: none;
+}
+
+@media (max-width: 980px) {
+  .brand-span-3,
+  .brand-span-4,
+  .brand-span-6,
+  .brand-span-8 {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-span-3,
+  .brand-span-4,
+  .brand-span-6,
+  .brand-span-8 {
+    grid-column: span 12;
+  }
+}
