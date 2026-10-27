@@ -10,9 +10,7 @@ const About = lazy(() => import('./pages/About.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Hire = lazy(() => import('./pages/Hire.jsx'));
 const Impact = lazy(() => import('./pages/Impact.jsx'));
-const Community = lazy(() => import('./components/community.jsx'));
-const OurStaff = lazy(() => import('./components/our-staff.jsx'));
-const CommunityFeed = lazy(() => import('./components/community-feed.jsx'));
+const Community = lazy(() => import('./pages/Community.jsx'));
 const Faqs = lazy(() => import('./components/faqs.jsx'));
 const ComingSoon = lazy(() => import('./components/coming-soon.jsx'));
 
@@ -51,14 +49,12 @@ function App() {
           }
         />
 
-        {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
+        {/* Community — hero, partner directory, 3D staff carousel + community feed */}
         <Route
           path="/community"
           element={
             <Layout>
               <Community />
-              <OurStaff />
-              <CommunityFeed />
             </Layout>
           }
         />
