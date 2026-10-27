@@ -397,13 +397,10 @@ const CommunityFeed = () => {
 
       <Container className="relative">
         <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-          <p className="mb-2 font-mono text-body-s uppercase tracking-[0.25em] text-blob-blue">
-            &lt; Community Hub &gt;
-          </p>
           <KineticHeading
             as="h2"
             id="community-hub-title"
-            text="What's happening now"
+            text="Community Hub"
             className="font-sans font-black leading-tight tracking-tight text-white text-[30px] md:text-section-headline"
           />
           <motion.p
@@ -413,7 +410,7 @@ const CommunityFeed = () => {
             className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base"
           >
             The latest news, events, blog posts and podcast episodes from the
-            Zone01 Kisumu community — each group shows its newest item first.
+            Zone01 Kisumu community. Each group shows its newest item first.
             Open a group to explore everything.
           </motion.p>
         </div>
