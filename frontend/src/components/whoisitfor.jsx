@@ -39,7 +39,7 @@ const targetAudience = [
     smallWidth: 360,
     title: 'EXPERIENCED PROFESSIONALS',
     description:
-      'Having a wealth of experience but looking to re-skill to keep up with global digital transformation and trends?',
+      'Having a wealth of experience but looking to re-skill to keep up with global digital trends?',
     alt: 'Experienced professional learner at Zone01 Kisumu',
   },
 ];

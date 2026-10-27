@@ -1207,28 +1207,32 @@
   position: relative;
   overflow: hidden;
   padding: 104px 0 112px;
-  background: #BBD6FF;
+  background: var(--brand-tint, #eaf2ff);
   isolation: isolate;
 }
 
 .impact-results-bg {
   position: absolute;
-  inset: -4%;
-  width: 108%;
-  height: 108%;
+  inset: -15px;
+  width: calc(100% + 30px);
+  height: calc(100% + 30px);
   object-fit: cover;
-  filter: blur(24px) saturate(0.9);
-  opacity: 0.18;
+  object-position: center;
+  filter: blur(6px);
+  opacity: 0.38;
   z-index: 0;
+  pointer-events: none;
+  transform: scale(1.02);
 }
 
 .impact-results-veil {
   position: absolute;
   inset: 0;
   z-index: 0;
+  pointer-events: none;
   background:
-    radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 72%),
-    linear-gradient(180deg, rgba(234, 242, 255, 0.72), rgba(187, 214, 255, 0.9));
+    radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(234, 242, 255, 0.82));
 }
 
 .impact-results-section::before {

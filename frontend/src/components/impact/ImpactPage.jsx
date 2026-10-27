@@ -14,6 +14,7 @@ import {
 } from '../../data/impact';
 import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
+import gdgBgImg from '../../assets/gdg.jpg';
 import impactHeroImg from '../../assets/impacthero.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
@@ -129,7 +130,7 @@ export default function ImpactPage({ children }) {
   const storiesInView = useInView(storiesRef, { once: true, amount: 0.15 });
 
   return (
-    <div className="impact-page" style={{ width: '100%', background: '#ffffff', overflowX: 'clip', fontFamily: 'var(--font-sans)' }}>
+    <div className="impact-page" style={{ width: '100%', background: 'var(--brand-white)', overflowX: 'clip', fontFamily: 'var(--brand-font-sans)' }}>
       {/* HERO */}
       <section
         data-nav-theme="dark"
@@ -140,7 +141,8 @@ export default function ImpactPage({ children }) {
           <div className="impact-hero-grid">
             <div className="impact-hero-content">
               <h1 className="impact-hero-title">
-                {IMPACT_HERO.headlinePart1} <span style={{ color: '#BBD6FF' }}>{IMPACT_HERO.headlinePart2}</span>
+                <span className="impact-hero-title-our" style={{ color: 'var(--brand-white)' }}>{IMPACT_HERO.headlinePart1}</span>{' '}
+                <span className="impact-hero-title-impact" style={{ color: 'var(--brand-black)' }}>{IMPACT_HERO.headlinePart2}</span>
               </h1>
               <p className="impact-hero-body">{IMPACT_HERO.body}</p>
               <div className="impact-hero-actions">
@@ -184,7 +186,7 @@ export default function ImpactPage({ children }) {
 
       {/* HEADLINE RESULTS + SELECTION */}
       <section id="headline" className="impact-results-section" data-nav-theme="light">
-        <img className="impact-results-bg" src={new URL('../../assets/impact-results-bg.webp', import.meta.url).href} alt="" aria-hidden="true" />
+        <img className="impact-results-bg" src={gdgBgImg} alt="" aria-hidden="true" />
         <div className="impact-results-veil" aria-hidden="true" />
         <div className="impact-wrap" style={{ position: 'relative', zIndex: 1 }}>
           <motion.h2
@@ -192,7 +194,7 @@ export default function ImpactPage({ children }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '16px 0 0', textAlign: 'center', fontWeight: 900, fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)' }}
+            style={{ margin: '16px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
           >
             Headline results.
           </motion.h2>
@@ -215,9 +217,9 @@ export default function ImpactPage({ children }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '64px 0 0', textAlign: 'center', fontWeight: 900, fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)' }}
+            style={{ margin: '64px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
           >
-            Selection, <span style={{ color: '#0063F9' }}>employment</span> and income
+            Selection, <span style={{ color: 'var(--brand-primary)' }}>employment</span> and income
           </motion.h2>
 
           <div ref={funnelRef} style={{ maxWidth: '1160px', margin: '72px auto 0', display: 'flex', flexWrap: 'wrap', gap: '56px', alignItems: 'center', justifyContent: 'center' }}>
@@ -234,7 +236,7 @@ export default function ImpactPage({ children }) {
                     style={{
                       width: step.width,
                       background: step.bg,
-                      color: '#ffffff',
+                      color: 'var(--brand-white)',
                       clipPath: idx === 0 ? 'polygon(0 0,100% 0,89% 100%,11% 100%)' : idx === 1 ? 'polygon(0 0,100% 0,88.5% 100%,11.5% 100%)' : idx === 2 ? 'polygon(0 0,100% 0,86.7% 100%,13.3% 100%)' : 'polygon(0 0,100% 0,86.4% 100%,13.6% 100%)',
                       padding: idx === 3 ? '30px 0 34px' : '30px 0',
                       boxSizing: 'border-box',
@@ -247,10 +249,10 @@ export default function ImpactPage({ children }) {
                       boxShadow: '0 8px 24px -6px rgba(0,0,0,0.18)',
                     }}
                   >
-                    <span style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 500, fontSize: 'clamp(28px, 4.2vw, 48px)', letterSpacing: '-.02em' }}>
+                    <span style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 'var(--brand-weight-medium)', fontSize: 'clamp(var(--brand-section-sm), 4.2vw, var(--brand-stat-lg))', letterSpacing: '-.02em' }}>
                       <CountUp value={step.value} inView={funnelInView} delay={idx * 0.16 + 0.1} />
                     </span>
-                    <span className="impact-monoc" style={{ fontSize: '12px', whiteSpace: 'pre-line' }}>{step.label}</span>
+                    <span className="impact-monoc" style={{ fontSize: 'var(--brand-caption)', whiteSpace: 'pre-line' }}>{step.label}</span>
                     <span className="impact-funnel-note">{step.note}</span>
                   </motion.div>
                 ))}
@@ -261,26 +263,26 @@ export default function ImpactPage({ children }) {
               initial={{ opacity: 0, x: 40, scale: 0.95 }}
               animate={funnelInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 40, scale: 0.95 }}
               transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              style={{ flex: '1 1 340px', minWidth: 0, maxWidth: '440px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(160deg, var(--brand-navy) 0%, var(--brand-primary) 100%)', color: '#ffffff', borderRadius: 'var(--brand-radius-lg)', padding: '44px 40px', boxSizing: 'border-box', minHeight: '420px', display: 'flex', flexDirection: 'column' }}
+              style={{ flex: '1 1 340px', minWidth: 0, maxWidth: '440px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(160deg, var(--brand-navy) 0%, var(--brand-primary) 100%)', color: 'var(--brand-white)', borderRadius: 'var(--brand-radius-lg)', padding: '44px 40px', boxSizing: 'border-box', minHeight: '420px', display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ position: 'absolute', right: '-90px', bottom: '-90px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle,#2F83FF,#0063F9 70%)' }} />
-              <div className="impact-mono" style={{ fontSize: '12px', position: 'relative' }}>{EMPLOYMENT_CARD.title}</div>
+              <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', position: 'relative' }}>{EMPLOYMENT_CARD.title}</div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,.45)', marginTop: '20px', position: 'relative' }} />
               <div className="impact-employment-main">
                 <ProgressRing value={parseInt(EMPLOYMENT_CARD.percentage, 10)} inView={funnelInView} />
                 <div style={{ flex: '1 1 150px', minWidth: 0 }}>
-                  <div className="impact-mono" style={{ fontSize: '12px', color: '#BBD6FF' }}>{EMPLOYMENT_CARD.subtext}</div>
+                  <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-tint-strong)' }}>{EMPLOYMENT_CARD.subtext}</div>
                   <div style={{ display: 'flex', gap: '26px', marginTop: '14px' }}>
                     {EMPLOYMENT_CARD.breakdown.map((item) => (
                       <div key={item.label}>
-                        <div style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 500, fontSize: '40px', lineHeight: 1, letterSpacing: '-.02em' }}>{item.value}</div>
-                        <div className="impact-mono" style={{ fontSize: '12px', marginTop: '6px', color: '#BBD6FF' }}>{item.label}</div>
+                        <div style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 'var(--brand-weight-medium)', fontSize: 'var(--brand-stat-sm)', lineHeight: 1, letterSpacing: '-.02em' }}>{item.value}</div>
+                        <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', marginTop: 'var(--brand-space-2, 8px)', color: 'var(--brand-tint-strong)' }}>{item.label}</div>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="impact-mono" style={{ fontSize: '12px', marginTop: 'auto', paddingTop: '32px', position: 'relative', lineHeight: 1.5 }}>{EMPLOYMENT_CARD.note}</div>
+              <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', marginTop: 'auto', paddingTop: 'var(--brand-space-8, 32px)', position: 'relative', lineHeight: 1.5 }}>{EMPLOYMENT_CARD.note}</div>
             </motion.div>
           </div>
         </div>
@@ -292,10 +294,10 @@ export default function ImpactPage({ children }) {
           <div className="impact-startups-header">
             <div>
               <h2 className="impact-startups-title">
-                Companies built by <span style={{ color: '#0063F9' }}>Zone01 Kisumu</span> talent.
+                Companies built by <span style={{ color: 'var(--brand-primary)' }}>Zone01 Kisumu</span> talent.
               </h2>
             </div>
-            <div className="impact-mono" style={{ color: '#0A3A9C', fontSize: '13px' }}>
+            <div className="impact-mono" style={{ color: 'var(--brand-navy)', fontSize: 'var(--brand-caption)' }}>
               3 Active Cohort 1 Ventures
             </div>
           </div>
@@ -388,30 +390,30 @@ export default function ImpactPage({ children }) {
               </div>
 
               <div className="ri-story-modal-body">
-                <div className="ri-story-category" style={{ margin: 0 }}>
+                <div className="ri-story-category" style={{ margin: 0, fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-caption)' }}>
                   {activeStartup.sector} &bull; {activeStartup.location || 'Nairobi, Kenya'} &bull; Founded {activeStartup.founded} &bull; {activeStartup.cohort}
                 </div>
-                <h3 id="startup-modal-title" className="ri-story-headline" style={{ fontSize: '26px', margin: 0, color: '#0A1A24' }}>
+                <h3 id="startup-modal-title" className="ri-story-headline" style={{ fontSize: 'var(--brand-cta-size)', margin: 0, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-black)' }}>
                   {activeStartup.name}
                 </h3>
-                <p style={{ fontSize: '16px', lineHeight: 1.55, color: '#334155', margin: 0 }}>
+                <p style={{ fontSize: 'var(--brand-body)', lineHeight: 1.6, color: 'var(--brand-slate)', margin: 0, fontFamily: 'var(--brand-font-sans)' }}>
                   {activeStartup.tagline}
                 </p>
 
                 {activeStartup.mission && (
                   <div
                     style={{
-                      background: '#F8FAFC',
+                      background: 'var(--brand-tint)',
                       borderRadius: 'var(--brand-radius-lg)',
-                      padding: '20px 24px',
-                      border: '1px solid #E2E8F0',
-                      borderLeft: '4px solid #0063F9',
+                      padding: 'var(--brand-space-5) var(--brand-space-6)',
+                      border: '1px solid var(--brand-line)',
+                      borderLeft: '4px solid var(--brand-primary)',
                     }}
                   >
-                    <div className="impact-mono" style={{ color: '#0063F9', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    <div className="impact-mono" style={{ color: 'var(--brand-primary)', fontSize: 'var(--brand-caption)', fontWeight: 'var(--brand-weight-bold)', textTransform: 'uppercase' }}>
                       The Gap in Kenya &amp; Why We Started
                     </div>
-                    <p style={{ margin: '8px 0 0', fontSize: '15px', lineHeight: 1.65, color: '#0F172A', fontStyle: 'italic' }}>
+                    <p style={{ margin: '8px 0 0', fontSize: 'var(--brand-body-sm)', lineHeight: 1.6, color: 'var(--brand-black)', fontStyle: 'italic', fontFamily: 'var(--brand-font-sans)' }}>
                       &ldquo;{activeStartup.mission}&rdquo;
                     </p>
                     {activeStartup.clientModel && (
@@ -419,15 +421,16 @@ export default function ImpactPage({ children }) {
                         style={{
                           marginTop: '12px',
                           paddingTop: '12px',
-                          borderTop: '1px solid #E2E8F0',
-                          fontSize: '13.5px',
-                          color: '#334155',
+                          borderTop: '1px solid var(--brand-line)',
+                          fontSize: 'var(--brand-body-sm)',
+                          color: 'var(--brand-slate)',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '8px',
+                          fontFamily: 'var(--brand-font-sans)',
                         }}
                       >
-                        <span style={{ color: '#0063F9', fontWeight: 900 }}>✓</span>
+                        <span style={{ color: 'var(--brand-primary)', fontWeight: 'var(--brand-weight-black)' }}>✓</span>
                         <span><strong>Direct Model:</strong> {activeStartup.clientModel}</span>
                       </div>
                     )}
@@ -436,7 +439,7 @@ export default function ImpactPage({ children }) {
 
                 {activeStartup.publicWork && (
                   <div>
-                    <div className="impact-mono" style={{ color: '#0063F9', fontSize: '11.5px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
+                    <div className="impact-mono" style={{ color: 'var(--brand-primary)', fontSize: 'var(--brand-caption)', fontWeight: 'var(--brand-weight-bold)', textTransform: 'uppercase', marginBottom: '10px' }}>
                       Public Work &amp; Flagship Deployments
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
@@ -447,11 +450,11 @@ export default function ImpactPage({ children }) {
                             background: '#F8FAFC',
                             borderRadius: 'var(--brand-radius-lg)',
                             padding: '16px 18px',
-                            border: '1px solid #E2E8F0',
+                            border: '1px solid var(--brand-line)',
                           }}
                         >
-                          <div style={{ fontWeight: 800, fontSize: '15px', color: '#0F172A' }}>{work.title}</div>
-                          <p style={{ margin: '6px 0 0', fontSize: '13.5px', color: '#475569', lineHeight: 1.55 }}>{work.desc}</p>
+                          <div style={{ fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-bold)', fontSize: 'var(--brand-body-sm)', color: 'var(--brand-black)' }}>{work.title}</div>
+                          <p style={{ margin: '6px 0 0', fontFamily: 'var(--brand-font-sans)', fontSize: 'var(--brand-caption)', color: 'var(--brand-slate)', lineHeight: 1.55 }}>{work.desc}</p>
                         </div>
                       ))}
                     </div>
@@ -464,11 +467,11 @@ export default function ImpactPage({ children }) {
                     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: '20px',
                     paddingTop: '16px',
-                    borderTop: '1px solid #E2E8F0',
+                    borderTop: '1px solid var(--brand-line)',
                   }}
                 >
                   <div>
-                    <div className="impact-mono" style={{ color: '#64748B', fontSize: '11px', textTransform: 'uppercase', fontWeight: 700 }}>
+                    <div className="impact-mono" style={{ color: 'var(--brand-slate-soft)', fontSize: 'var(--brand-caption)', textTransform: 'uppercase', fontWeight: 'var(--brand-weight-bold)' }}>
                       Co-Founders (Zone01 Alumni)
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
@@ -479,21 +482,22 @@ export default function ImpactPage({ children }) {
                               width: '28px',
                               height: '28px',
                               borderRadius: '50%',
-                              background: '#0063F9',
-                              color: '#fff',
+                              background: 'var(--brand-primary)',
+                              color: 'var(--brand-white)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: '11px',
-                              fontWeight: 700,
+                              fontFamily: 'var(--brand-font-mono)',
+                              fontSize: 'var(--brand-caption)',
+                              fontWeight: 'var(--brand-weight-bold)',
                               flexShrink: 0,
                             }}
                           >
                             {f.initials}
                           </span>
                           <div>
-                            <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#0F172A' }}>{f.name}</div>
-                            <div className="impact-mono" style={{ fontSize: '11px', color: '#64748B' }}>{f.role}</div>
+                            <div style={{ fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-bold)', fontSize: 'var(--brand-body-sm)', color: 'var(--brand-black)' }}>{f.name}</div>
+                            <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)' }}>{f.role}</div>
                           </div>
                         </div>
                       ))}
@@ -501,19 +505,19 @@ export default function ImpactPage({ children }) {
                   </div>
 
                   <div>
-                    <div className="impact-mono" style={{ color: '#64748B', fontSize: '11px', textTransform: 'uppercase', fontWeight: 700 }}>
+                    <div className="impact-mono" style={{ color: 'var(--brand-slate-soft)', fontSize: 'var(--brand-caption)', textTransform: 'uppercase', fontWeight: 'var(--brand-weight-bold)' }}>
                       Traction &amp; Metric
                     </div>
-                    <div className="modal-stat">
+                    <div className="modal-stat" style={{ fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-stat-sm)', fontWeight: 'var(--brand-weight-medium)', color: 'var(--brand-black)' }}>
                       {activeStartup.metric}
                     </div>
-                    <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569', lineHeight: 1.5 }}>
+                    <p style={{ margin: '6px 0 0', fontFamily: 'var(--brand-font-sans)', fontSize: 'var(--brand-body-sm)', color: 'var(--brand-slate)', lineHeight: 1.5 }}>
                       {activeStartup.tractionNote}
                     </p>
                   </div>
 
                   <div>
-                    <div className="impact-mono" style={{ color: '#64748B', fontSize: '11px', textTransform: 'uppercase', fontWeight: 700 }}>
+                    <div className="impact-mono" style={{ color: 'var(--brand-slate-soft)', fontSize: 'var(--brand-caption)', textTransform: 'uppercase', fontWeight: 'var(--brand-weight-bold)' }}>
                       Tech Stack
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
@@ -522,13 +526,14 @@ export default function ImpactPage({ children }) {
                           key={i}
                           className="impact-mono"
                           style={{
-                            fontSize: '11px',
-                            background: '#EEF2FF',
-                            color: '#0057E0',
-                            border: '1px solid #C7D2FE',
-                            padding: '4px 9px',
-                            borderRadius: '6px',
-                            fontWeight: 600,
+                            fontFamily: 'var(--brand-font-mono)',
+                            fontSize: 'var(--brand-caption)',
+                            background: 'var(--brand-tint)',
+                            color: 'var(--brand-primary)',
+                            border: '1px solid var(--brand-line)',
+                            padding: '4px 8px',
+                            borderRadius: 'var(--brand-radius-sm)',
+                            fontWeight: 'var(--brand-weight-medium)',
                           }}
                         >
                           {tech}
@@ -541,9 +546,9 @@ export default function ImpactPage({ children }) {
                 <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
                   <button
                     type="button"
-                    className="impact-btn impact-btn-primary"
+                    className="brand-btn brand-btn--primary"
                     onClick={() => setActiveStartup(null)}
-                    style={{ padding: '10px 24px', fontSize: '13px', cursor: 'pointer' }}
+                    style={{ fontSize: 'var(--brand-body-sm)' }}
                   >
                     Close Details
                   </button>
@@ -564,7 +569,7 @@ export default function ImpactPage({ children }) {
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2 className="ri-stories-title">
-              Real journeys. <span style={{ color: '#0063F9' }}>Transformational</span> impact.
+              Real journeys. <span style={{ color: 'var(--brand-primary)' }}>Transformational</span> impact.
             </h2>
             <p className="ri-stories-description">
               Direct firsthand accounts of how peer-to-peer software education is opening global digital economy opportunities for youth across Western Kenya.
@@ -642,13 +647,13 @@ export default function ImpactPage({ children }) {
               </div>
 
               <div className="ri-story-modal-body">
-                <div className="ri-story-category" style={{ margin: 0 }}>
+                <div className="ri-story-category" style={{ margin: 0, fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-caption)' }}>
                   {activeStory.category}
                 </div>
-                <h3 id="story-modal-title" className="ri-story-headline" style={{ fontSize: '24px', margin: 0 }}>
+                <h3 id="story-modal-title" className="ri-story-headline" style={{ fontSize: 'var(--brand-cta-size)', margin: 0, fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-black)', color: 'var(--brand-black)' }}>
                   {activeStory.headline}
                 </h3>
-                <div className="impact-mono" style={{ fontSize: '12px', color: '#64748B' }}>
+                <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', fontFamily: 'var(--brand-font-mono)' }}>
                   {activeStory.author}
                 </div>
 
@@ -661,12 +666,12 @@ export default function ImpactPage({ children }) {
                       padding: '16px',
                       background: '#F8FAFC',
                       borderRadius: 'var(--brand-radius-lg)',
-                      border: '1px solid #E2E8F0',
+                      border: '1px solid var(--brand-line)',
                       marginTop: '8px',
                     }}
                   >
                     <div>
-                      <div className="impact-mono" style={{ fontSize: '11px', color: '#94A3B8', textTransform: 'uppercase' }}>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
                         Before Zone01
                       </div>
                       <div className="journey-value journey-value--before">
@@ -674,7 +679,7 @@ export default function ImpactPage({ children }) {
                       </div>
                     </div>
                     <div>
-                      <div className="impact-mono" style={{ fontSize: '11px', color: '#0063F9', textTransform: 'uppercase' }}>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-primary)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
                         During Zone01
                       </div>
                       <div className="journey-value journey-value--during">
@@ -682,7 +687,7 @@ export default function ImpactPage({ children }) {
                       </div>
                     </div>
                     <div>
-                      <div className="impact-mono" style={{ fontSize: '11px', color: '#16A34A', textTransform: 'uppercase' }}>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-mint-ink)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
                         Current Outcome
                       </div>
                       <div className="journey-value journey-value--now">
@@ -694,7 +699,7 @@ export default function ImpactPage({ children }) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '8px' }}>
                   {activeStory.fullParagraphs.map((para, idx) => (
-                    <p key={idx} style={{ fontSize: '15px', lineHeight: 1.7, color: '#334155', margin: 0 }}>
+                    <p key={idx} style={{ fontFamily: 'var(--brand-font-sans)', fontSize: 'var(--brand-body-sm)', lineHeight: 1.6, color: 'var(--brand-slate)', margin: 0 }}>
                       {para}
                     </p>
                   ))}
@@ -703,9 +708,9 @@ export default function ImpactPage({ children }) {
                 <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
                   <button
                     type="button"
-                    className="impact-btn impact-btn-primary"
+                    className="brand-btn brand-btn--primary"
                     onClick={() => setActiveStory(null)}
-                    style={{ padding: '10px 24px', fontSize: '13px', cursor: 'pointer' }}
+                    style={{ fontSize: 'var(--brand-body-sm)' }}
                   >
                     Close Story
                   </button>
