@@ -114,9 +114,7 @@ def _extract_text(data: dict) -> str:
         return ""
     if isinstance(content, list):
         # Some gateways return content parts instead of a string.
-        content = " ".join(
-            part.get("text", "") for part in content if isinstance(part, dict)
-        )
+        content = " ".join(part.get("text", "") for part in content if isinstance(part, dict))
     return (content or "").strip() if isinstance(content, str) else ""
 
 
