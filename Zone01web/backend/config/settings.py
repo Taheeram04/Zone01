@@ -36,6 +36,9 @@ if RENDER_EXTERNAL_HOSTNAME:
 # TLS is terminated by the hosting proxy (e.g. Fly.io), which forwards the
 # original scheme in X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# The frontend's nginx proxies /admin/ from the public domain and passes the
+# original host in X-Forwarded-Host. It is still validated against ALLOWED_HOSTS.
+USE_X_FORWARDED_HOST = True
 
 # Cross-platform security headers. HSTS is only enabled outside DEBUG so local
 # HTTP development is never pinned; Render/Fly terminate TLS in production.
