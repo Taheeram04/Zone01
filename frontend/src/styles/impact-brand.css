@@ -11,19 +11,41 @@
 
 /* ---- Backgrounds -------------------------------------------------------- */
 .impact-page #headline {
+  position: relative;
   background: var(--brand-tint);
   padding-top: 56px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.impact-page #headline .impact-results-bg {
+  position: absolute;
+  inset: -15px;
+  width: calc(100% + 30px);
+  height: calc(100% + 30px);
+  object-fit: cover;
+  object-position: center;
+  filter: blur(6px);
+  opacity: 0.38;
+  z-index: 0;
+  pointer-events: none;
+  transform: scale(1.02);
 }
 
 .impact-page #headline .impact-results-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background:
-    radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0) 72%),
-    linear-gradient(180deg, var(--brand-white), var(--brand-tint));
+    radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(234, 242, 255, 0.82));
 }
 
 .impact-page #headline::before {
   background-image: radial-gradient(rgba(0, 99, 249, 0.16) 1.2px, transparent 1.2px);
-  opacity: 0.22;
+  opacity: 0.18;
+  z-index: 0;
 }
 
 /* ---- Type hierarchy ----------------------------------------------------- */
@@ -209,7 +231,7 @@
   }
 
   .impact-page #headline .impact-funnel-note {
-    font-size: 11px;
+    font-size: var(--brand-caption);
     letter-spacing: 0.03em;
   }
 }
@@ -546,6 +568,14 @@
   font-weight: var(--brand-weight-black, 900);
   line-height: 0.95;
   letter-spacing: -0.03em;
+}
+
+.impact-hero-title-our {
+  color: var(--brand-white) !important;
+}
+
+.impact-hero-title-impact {
+  color: var(--brand-black) !important;
 }
 
 .impact-page .impact-hero-body {

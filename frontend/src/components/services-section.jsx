@@ -122,8 +122,8 @@ const ServicesSection = ({ services }) => {
                     onKeyDown={handleKeyDown}
                     className={`relative flex flex-col gap-1 border-r border-white/20 px-4 py-4 text-left transition-colors last:border-r-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white sm:px-5 sm:py-5 ${
                       selected
-                        ? 'bg-white/10 text-white'
-                        : 'text-white/65 hover:bg-white/5 hover:text-white'
+                        ? 'bg-black/10 text-white'
+                        : 'text-white hover:bg-white/10'
                     }`}
                   >
                     <span
@@ -164,7 +164,7 @@ const ServicesSection = ({ services }) => {
                 <h3 className="max-w-xl font-sans text-cta-headline font-black leading-tight tracking-tight text-white">
                   {activeService.title || activeService.name}
                 </h3>
-                <p className="mt-4 max-w-xl font-sans text-body-m leading-relaxed text-white/70">
+                <p className="mt-4 max-w-xl font-sans text-body-m leading-relaxed text-white">
                   {activeService.description}
                 </p>
 

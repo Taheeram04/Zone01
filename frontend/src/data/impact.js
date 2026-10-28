@@ -1,7 +1,7 @@
 // data/impact.js
 export const IMPACT_HERO = {
-  headlinePart1: 'Impact you can',
-  headlinePart2: 'hire.',
+  headlinePart1: 'Our',
+  headlinePart2: 'impact',
   body: "Eighty-six of our first 97 apprentices are now in paid tech work, and the median graduate found a first paid role in about six weeks. That's an 89% employment rate from 28,000+ applicants — measured, dated and defined.",
   cta1: { label: 'Read the stories', href: '#stories' },
   cta2: { label: 'Hire our talent', href: '/hire' },

@@ -250,6 +250,9 @@ const Hero = () => {
       className="relative w-full min-h-screen flex items-end overflow-hidden"
       style={{ filter: 'saturate(0.75)', minHeight: '100svh' }}
     >
+      {/* Preload the first hero image so the Ken Burns background paints early */}
+      <link rel="preload" as="image" href={heroImages[0]} fetchPriority="high" />
+
       {/* Spring-crossfading, Ken Burns background */}
       <AnimatePresence>
         <motion.div

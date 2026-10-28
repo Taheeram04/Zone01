@@ -860,8 +860,12 @@ export default function GeographicReachSection() {
             left: 0 !important;
             right: 0 !important;
             top: 32px !important;
-            font-size: clamp(34px, 3.2vw, 42px) !important;
-            line-height: 1.15 !important;
+            font-family: var(--brand-font-sans) !important;
+            font-size: var(--brand-section-size) !important;
+            font-weight: var(--brand-weight-black) !important;
+            line-height: 1.1 !important;
+            letter-spacing: -0.02em !important;
+            color: var(--brand-black) !important;
             text-align: center !important;
             margin-bottom: 0 !important;
             white-space: nowrap !important;
@@ -891,16 +895,18 @@ export default function GeographicReachSection() {
             align-items: center;
             justify-content: center;
             gap: 16px;
-            font-family: var(--font-mono);
-            font-size: 10.5px;
-            letter-spacing: 0.07em;
+            font-family: var(--brand-font-mono) !important;
+            font-size: var(--brand-caption) !important;
+            font-weight: var(--brand-weight-medium) !important;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #0A3A9C;
+            color: var(--brand-navy) !important;
           }
           .reach-summary strong {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0063F9;
+            font-family: var(--brand-font-mono) !important;
+            font-size: var(--brand-body) !important;
+            font-weight: var(--brand-weight-bold) !important;
+            color: var(--brand-primary) !important;
             margin-right: 4px;
           }
           .reach-summary-sep {
@@ -919,8 +925,12 @@ export default function GeographicReachSection() {
             align-items: center;
           }
           .reach-title-pos {
-            font-size: clamp(26px, 6.8vw, 36px);
-            line-height: 1.15;
+            font-family: var(--brand-font-sans) !important;
+            font-size: var(--brand-section-size) !important;
+            font-weight: var(--brand-weight-black) !important;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--brand-black);
             text-align: center;
             margin-bottom: 36px;
           }
@@ -957,7 +967,7 @@ export default function GeographicReachSection() {
           className="reach-title-pos font-sans font-black text-black-900 tracking-[-0.015em]"
         >
           {heading.prefix}
-          <span className="text-[#0063F9] font-black">{heading.highlight}</span>
+          <span className="font-black" style={{ color: 'var(--brand-primary)' }}>{heading.highlight}</span>
           {heading.suffix}
         </h2>
 
@@ -991,7 +1001,7 @@ export default function GeographicReachSection() {
                 onMouseLeave={handleClearActive}
                 onFocus={() => handleSelectRegion(region)}
                 onBlur={handleClearActive}
-                className="absolute bg-white rounded-xl flex items-center select-none cursor-pointer transition-all duration-200"
+                className="absolute bg-white flex items-center select-none cursor-pointer transition-all duration-200"
                 style={{
                   left: `${def.x}px`,
                   top: `${def.y}px`,
@@ -999,18 +1009,19 @@ export default function GeographicReachSection() {
                   height: `${def.h}px`,
                   opacity: 1,
                   pointerEvents: 'auto',
+                  borderRadius: 'var(--brand-radius-lg)',
                   boxShadow: isHovered
                     ? '0 10px 25px -4px rgba(0, 99, 249, 0.28), 0 4px 10px -2px rgba(0, 0, 0, 0.08)'
                     : '0 2px 8px -2px rgba(0, 0, 0, 0.08), 0 1px 3px 0 rgba(0, 0, 0, 0.04)',
-                  outline: isHovered ? '2px solid #0063F9' : '1px solid rgba(0, 0, 0, 0.06)',
+                  outline: isHovered ? '2px solid var(--brand-primary)' : '1px solid var(--brand-line)',
                   transform: isHovered ? 'translateY(-2px) scale(1.02)' : 'none',
                   padding: def.h > 65 ? '16px 22px' : '12px 22px',
                 }}
               >
-                <span className="font-mono font-bold text-black-900 text-[19px] mr-3.5 leading-none shrink-0">
+                <span className="leading-none shrink-0" style={{ fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-body-lg)', fontWeight: 'var(--brand-weight-bold)', color: 'var(--brand-black)', marginRight: '14px' }}>
                   {region.percentage}
                 </span>
-                <span className="font-mono font-medium text-black-900 text-[15.5px] leading-[1.2] text-left">
+                <span className="leading-[1.2] text-left" style={{ fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-body-sm)', fontWeight: 'var(--brand-weight-medium)', color: 'var(--brand-black)' }}>
                   {region.nameLines.map((line, lIdx) => (
                     <React.Fragment key={lIdx}>
                       {line}
@@ -1033,11 +1044,12 @@ export default function GeographicReachSection() {
                 key={region.id}
                 type="button"
                 onClick={() => handleSelectRegion(region)}
-                className={`w-full bg-white rounded-xl p-4 flex items-center justify-between text-left transition-all duration-200 cursor-pointer ${
+                className={`w-full bg-white p-4 flex items-center justify-between text-left transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'ring-2 ring-[#0063F9] shadow-md bg-blue-50/20'
                     : 'shadow-sm hover:shadow'
                 }`}
+                style={{ borderRadius: 'var(--brand-radius-lg)' }}
               >
                 <div className="flex items-center space-x-3">
                   <span
@@ -1046,11 +1058,11 @@ export default function GeographicReachSection() {
                     }`}
                     aria-hidden="true"
                   />
-                  <span className="font-mono font-medium text-black-900 text-[15px]">
+                  <span style={{ fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-body-sm)', fontWeight: 'var(--brand-weight-medium)', color: 'var(--brand-black)' }}>
                     {region.name}
                   </span>
                 </div>
-                <span className="font-mono font-bold text-black-900 text-[18px]">
+                <span style={{ fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-body-lg)', fontWeight: 'var(--brand-weight-bold)', color: 'var(--brand-black)' }}>
                   {region.percentage}
                 </span>
               </button>

@@ -238,7 +238,7 @@
   gap: var(--brand-space-2, 8px);
 }
 
-.hb-key-list strong { font-weight: 600; }
+.hb-key-list strong { font-weight: var(--brand-weight-bold, 700); }
 
 /* Placement dot matrix */
 .hb-placement .hb-dots {
