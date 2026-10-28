@@ -60,54 +60,62 @@ const progressLine = {
  * the four-step hiring process, so employers can see both the "what" and the
  * "what happens next" in one place.
  */
+// Set to true to show the "Four ways to work with Zone01 talent" block again.
+// The content and interaction are kept intact but disabled for now.
+const HIRING_OPTIONS_ENABLED = false;
+
 const HireOptions = () => (
   <section id="options" data-nav-theme="light" className="bg-white pb-6 pt-10 md:pb-8 md:pt-14">
     <Container>
-      <div className="mx-auto max-w-3xl text-center">
-        <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-secondary sm:text-section-headline">
-          Four ways to work with Zone01 talent.
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
-          Start with a single hire or build a long-term pipeline. Every route
-          begins with the same thing: a clear brief.
-        </p>
-      </div>
+      {HIRING_OPTIONS_ENABLED && (
+        <>
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-secondary sm:text-section-headline">
+              Four ways to work with Zone01 talent.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
+              Start with a single hire or build a long-term pipeline. Every route
+              begins with the same thing: a clear brief.
+            </p>
+          </div>
 
-      <motion.ol
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={container}
-        className="mt-12 border-t border-secondary/15"
-      >
-        {HIRING_OPTIONS.map((option) => (
-          <motion.li
-            key={option.index}
-            variants={item}
-            className="group grid gap-x-8 gap-y-3 border-b border-secondary/15 py-8 transition-colors duration-300 hover:bg-campus-bg/70 md:grid-cols-[0.9fr_1.25fr] md:items-start md:py-10"
+          <motion.ol
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={container}
+            className="mt-12 border-t border-secondary/15"
           >
-            <h3 className="font-sans text-cta-headline font-black leading-tight tracking-tight text-secondary">
-              {option.title}
-            </h3>
-
-            <div>
-              <p className="font-sans text-body-m leading-relaxed text-black-900/65">
-                {option.body}
-              </p>
-              <a
-                href="#request"
-                className="group/link mt-5 inline-flex items-center gap-2 font-sans text-body-m font-semibold text-primary transition-colors hover:text-secondary"
+            {HIRING_OPTIONS.map((option) => (
+              <motion.li
+                key={option.index}
+                variants={item}
+                className="group grid gap-x-8 gap-y-3 border-b border-secondary/15 py-8 transition-colors duration-300 hover:bg-campus-bg/70 md:grid-cols-[0.9fr_1.25fr] md:items-start md:py-10"
               >
-                {option.cta}
-                <ArrowRight
-                  className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-1"
-                  aria-hidden="true"
-                />
-              </a>
-            </div>
-          </motion.li>
-        ))}
-      </motion.ol>
+                <h3 className="font-sans text-cta-headline font-black leading-tight tracking-tight text-secondary">
+                  {option.title}
+                </h3>
+
+                <div>
+                  <p className="font-sans text-body-m leading-relaxed text-black-900/65">
+                    {option.body}
+                  </p>
+                  <a
+                    href="#request"
+                    className="group/link mt-5 inline-flex items-center gap-2 font-sans text-body-m font-semibold text-primary transition-colors hover:text-secondary"
+                  >
+                    {option.cta}
+                    <ArrowRight
+                      className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </div>
+              </motion.li>
+            ))}
+          </motion.ol>
+        </>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -118,7 +126,7 @@ const HireOptions = () => (
       >
         <div className="flex flex-col items-center gap-3 text-center">
           <h3 className="font-sans text-cta-headline font-black tracking-tight text-secondary">
-            From brief to first day.
+            Engage with our talent.
           </h3>
         </div>
 

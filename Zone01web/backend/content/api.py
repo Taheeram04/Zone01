@@ -24,6 +24,7 @@ from django.views.decorators.http import require_GET
 
 from content.models import (
     CommunityPost,
+    CommunityStream,
     FaqCategory,
     ImpactUpdate,
     NewsUpdate,
@@ -73,6 +74,7 @@ def serialize_news(request, item):
         "image": _media_url(request, item.image),
         "information": item.information,
         "published_at": item.published_at.isoformat() if item.published_at else None,
+        "is_featured": item.is_featured,
         "order": item.order,
     }
 
@@ -120,6 +122,19 @@ def _grouped_community_posts(request):
     for post in posts:
         grouped[post.kind].append(serialize_community_post(request, post))
     return grouped
+
+
+def serialize_community_stream(stream):
+    return {
+        "kind": stream.kind,
+        "label": stream.label or stream.get_kind_display(),
+        "is_active": stream.is_active,
+        "order": stream.order,
+    }
+
+
+def _community_streams():
+    return [serialize_community_stream(stream) for stream in CommunityStream.objects.all()]
 
 
 def serialize_link(link):
@@ -248,7 +263,12 @@ def impact_list(request):
 
 @require_GET
 def community_list(request):
-    return JsonResponse({"results": _grouped_community_posts(request)})
+    return JsonResponse(
+        {
+            "results": _grouped_community_posts(request),
+            "streams": _community_streams(),
+        }
+    )
 
 
 @require_GET
@@ -298,6 +318,7 @@ def content_index(request):
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
             ],
             "community": _grouped_community_posts(request),
+            "community_streams": _community_streams(),
             "links": [serialize_link(link) for link in SiteLink.objects.filter(is_active=True)],
             "piscine": serialize_piscine(),
             "pages": [

@@ -12,6 +12,8 @@ import {
 } from 'react-icons/fa6';
 import { Container } from './layout.jsx';
 import { KineticHeading } from './whocanapply.jsx';
+import StoryDialog from './story-dialog.jsx';
+import { plainText } from '../lib/plain-text.js';
 import { SOCIAL_LINKS, socialByKey } from '../social.js';
 import communityHeroImg from '../assets/community-hero.webp';
 
@@ -28,7 +30,7 @@ import communityHeroImg from '../assets/community-hero.webp';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 // How long a fetched payload is reused before we ask the API again (ms).
-const REFRESH_MS = 120_000;
+const REFRESH_MS = 60_000;
 
 const GROUPS = [
   {
@@ -132,7 +134,7 @@ const PlatformBadge = ({ platform }) => {
   const { Icon, label, color } = social;
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur"
+      className="inline-flex items-center gap-1.5 rounded-full border border-secondary/15 bg-secondary/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-secondary/70"
       title={`From ${label}`}
     >
       <Icon className="h-3 w-3" style={{ color }} aria-hidden="true" />
@@ -141,21 +143,23 @@ const PlatformBadge = ({ platform }) => {
   );
 };
 
-const PostCard = ({ post, group, index }) => {
+const PostCard = ({ post, group, index, onReadMore }) => {
   const { Icon, accent } = group;
   const link = post.external_url || post.video_url || '';
   const hasVideo = Boolean(post.video_url);
   const date = post.kind === 'event' && post.event_date ? post.event_date : post.published_at;
+  const bodyText = plainText(post.body);
+  const hasStory = Boolean(post.body) && bodyText.length > (post.summary?.length || 0);
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4), ease: [0.16, 1, 0.3, 1] }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur transition-colors hover:border-white/25 hover:bg-white/[0.07]"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-secondary/15 bg-white transition-colors hover:border-secondary/30 hover:bg-campus-bg/40"
     >
       {/* Media */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#071722]">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F1F5F9]">
         {post.image ? (
           <img
             src={post.image}
@@ -168,7 +172,7 @@ const PostCard = ({ post, group, index }) => {
             className="flex h-full w-full items-center justify-center"
             style={{ background: `radial-gradient(circle at 30% 20%, ${accent}33, transparent 70%)` }}
           >
-            <Icon className="h-10 w-10 text-white/35" aria-hidden="true" />
+            <Icon className="h-10 w-10 text-secondary/25" aria-hidden="true" />
           </div>
         )}
 
@@ -190,37 +194,49 @@ const PostCard = ({ post, group, index }) => {
 
       {/* Body */}
       <div className="flex flex-1 flex-col p-5">
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/50">
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-medium text-black-900/50">
           {formatDate(date) && <time dateTime={date}>{formatDate(date)}</time>}
           {formatDate(date) && <span aria-hidden="true">•</span>}
           <PlatformBadge platform={post.platform} />
         </div>
 
-        <h4 className="font-sans text-lg font-bold leading-snug text-white">{post.title}</h4>
+        <h4 className="font-sans text-lg font-bold leading-snug text-secondary">{post.title}</h4>
 
         {(post.summary || post.body) && (
-          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/65">
-            {post.summary || post.body}
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-black-900/65">
+            {post.summary || bodyText}
           </p>
         )}
 
-        {link && (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-blob-blue transition-colors hover:text-white"
-          >
-            {actionFor(post.kind)}
-            <FaArrowUpRightFromSquare className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
-        )}
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-5">
+          {hasStory && (
+            <button
+              type="button"
+              onClick={onReadMore}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-secondary"
+            >
+              Read more
+              <FaArrowUpRightFromSquare className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          )}
+          {link && (
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-secondary"
+            >
+              {actionFor(post.kind)}
+              <FaArrowUpRightFromSquare className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          )}
+        </div>
       </div>
     </motion.article>
   );
 };
 
-const GroupRow = ({ group, posts, open, onToggle, reduced }) => {
+const GroupRow = ({ group, posts, open, onToggle, reduced, onReadMore }) => {
   const { Icon, accent, label, blurb, kind } = group;
   const latest = posts[0];
   const panelId = `community-panel-${kind}`;
@@ -229,7 +245,9 @@ const GroupRow = ({ group, posts, open, onToggle, reduced }) => {
   return (
     <div
       className={`overflow-hidden rounded-2xl border transition-colors ${
-        open ? 'border-white/25 bg-white/[0.06]' : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+        open
+          ? 'border-primary/30 bg-campus-bg'
+          : 'border-secondary/15 bg-white hover:border-secondary/30'
       }`}
     >
       <button
@@ -243,31 +261,34 @@ const GroupRow = ({ group, posts, open, onToggle, reduced }) => {
         {/* Group icon — echoes the accent colour when open */}
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors"
-          style={{ backgroundColor: open ? accent : 'rgba(255,255,255,0.06)' }}
+          style={{ backgroundColor: open ? accent : 'rgba(15,23,42,0.05)' }}
         >
-          <Icon className={`h-5 w-5 ${open ? 'text-secondary' : 'text-white/80'}`} aria-hidden="true" />
+          <Icon
+            className={`h-5 w-5 ${open ? 'text-secondary' : 'text-secondary/65'}`}
+            aria-hidden="true"
+          />
         </span>
 
         {/* Label + latest preview */}
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="font-sans text-base font-black uppercase tracking-wide text-white sm:text-lg">
+            <span className="font-sans text-base font-black uppercase tracking-wide text-secondary sm:text-lg">
               {label}
             </span>
-            <span className="rounded-full border border-white/15 px-2 py-0.5 font-mono text-[10px] text-white/60">
+            <span className="rounded-full border border-secondary/15 px-2 py-0.5 font-mono text-[10px] text-secondary/55">
               {posts.length}
             </span>
           </span>
-          <span className="mt-1 block truncate text-sm text-white/60">
+          <span className="mt-1 block truncate text-sm text-black-900/60">
             {latest ? `${latest.title}` : `${blurb} — nothing here yet`}
           </span>
         </span>
 
         {/* Count on wide screens, chevron always */}
-        <span className="hidden shrink-0 text-right text-xs text-white/45 md:block">{blurb}</span>
+        <span className="hidden shrink-0 text-right text-xs text-black-900/40 md:block">{blurb}</span>
 
         <FaChevronDown
-          className={`h-4 w-4 shrink-0 text-white/70 transition-transform duration-300 ${
+          className={`h-4 w-4 shrink-0 text-secondary/60 transition-transform duration-300 ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden="true"
@@ -287,15 +308,21 @@ const GroupRow = ({ group, posts, open, onToggle, reduced }) => {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="border-t border-white/10 px-4 pb-6 pt-6 sm:px-6">
+            <div className="border-t border-secondary/10 px-4 pb-6 pt-6 sm:px-6">
               {posts.length === 0 ? (
-                <p className="py-6 text-center text-sm text-white/50">
+                <p className="py-6 text-center text-sm text-black-900/50">
                   No {label.toLowerCase()} yet — check back soon.
                 </p>
               ) : (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {posts.map((post, i) => (
-                    <PostCard key={post.id} post={post} group={group} index={i} />
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      group={group}
+                      index={i}
+                      onReadMore={() => onReadMore(post)}
+                    />
                   ))}
                 </div>
               )}
@@ -309,6 +336,8 @@ const GroupRow = ({ group, posts, open, onToggle, reduced }) => {
 
 const CommunityFeed = () => {
   const [groups, setGroups] = useState(null);
+  const [streams, setStreams] = useState(null);
+  const [storyPost, setStoryPost] = useState(null);
   const [openKind, setOpenKind] = useState('news');
   const [paused, setPaused] = useState(false);
   const sectionRef = useRef(null);
@@ -328,10 +357,14 @@ const CommunityFeed = () => {
 
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/community/`, { signal: controller.signal });
+        const res = await fetch(`${API_BASE}/api/community/`, {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const payload = await res.json();
         setGroups(payload.results || payload);
+        setStreams(Array.isArray(payload.streams) ? payload.streams : null);
       } catch (error) {
         if (error?.name === 'AbortError') return;
         // Keep the last good payload; in development fall back to samples so
@@ -352,15 +385,24 @@ const CommunityFeed = () => {
     };
   }, []);
 
-  // Always render the four groups, even before data lands.
-  const resolved = useMemo(
-    () =>
-      GROUPS.map((group) => ({
-        group,
+  // Only render rows that the CMS has activated and that contain a post.
+  const resolved = useMemo(() => {
+    const streamList = streams && streams.length ? streams : null;
+    const activeKinds = streamList
+      ? new Set(streamList.filter((stream) => stream.is_active).map((stream) => stream.kind))
+      : new Set(GROUPS.map((group) => group.kind));
+    const streamByKind = new Map((streamList || []).map((stream) => [stream.kind, stream]));
+
+    return GROUPS.filter((group) => activeKinds.has(group.kind))
+      .map((group) => ({
+        group: {
+          ...group,
+          label: streamByKind.get(group.kind)?.label || group.label,
+        },
         posts: Array.isArray(groups?.[group.kind]) ? groups[group.kind] : [],
-      })),
-    [groups],
-  );
+      }))
+      .filter(({ posts }) => posts.length > 0);
+  }, [groups, streams]);
 
   const toggle = (kind) => setOpenKind((current) => (current === kind ? null : kind));
 
@@ -368,76 +410,54 @@ const CommunityFeed = () => {
     <section
       ref={sectionRef}
       id="community-hub"
-      data-nav-theme="dark"
+      data-nav-theme="light"
       aria-labelledby="community-hub-title"
-      className="relative w-full overflow-hidden py-16 md:py-24"
-      style={{
-        background: 'linear-gradient(160deg, #04131f 0%, #092c3e 55%, #04131f 100%)',
-      }}
+      className="relative w-full overflow-hidden bg-white py-16 md:py-24"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Ambient glow + dotted texture */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-24 top-0 h-[420px] w-[420px] rounded-full bg-primary/25 blur-[140px]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-accent/15 blur-[140px]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.15]"
-        style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px)',
-          backgroundSize: '26px 26px',
-        }}
-      />
-
       <Container className="relative">
         <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-          <p className="mb-2 font-mono text-body-s uppercase tracking-[0.25em] text-blob-blue">
-            &lt; Community Hub &gt;
-          </p>
           <KineticHeading
             as="h2"
             id="community-hub-title"
-            text="What's happening now"
-            className="font-sans font-black leading-tight tracking-tight text-white text-[30px] md:text-section-headline"
+            text="Community Hub"
+            className="font-sans font-black leading-tight tracking-tight text-secondary text-[30px] md:text-section-headline"
           />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base"
+            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-black-900/65 sm:text-base"
           >
             The latest news, events, blog posts and podcast episodes from the
-            Zone01 Kisumu community — each group shows its newest item first.
-            Open a group to explore everything.
+            Zone01 Kisumu community.
           </motion.p>
         </div>
 
-        {/* Group accordion — only the latest item is visible until expanded */}
-        <div className="mx-auto flex max-w-5xl flex-col gap-3">
-          {resolved.map(({ group, posts }) => (
-            <GroupRow
-              key={group.kind}
-              group={group}
-              posts={posts}
-              open={openKind === group.kind}
-              onToggle={() => toggle(group.kind)}
-              reduced={reduced}
-            />
-          ))}
-        </div>
+        {/* Group accordion — only active streams with posts are shown */}
+        {resolved.length > 0 && (
+          <div className="mx-auto flex max-w-5xl flex-col gap-3">
+            {resolved.map(({ group, posts }) => (
+              <GroupRow
+                key={group.kind}
+                group={group}
+                posts={posts}
+                open={openKind === group.kind}
+                onToggle={() => toggle(group.kind)}
+                reduced={reduced}
+                onReadMore={setStoryPost}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Social strip — same accounts as the footer */}
-        <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 backdrop-blur sm:px-8">
+        <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-secondary/15 bg-campus-bg px-5 py-6 sm:px-8">
           <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
             <div>
-              <h3 className="font-sans text-lg font-bold text-white">Follow the journey</h3>
-              <p className="mt-1 text-sm text-white/60">
+              <h3 className="font-sans text-lg font-bold text-secondary">Follow the journey</h3>
+              <p className="mt-1 text-sm text-black-900/60">
                 New posts land on our socials first — join the conversation.
               </p>
             </div>
@@ -449,7 +469,7 @@ const CommunityFeed = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition-all hover:scale-105 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-secondary/15 bg-white text-secondary/70 transition-all hover:scale-105 hover:text-white"
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = color;
                       e.currentTarget.style.borderColor = color;
@@ -467,6 +487,14 @@ const CommunityFeed = () => {
           </div>
         </div>
       </Container>
+
+      <StoryDialog
+        open={Boolean(storyPost)}
+        onClose={() => setStoryPost(null)}
+        title={storyPost?.title}
+        image={storyPost?.image}
+        html={storyPost?.body}
+      />
     </section>
   );
 };

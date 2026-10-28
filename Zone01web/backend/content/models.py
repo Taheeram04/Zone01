@@ -34,6 +34,7 @@ from zoneinfo import ZoneInfo
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from djangocms_text.fields import HTMLField
 from filer.fields.file import FilerFileField
 from filer.fields.image import FilerImageField
 
@@ -118,14 +119,25 @@ class NewsUpdate(OrderedContent):
         on_delete=models.SET_NULL,
         related_name="news_images",
     )
-    information = models.TextField(blank=True, help_text="The news story.")
+    information = HTMLField(
+        blank=True,
+        configuration="COMMUNITY_POST_EDITOR",
+        help_text=(
+            "The news story. Use the toolbar for fonts, font sizes, "
+            "bold/italic/underline, colours, lists, links and more."
+        ),
+    )
     is_published = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Include this news item in the featured banner rotation.",
+    )
     published_at = models.DateTimeField(default=timezone.now)
 
     class Meta(OrderedContent.Meta):
         verbose_name = "news update"
         verbose_name_plural = "news"
-        ordering = ["-published_at", "order", "id"]
+        ordering = ["-is_featured", "-published_at", "order", "id"]
         indexes = [
             GinTrigramIndex(fields=["title"], name="news_title_trgm"),
         ]
@@ -209,7 +221,14 @@ class CommunityPost(OrderedContent):
         blank=True,
         help_text="One-line teaser shown on the collapsed row and cards.",
     )
-    body = models.TextField(blank=True, help_text="The full story or episode notes.")
+    body = HTMLField(
+        blank=True,
+        configuration="COMMUNITY_POST_EDITOR",
+        help_text=(
+            "The full story or episode notes. Use the toolbar for fonts, font "
+            "sizes, bold/italic/underline, colours, lists, links and more."
+        ),
+    )
     cover_image = FilerImageField(
         null=True,
         blank=True,
@@ -260,6 +279,44 @@ class CommunityPost(OrderedContent):
 
     def __str__(self):
         return f"{self.get_kind_display()}: {self.title}"
+
+
+class CommunityStream(models.Model):
+    """Visibility switch for one stream of the Community Hub.
+
+    News, events, blog and podcast are always queried from
+    :class:`CommunityPost`; this model only decides whether the matching row is
+    shown on the public Community page. Editors can turn a stream on when its
+    first post is ready, and off again without deleting the posts.
+    """
+
+    kind = models.CharField(
+        max_length=20,
+        choices=CommunityPost.Kind.choices,
+        unique=True,
+        help_text="Which community group this switch controls.",
+    )
+    label = models.CharField(
+        max_length=60,
+        blank=True,
+        help_text="Optional label shown on the website. Defaults to the kind.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Show this stream on the Community Hub when it has posts.",
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text="Lower numbers are shown first.",
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "community stream"
+        verbose_name_plural = "community streams"
+
+    def __str__(self):
+        return self.label or self.get_kind_display()
 
 
 class SiteLink(OrderedContent):

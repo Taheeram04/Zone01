@@ -43,7 +43,7 @@ SERVICES = [
         "category": "what_we_offer",
         "order": 3,
         "description": (
-            "Full-time, part-time or project-based work — we provide immediate "
+            "Full-time, part-time or project-based work we provide immediate "
             "access to proficient developers for flexible hiring in fintech, "
             "AI, blockchain and cybersecurity."
         ),
