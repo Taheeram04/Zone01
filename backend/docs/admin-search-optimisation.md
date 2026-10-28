@@ -1,7 +1,7 @@
 # Admin Search Optimisation — Technical Record
 
 **Branch:** `seo` (branched from `develop` at `0282e79`)
-**Scope:** `Zone01web/backend` — Django admin changelist search
+**Scope:** `backend` — Django admin changelist search
 **Status:** complete, verified against PostgreSQL 16, committed as 17 single-file commits
 
 ---
@@ -311,7 +311,7 @@ scan. Some deliberately excluded columns are listed in the admin comments.
   near-misses via a `similarity() >= threshold` filter) was deliberately left
   out, because that predicate is not served by a GIN index and would reintroduce
   a scan, and because it would silently change which rows match.
-- **`Zone01web/frontend/admin-dashboard.html` was not touched.** It is a
+- **`frontend/admin-dashboard.html` was not touched.** It is a
   static design mockup with no JavaScript; its search input is inert
   decoration and is not connected to the Django admin. The `seo` branch covers
   that directory (it is the same repository), but it contains no changes.

@@ -42,7 +42,7 @@ The answers come from the `content` app (`FaqCategory` / `FaqItem`), which is
 also the FAQ content for the website. Seed the shipped set once:
 
 ```bash
-cd Zone01web/backend
+cd backend
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py seed_faqs            # add --prune to remove stale rows
 ```
@@ -58,7 +58,7 @@ incoming message. The AI prompt is rebuilt from the active FAQs per request.
 
 ## 2. Configure the environment
 
-Add these to `Zone01web/backend/.env` (see `.env.example`):
+Add these to `backend/.env` (see `.env.example`):
 
 | Variable | Purpose |
 | -------- | ------- |

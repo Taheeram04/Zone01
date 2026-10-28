@@ -71,7 +71,7 @@ CORS or separate frontend host is needed.
 
 ## Deploying to Fly.io
 
-The backend (`Zone01web/backend/fly.toml`) and the React frontend
+The backend (`backend/fly.toml`) and the React frontend
 (`frontend/fly.toml`) can also deploy as two Fly apps, backed by a third app
 running **unmanaged Fly Postgres** (`fly postgres`, not Managed Postgres /
 `fly mpg`).
@@ -81,7 +81,7 @@ either app, update the hostnames in both `fly.toml` files.
 
 | Fly app             | What it runs                    | Config                       |
 | ------------------- | ------------------------------- | ---------------------------- |
-| `zone01-kisumu-api` | Django CMS + JSON API           | `Zone01web/backend/fly.toml` |
+| `zone01-kisumu-api` | Django CMS + JSON API           | `backend/fly.toml` |
 | `zone01-kisumu-web` | React bundle served by nginx    | `frontend/fly.toml`          |
 | `zone01-kisumu-db`  | Unmanaged Postgres (one volume) | created by `fly postgres create` |
 
@@ -93,7 +93,7 @@ API can reach the database over the private network.
 
 ### 1. Create the backend app
 
-From `Zone01web/backend/`:
+From `backend/`:
 
 ```bash
 fly launch --no-deploy --copy-config        # creates zone01-kisumu-api from fly.toml
@@ -438,4 +438,4 @@ make static      # collect static files
 
 `.github/workflows/backend-ci.yml` runs ruff lint/format checks, Django system
 and migration checks, and the test suite against a `postgres:16` service for
-changes under `Zone01web/backend`.
+changes under `backend`.

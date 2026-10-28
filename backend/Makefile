@@ -45,10 +45,10 @@ static: ## Collect static files
 	$(MANAGE) collectstatic --noinput
 
 frontend: ## Build the React SPA and copy it into the backend for Django to serve
-	cd ../../frontend && npm install --no-audit --no-fund
-	cd ../../frontend && VITE_BASE=/static/ npm run build
+	cd ../frontend && npm install --no-audit --no-fund
+	cd ../frontend && VITE_BASE=/static/ npm run build
 	rm -rf frontend_dist
-	cp -r ../../frontend/dist frontend_dist
+	cp -r ../frontend/dist frontend_dist
 	$(MANAGE) collectstatic --noinput
 
 db-backup: ## Dump the database to backups/ (PostgreSQL custom format)
