@@ -1,17 +1,17 @@
-# M6 SEO/Regression & UAT Execution Plan
+# M6 SEO/Regression & UAT Execution Plan (Tactical)
 
-## Audit & Hand-off Checklist (M6)
-- SEO: titles/meta/OG/JSON-LD, sitemap/robots, canonical, Lighthouse SEO ≥90.
-- Regression: all MVP routes pass; cross-browser/device; no broken images/overflow; build+lint green.
+## 1. M6 Milestone Checklist
+- SEO: semantic HTML, meta/OG/Twitter, JSON-LD, canonical, sitemap/robots, indexing, Lighthouse SEO ≥90.
+- Regression: all routes pass; cross-browser/device; no broken images/overflow; build+lint green.
 
-## UAT Readiness Plan
-- Onboard PO + prospective learners; provide UAT script and feedback form; daily feedback sync; prioritize blocker fixes.
+## 2. UAT Onboarding & Feedback Loop
+- PO + prospective learners; provide script + form; daily sync; triage feedback; isolate issues.
 
-## Zero-Blocker Triage Workflow
-- Blocker = auth bypass, data loss, crash, critical flow broken. Triage ≤1h, fix ≤4h, verify, escalate if at risk.
+## 3. Zero-Blocker Triage Workflow
+- Blocker = auth bypass, data loss, crash, critical flow broken. Triage ≤1h, fix ≤4h, verify, escalate.
 
-## Daily Roadmap (to Oct 25)
+## 4. Milestone Countdown
 - D1-D2: SEO/regression audit.
-- D3: Fix findings, perf check.
-- D4: UAT kickoff, onboard testers.
+- D3: fix findings, perf check.
+- D4: UAT kickoff.
 - D5 (Oct25): zero blockers, sign-off.
