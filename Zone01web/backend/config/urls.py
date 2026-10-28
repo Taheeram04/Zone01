@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
 
+from content import views as content_views
 from core.views import api_not_found, frontend_status, health, robots_txt, sitemap_xml, spa
 
 admin.site.site_header = "Zone01 CMS"
@@ -30,6 +31,8 @@ urlpatterns = [
     path("api/services/", include("services.urls")),
     path("api/", include("content.urls")),
     path("api/applicants/", include("applicants.urls")),
+    # Rich-text editor uploads (staff only; see content.views.community_upload).
+    path("admin/community-upload/", content_views.community_upload, name="community-upload"),
     # Unknown API paths must 404 as JSON, not fall through to the SPA.
     re_path(r"^api/.*$", api_not_found, name="api-not-found"),
     # WhatsApp Cloud API webhook (GET verify + POST events). Public and
