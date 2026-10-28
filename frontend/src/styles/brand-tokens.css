@@ -255,6 +255,45 @@
   color: var(--brand-primary);
 }
 
+.brand-btn--outline-white {
+  background: transparent;
+  border-color: var(--brand-white);
+  color: var(--brand-white);
+}
+
+.brand-btn--outline-white:hover {
+  background: var(--brand-white);
+  color: var(--brand-black);
+}
+
+.brand-link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brand-space-2);
+  font-family: var(--brand-font-sans);
+  font-weight: var(--brand-weight-bold);
+  font-size: var(--brand-body-sm);
+  line-height: 1;
+  color: var(--brand-white);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s, opacity 0.2s;
+  opacity: 0.95;
+}
+
+.brand-link-arrow:hover {
+  opacity: 1;
+  color: var(--brand-white);
+}
+
+.brand-link-arrow:hover svg {
+  transform: translateX(4px);
+}
+
+.brand-link-arrow svg {
+  transition: transform 0.2s ease;
+}
+
 /* Ink overlay for photography */
 .brand-ink-overlay {
   position: absolute;

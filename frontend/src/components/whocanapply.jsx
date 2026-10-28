@@ -90,6 +90,8 @@ export const KineticHeading = ({
   id,
   delay = 0,
   stagger = 0.035,
+  style,
+  ...props
 }) => {
   const content = typeof children === 'string' ? children : text || '';
   const lines = content.split('\n');
@@ -104,7 +106,7 @@ export const KineticHeading = ({
 
   if (staticMode) {
     return (
-      <Tag id={id} className={className}>
+      <Tag id={id} className={className} style={style} {...props}>
         {lines.map((line, lineIdx) => (
           <span key={lineIdx} className="block">
             {line}
@@ -142,7 +144,7 @@ export const KineticHeading = ({
   };
 
   return (
-    <Tag id={id} className={className} aria-label={content}>
+    <Tag id={id} className={className} style={style} aria-label={content} {...props}>
       <motion.span
         className="inline-block w-full"
         initial="hidden"
@@ -248,17 +250,26 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={textContainerVariants}
-          className="w-full md:w-1/2 pt-12 pb-8 md:py-20 lg:py-24 pl-[clamp(1.25rem,5vw,8rem)] pr-[clamp(1.25rem,5vw,2rem)]"
+          className="w-full md:w-[58%] lg:w-[62%] pt-12 pb-8 md:py-20 lg:py-24 pl-[clamp(1.25rem,5vw,8rem)] pr-[clamp(1.25rem,3vw,2rem)]"
         >
-          <div className="max-w-2xl lg:max-w-3xl">
+          <div className="max-w-none">
             <KineticHeading
               as="h2"
               id="who-can-apply-title"
-              className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-[1.08] tracking-tight mb-8 md:mb-10"
-              text="Who can apply?"
+              className="font-sans font-black text-black-900 whitespace-nowrap leading-tight tracking-tight"
+              style={{
+                fontFamily: 'var(--brand-font-sans)',
+                fontSize: 'clamp(var(--brand-body-sm, 14px), 2.5vw, var(--brand-display-sm, 48px))',
+                fontWeight: 'var(--brand-weight-black, 900)',
+                color: 'var(--brand-black, #000000)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+                marginBottom: 'clamp(12px, 1.5vw, 18px)',
+              }}
+              text="From overlooked potential to paid employment"
             />
 
-            <div className="space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal">
+            <div className="space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal max-w-2xl">
               <motion.p variants={paragraphVariants}>
                 The Zone01 Kisumu digital training is open to anyone over 18 years
                 old.{' '}
@@ -282,7 +293,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={imageWrapperVariants}
-          className="w-full md:w-1/2 self-stretch flex items-center justify-end px-[clamp(1.25rem,5vw,8rem)] pb-10 md:px-0 md:pb-0"
+          className="w-full md:w-[42%] lg:w-[38%] self-stretch flex items-center justify-end px-[clamp(1.25rem,5vw,8rem)] pb-10 md:px-0 md:pb-0"
         >
           <motion.div
             whileHover={{ scale: 1.015 }}
