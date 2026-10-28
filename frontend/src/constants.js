@@ -18,3 +18,7 @@ export const hireContactUrl = (serviceName) => {
   return hireWhatsAppUrl(message);
 };
 
+export const PARTNER_WHATSAPP_URL = hireWhatsAppUrl(
+  "Hi Zone01 Kisumu, I'd like to explore partnering with your organization."
+);
+
