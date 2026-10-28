@@ -26,16 +26,66 @@ import staff10 from '../assets/010 Lydiah.webp';
  */
 
 const STAFF = [
-  { name: 'Dorcas', src: staff01 },
-  { name: 'Caleb', src: staff02 },
-  { name: 'Torsten', src: staff03 },
-  { name: 'Paul', src: staff04 },
-  { name: 'Alpha', src: staff05 },
-  { name: 'Bellah', src: staff06 },
-  { name: 'Rodgers', src: staff07 },
-  { name: 'Deril', src: staff08 },
-  { name: 'Daisy', src: staff09 },
-  { name: 'Lydiah', src: staff10 },
+  {
+    name: 'Dorcas',
+    role: 'Community & Talent Lead',
+    description: 'Fosters apprentice engagement, community partnerships, and student welfare.',
+    src: staff01,
+  },
+  {
+    name: 'Caleb',
+    role: 'Technical Lead & Coach',
+    description: 'Guides software engineering pedagogy, code quality, and peer review systems.',
+    src: staff02,
+  },
+  {
+    name: 'Torsten',
+    role: 'Managing Director',
+    description: 'Directs strategic vision, institutional partnerships, and employer relations.',
+    src: staff03,
+  },
+  {
+    name: 'Paul',
+    role: 'Lead Technical Mentor',
+    description: 'Mentors apprentices through system architecture, fullstack, and cloud projects.',
+    src: staff04,
+  },
+  {
+    name: 'Alpha',
+    role: 'Software Engineering Coach',
+    description: 'Accelerates learner problem-solving, algorithms, and collaborative development.',
+    src: staff05,
+  },
+  {
+    name: 'Bellah',
+    role: 'Admissions & Success Lead',
+    description: 'Oversees recruitment, selection funnels, and apprentice career onboarding.',
+    src: staff06,
+  },
+  {
+    name: 'Rodgers',
+    role: 'Systems & DevOps Mentor',
+    description: 'Trains apprentices on infrastructure, containerization, and backend scalability.',
+    src: staff07,
+  },
+  {
+    name: 'Deril',
+    role: 'Software Engineer & Mentor',
+    description: 'Supports peer-learning tracks in modern frameworks and API engineering.',
+    src: staff08,
+  },
+  {
+    name: 'Daisy',
+    role: 'Programs Coordinator',
+    description: 'Coordinates campus operations, events, and day-to-day cohort activities.',
+    src: staff09,
+  },
+  {
+    name: 'Lydiah',
+    role: 'Operations & Finance Lead',
+    description: 'Manages campus resources, financial administration, and operational excellence.',
+    src: staff10,
+  },
 ];
 
 /** How long each focal card holds before the next one slides in (ms). */
@@ -163,11 +213,30 @@ const OurStaff = () => {
                   className="h-full w-full object-cover object-top"
                 />
 
-                {/* Name plate */}
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-4 pt-12 text-left">
-                  <span className="block font-sans text-base font-black uppercase tracking-tight text-white">
+                {/* Name plate & description */}
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/95 via-black/75 to-transparent px-3.5 pb-3.5 pt-16 text-left">
+                  <span className="block font-sans text-base font-black uppercase tracking-tight text-white leading-tight">
                     {member.name}
                   </span>
+                  {member.role && (
+                    <span
+                      className="block font-sans text-[11px] font-bold uppercase tracking-wider text-blob-blue mt-1 leading-tight"
+                      style={{
+                        fontFamily: 'var(--brand-font-sans)',
+                        color: 'var(--brand-mint, #2be4b5)',
+                      }}
+                    >
+                      {member.role}
+                    </span>
+                  )}
+                  {member.description && (
+                    <span
+                      className="block font-sans text-[11px] sm:text-xs text-white/80 line-clamp-2 mt-1 leading-snug"
+                      style={{ fontFamily: 'var(--brand-font-sans)' }}
+                    >
+                      {member.description}
+                    </span>
+                  )}
                 </span>
               </motion.button>
             );
