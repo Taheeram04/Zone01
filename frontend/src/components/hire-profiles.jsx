@@ -37,7 +37,7 @@ const HireProfiles = () => (
         
         <a
           href="#request"
-          className="group mt-6 inline-flex items-center gap-2 rounded-full border border-primary px-6 py-3 font-sans text-body-m font-semibold text-[#0052d4] transition-colors hover:bg-primary hover:text-white"
+          className="group mt-6 inline-flex items-center gap-2 rounded-full border border-primary px-6 py-3 font-sans text-body-m font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
         >
           Request full portfolios
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -98,9 +98,6 @@ const HireProfiles = () => (
         })}
       </motion.ul>
 
-      <p className="mt-6 font-mono text-body-s leading-relaxed text-black-900/70">
-        Profiles shown are illustrative of the pipeline, not a live directory.
-      </p>
     </Container>
   </section>
 );
