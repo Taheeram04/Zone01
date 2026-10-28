@@ -276,6 +276,16 @@ class SpaServingTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_missing_build_redirects_to_admin_in_debug(self):
+        with override_settings(
+            DEBUG=True,
+            FRONTEND_INDEX=Path("/nonexistent/index.html"),
+        ):
+            response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/admin/")
+
     def test_unknown_api_path_returns_json_404(self):
         response = self.client.get("/api/does-not-exist/")
 
