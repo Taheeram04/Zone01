@@ -16,6 +16,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
 from content import views as content_views
@@ -41,6 +42,13 @@ urlpatterns = [
 ] + i18n_patterns(
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("admin/frontend-status/", frontend_status, name="frontend-status"),
+    # People often type /admin without the trailing slash. Without this the
+    # SPA catch-all would swallow it and the CMS login would never appear.
+    path(
+        "admin",
+        RedirectView.as_view(pattern_name="admin:index", permanent=False),
+        name="admin-slash-redirect",
+    ),
     path("admin/", admin.site.urls),
     path("filer/", include("filer.urls")),
     prefix_default_language=False,
