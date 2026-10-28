@@ -13,7 +13,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.db.utils import OperationalError
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
@@ -141,6 +141,11 @@ def spa(request, path=""):
     try:
         html = settings.FRONTEND_INDEX.read_text(encoding="utf-8")
     except FileNotFoundError:
+        # Backend-only development: no SPA build yet, so send the root URL to
+        # the CMS login instead of showing a dead 404. In production the bundle
+        # is built into the image and this branch is never reached.
+        if settings.DEBUG and request.path in ("", "/"):
+            return redirect("admin:index")
         raise Http404(
             "Frontend build not found. Run `make frontend` (or build the "
             "frontend with VITE_BASE=/static/) and try again."
