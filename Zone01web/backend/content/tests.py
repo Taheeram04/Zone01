@@ -1,3 +1,4 @@
+import base64
 import datetime
 import shutil
 import tempfile
@@ -7,6 +8,8 @@ from cms.utils.permissions import set_current_user
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -19,6 +22,7 @@ from content.models import (
     Article,
     Category,
     CommunityPost,
+    CommunityStream,
     ImpactUpdate,
     NewsUpdate,
     Page,
@@ -370,6 +374,39 @@ class ContentApiTests(TestCase):
         titles = [item["title"] for item in response.json()["results"]]
         self.assertEqual(titles, ["Live"])
 
+    def test_news_list_exposes_featured_flag(self):
+        NewsUpdate.objects.create(title="Featured", is_published=True, is_featured=True)
+        NewsUpdate.objects.create(title="Normal", is_published=True)
+
+        response = self.client.get(reverse("content_api:news-list"))
+
+        self.assertEqual(response.status_code, 200)
+        results = response.json()["results"]
+        self.assertEqual(results[0]["title"], "Featured")
+        self.assertTrue(results[0]["is_featured"])
+        self.assertFalse(results[1]["is_featured"])
+
+    def test_api_responses_are_not_cached(self):
+        for url_name in ("news-list", "community-list", "piscine-detail"):
+            response = self.client.get(reverse(f"content_api:{url_name}"))
+            self.assertIn("no-store", response["Cache-Control"])
+
+    def test_piscine_update_does_not_touch_news(self):
+        NewsUpdate.objects.create(title="Keep this news", is_published=True)
+        piscine = PiscineDate.objects.create(
+            date=timezone.localdate() + timedelta(days=30),
+            message="First message",
+        )
+
+        piscine.message = "Updated piscine message"
+        piscine.save()
+
+        response = self.client.get(reverse("content_api:news-list"))
+
+        self.assertEqual(response.status_code, 200)
+        titles = [item["title"] for item in response.json()["results"]]
+        self.assertIn("Keep this news", titles)
+
     def test_piscine_detail_exposes_date_and_active_state(self):
         upcoming = PiscineDate.objects.create(date=timezone.localdate() + timedelta(days=30))
 
@@ -512,6 +549,17 @@ class CommunityPostModelTests(TestCase):
         with self.assertRaises(IntegrityError):
             CommunityPost.objects.create(title="Hello again", slug="hello")
 
+    def test_body_html_is_sanitized(self):
+        post = CommunityPost.objects.create(
+            title="Rich news",
+            slug="rich-news",
+            body="<p><strong>Hello</strong><script>alert(1)</script></p>",
+        )
+        post.refresh_from_db()
+
+        self.assertIn("<strong>Hello</strong>", post.body)
+        self.assertNotIn("<script", post.body)
+
 
 class CommunityApiTests(TestCase):
     def test_community_list_groups_and_hides_unpublished(self):
@@ -552,6 +600,163 @@ class CommunityApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         community = response.json()["community"]
         self.assertEqual(community["blog"][0]["title"], "A post")
+
+    def test_featured_news_is_first_in_group(self):
+        CommunityPost.objects.create(
+            kind=CommunityPost.Kind.NEWS,
+            title="Newest news",
+            slug="newest-news",
+            published_at=timezone.now(),
+        )
+        CommunityPost.objects.create(
+            kind=CommunityPost.Kind.NEWS,
+            title="Featured older news",
+            slug="featured-older-news",
+            published_at=timezone.now() - timezone.timedelta(days=10),
+            is_featured=True,
+        )
+
+        response = self.client.get(reverse("content_api:community-list"))
+
+        self.assertEqual(response.status_code, 200)
+        news = response.json()["results"]["news"]
+        self.assertEqual(news[0]["title"], "Featured older news")
+
+    def test_community_list_returns_stream_switches(self):
+        response = self.client.get(reverse("content_api:community-list"))
+
+        self.assertEqual(response.status_code, 200)
+        streams = response.json()["streams"]
+        self.assertEqual(
+            {stream["kind"] for stream in streams},
+            {"news", "event", "blog", "podcast"},
+        )
+        self.assertTrue(all(stream["is_active"] for stream in streams))
+
+        CommunityStream.objects.filter(kind="event").update(is_active=False)
+
+        response = self.client.get(reverse("content_api:community-list"))
+        streams = response.json()["streams"]
+        event = next(stream for stream in streams if stream["kind"] == "event")
+        self.assertFalse(event["is_active"])
+
+
+class CommunityUploadTests(TestCase):
+    """The rich-text editor uploads images/documents straight from the browser."""
+
+    PNG = base64.b64decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII="
+    )
+
+    def setUp(self):
+        self.media_dir = tempfile.mkdtemp()
+        override = override_settings(MEDIA_ROOT=self.media_dir)
+        override.enable()
+        self.addCleanup(override.disable)
+        self.addCleanup(shutil.rmtree, self.media_dir, ignore_errors=True)
+
+    def test_staff_can_upload_an_image(self):
+        user = get_user_model().objects.create_user(
+            username="uploader",
+            password="x",
+            is_staff=True,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            "/admin/community-upload/?type=image",
+            {"upload": SimpleUploadedFile("news.png", self.PNG, content_type="image/png")},
+            HTTP_HOST="localhost",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["uploaded"], 1)
+        self.assertEqual(payload["fileName"], "news.png")
+        self.assertTrue(payload["url"].startswith("/media/community/"))
+
+        stored_name = payload["url"].removeprefix("/media/")
+        self.assertTrue(default_storage.exists(stored_name))
+
+    def test_non_staff_cannot_upload(self):
+        response = self.client.post(
+            "/admin/community-upload/?type=image",
+            {"upload": SimpleUploadedFile("news.png", self.PNG, content_type="image/png")},
+            HTTP_HOST="localhost",
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["uploaded"], 0)
+
+    def test_disallowed_extension_is_rejected(self):
+        user = get_user_model().objects.create_user(
+            username="uploader",
+            password="x",
+            is_staff=True,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            "/admin/community-upload/?type=image",
+            {
+                "upload": SimpleUploadedFile(
+                    "payload.html",
+                    b"<script>alert(1)</script>",
+                    content_type="text/html",
+                )
+            },
+            HTTP_HOST="localhost",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["uploaded"], 0)
+
+
+class AdminEditLinkTests(TestCase):
+    """News and community posts can be reopened from their changelists."""
+
+    def setUp(self):
+        set_current_user(None)
+        self.addCleanup(set_current_user, None)
+        self.user = get_user_model().objects.create_superuser(
+            username="post-editor",
+            email="editor@example.com",
+            password="secret",
+        )
+        self.client.force_login(self.user)
+
+    def test_news_changelist_links_to_the_change_form(self):
+        news = NewsUpdate.objects.create(title="Editable news", is_published=True)
+
+        response = self.client.get(reverse("admin:site_content_newsupdate_changelist"))
+
+        self.assertContains(
+            response,
+            reverse("admin:site_content_newsupdate_change", args=[news.pk]),
+        )
+        self.assertContains(
+            response,
+            reverse("admin:site_content_newsupdate_delete", args=[news.pk]),
+        )
+
+    def test_community_changelist_links_to_the_change_form(self):
+        post = CommunityPost.objects.create(
+            kind=CommunityPost.Kind.BLOG,
+            title="Editable blog post",
+            slug="editable-blog-post",
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("admin:site_content_communitypost_changelist"))
+
+        self.assertContains(
+            response,
+            reverse("admin:site_content_communitypost_change", args=[post.pk]),
+        )
+        self.assertContains(
+            response,
+            reverse("admin:site_content_communitypost_delete", args=[post.pk]),
+        )
 
 
 class CategoryModelTests(TestCase):

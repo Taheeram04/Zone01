@@ -21,6 +21,7 @@ from content.models import (
     Article,
     Category,
     CommunityPost,
+    CommunityStream,
     FaqCategory,
     FaqItem,
     ImpactUpdate,
@@ -57,6 +58,46 @@ class ImagePreviewMixin:
         )
 
 
+class EditLinkMixin:
+    """Add explicit Edit and Delete buttons to admin changelists."""
+
+    @admin.display(description="Edit")
+    def edit_link(self, obj):
+        url = reverse(
+            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change",
+            args=[obj.pk],
+        )
+        return format_html('<a class="button" href="{}">Edit</a>', url)
+
+    @admin.display(description="Delete")
+    def delete_link(self, obj):
+        url = reverse(
+            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_delete",
+            args=[obj.pk],
+        )
+        return format_html(
+            '<a class="button" '
+            'style="background:#ba2121;border-color:#ba2121;color:#fff;" '
+            'href="{}">Delete</a>',
+            url,
+        )
+
+
+class ImageReplaceHelpMixin:
+    """Put the replace/clear instructions directly under image pickers."""
+
+    image_field_names = ("image", "cover_image")
+    image_help_text = (
+        "To replace the selected image, click the search / Choose File button; the X removes it."
+    )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+        if db_field.name in self.image_field_names and formfield:
+            formfield.help_text = self.image_help_text
+        return formfield
+
+
 @admin.register(Partner)
 class PartnerAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
     image_field = "logo"
@@ -82,14 +123,47 @@ class StaffMemberAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
 
 
 @admin.register(NewsUpdate)
-class NewsUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
-    list_display = ("preview", "title", "is_published", "published_at", "order")
-    list_editable = ("is_published", "order")
-    list_filter = ("is_published",)
+class NewsUpdateAdmin(
+    ImageReplaceHelpMixin, EditLinkMixin, ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin
+):
+    list_display = (
+        "preview",
+        "title",
+        "is_featured",
+        "is_published",
+        "published_at",
+        "order",
+        "edit_link",
+        "delete_link",
+    )
+    list_display_links = ("title",)
+    list_editable = ("is_featured", "is_published", "order")
+    list_filter = ("is_published", "is_featured")
+    actions = ("delete_selected",)
     search_fields = ("title",)
     trigram_search_fields = ("title",)
     readonly_fields = ("created_at",)
     date_hierarchy = "published_at"
+    save_on_top = True
+    fieldsets = (
+        (
+            "News story",
+            {
+                "fields": ("title", "image", "information"),
+                "description": (
+                    "Published news appears automatically in the featured "
+                    "banner on /community. Use “Featured” to include it in the "
+                    "rotation. To replace the image, click the search / Choose "
+                    "File icon; the X removes it."
+                ),
+            },
+        ),
+        (
+            "Publishing",
+            {"fields": ("published_at", "is_featured", "is_published", "order")},
+        ),
+        ("Timestamps", {"fields": ("created_at",), "classes": ("collapse",)}),
+    )
 
 
 @admin.register(ImpactUpdate)
@@ -117,7 +191,9 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
 
 
 @admin.register(CommunityPost)
-class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
+class CommunityPostAdmin(
+    ImageReplaceHelpMixin, EditLinkMixin, ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin
+):
     """Manage every News / Event / Blog / Podcast card from one list."""
 
     image_field = "cover_image"
@@ -130,9 +206,13 @@ class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin
         "is_published",
         "published_at",
         "order",
+        "edit_link",
+        "delete_link",
     )
+    list_display_links = ("title",)
     list_editable = ("is_featured", "is_published", "order")
     list_filter = ("kind", "platform", "is_published", "is_featured")
+    actions = ("delete_selected",)
     date_hierarchy = "published_at"
     search_fields = ("title", "summary", "body", "slug")
     trigram_search_fields = ("title", "summary", "body", "slug")
@@ -140,6 +220,82 @@ class CommunityPostAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin
     readonly_fields = ("created_at", "updated_at")
     ordering = ("kind", "-is_featured", "-published_at", "order")
     show_full_result_count = False
+    save_on_top = True
+    fieldsets = (
+        (
+            "Post type",
+            {
+                "fields": ("kind",),
+                "description": (
+                    "Choose News to publish a community news item. New published "
+                    "news automatically feeds the featured banner on /community."
+                ),
+            },
+        ),
+        (
+            "Headline & teaser",
+            {
+                "fields": ("title", "slug", "summary"),
+                "description": (
+                    "The featured banner uses the title and summary of the newest "
+                    "published news post (or the one marked as featured)."
+                ),
+            },
+        ),
+        (
+            "Story",
+            {
+                "fields": ("body",),
+                "description": (
+                    "Rich text: fonts, font sizes, bold, italic, underline, "
+                    "colours, alignment, lists, links, tables and more. To "
+                    "replace an image inside the story, double-click it and "
+                    "choose a new file in the Image dialog."
+                ),
+            },
+        ),
+        (
+            "Media & links",
+            {
+                "fields": ("cover_image", "video_url", "external_url", "platform"),
+                "description": (
+                    "Upload a cover image from your computer (or pick one from "
+                    "the media library). To replace it, click the search / "
+                    "Choose File icon; the X removes it. Then add any video or "
+                    "social links."
+                ),
+            },
+        ),
+        (
+            "Publishing",
+            {
+                "fields": (
+                    "event_date",
+                    "published_at",
+                    "is_published",
+                    "is_featured",
+                    "order",
+                ),
+                "description": (
+                    "Featured posts from any stream rotate in the banner above "
+                    "the Community Hub. Lower order values appear first."
+                ),
+            },
+        ),
+        ("Timestamps", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
+    )
+
+
+@admin.register(CommunityStream)
+class CommunityStreamAdmin(admin.ModelAdmin):
+    """Turn each Community Hub row (News / Events / Blog / Podcast) on or off."""
+
+    list_display = ("label", "kind", "is_active", "order")
+    list_display_links = ("kind",)
+    list_editable = ("label", "is_active", "order")
+    list_filter = ("is_active",)
+    ordering = ("order", "id")
+    list_per_page = 20
 
 
 @admin.register(SiteLink)
