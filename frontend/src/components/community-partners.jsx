@@ -4,13 +4,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { HIRE_EMAIL } from '../constants.js';
 import mastercardFoundation from '../assets/community-partners/mastercard-foundation.webp';
-import google from '../assets/community-partners/google.webp';
 import talent01 from '../assets/community-partners/01-talent.webp';
 import livelihoodImpactFund from '../assets/community-partners/livelihood-impact-fund.webp';
 import lakehub from '../assets/community-partners/lakehub.webp';
 import segalFamilyFoundation from '../assets/community-partners/segal-family-foundation.webp';
 import uclgAfrica from '../assets/community-partners/uclg-africa.webp';
-import zone01Kisumu from '../assets/community-partners/zone01-kisumu.webp';
 import partnersForEquity from '../assets/community-partners/partners-for-equity.webp';
 import kisumuCounty from '../assets/community-partners/county-government-kisumu.webp';
 
@@ -33,18 +31,6 @@ const PARTNERS = [
     tags: ['Fellowships', 'Digital Livelihood', 'Scale Partner'],
     src: mastercardFoundation,
     href: 'https://mastercardfdn.org/',
-  },
-  {
-    name: 'Google / Developers',
-    subtitle: 'Technology & Developer Ecosystem',
-    badge: 'Tech & EdTech',
-    tone: 'blue',
-    since: 'Since 2021',
-    description:
-      'Providing student access to Google Cloud credits, open-source AI frameworks (TensorFlow), and direct curriculum feedback from Google Africa engineers.',
-    tags: ['Cloud Compute', 'AI & Machine Learning', 'Mentorship'],
-    src: google,
-    href: 'https://developers.google.com/',
   },
   {
     name: '01Talent',
@@ -105,18 +91,6 @@ const PARTNERS = [
     tags: ['Metropolitan Policy', 'Civic Innovation'],
     src: uclgAfrica,
     href: 'https://uclgafrica.org/',
-  },
-  {
-    name: 'Zone01 Kisumu',
-    subtitle: 'Software Engineering Campus',
-    badge: 'Grassroots Hub',
-    tone: 'green',
-    since: 'Launched 2023',
-    description:
-      'The flagship physical collective running full two-year full-stack engineering residencies with automated assessment protocols and peer evaluation.',
-    tags: ['Campus', 'Peer Coding', 'Work Integration'],
-    src: zone01Kisumu,
-    href: 'https://zone01kisumu.ke/',
   },
   {
     name: 'Partners For Equity',
@@ -202,12 +176,7 @@ const CommunityPartners = () => {
             const isActive = index === activeIndex;
 
             return (
-              <li
-                key={partner.name}
-                className={`${
-                  index === PARTNERS.length - 2 ? 'lg:col-start-2' : ''
-                } ${index === PARTNERS.length - 1 ? 'lg:col-start-3' : ''}`}
-              >
+              <li key={partner.name}>
                 <button
                   type="button"
                   onMouseEnter={() => setActiveIndex(index)}

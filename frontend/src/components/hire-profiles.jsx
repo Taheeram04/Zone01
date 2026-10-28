@@ -28,17 +28,13 @@ const item = {
  * one line.
  */
 const HireProfiles = () => (
-  <section id="profiles" data-nav-theme="light" className="bg-tint-blue pb-10 pt-8 md:pb-14 md:pt-12">
+  <section id="profiles" data-nav-theme="light" className="bg-tint-blue pb-10 pt-4 md:pb-14 md:pt-6">
     <Container>
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-secondary sm:text-section-headline">
-          A snapshot of the pipeline.
+          Specialization
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
-          Anonymised profiles. Full portfolios and references are shared with
-          employers on request, with the candidate&apos;s consent.
-        </p>
-
+        
         <a
           href="#request"
           className="group mt-6 inline-flex items-center gap-2 rounded-full border border-primary px-6 py-3 font-sans text-body-m font-semibold text-[#0052d4] transition-colors hover:bg-primary hover:text-white"
@@ -70,6 +66,19 @@ const HireProfiles = () => (
                 <p className="mt-2 font-sans text-body-m leading-relaxed text-black-900/65">
                   {profile.body}
                 </p>
+
+                {/* Profile tag chips intentionally hidden. Data kept in hire.data.js.
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {profile.tags.map((tag) => (
+                    <li
+                      key={tag}
+                      className="rounded-full border border-secondary/15 bg-white/70 px-2.5 py-0.5 font-mono text-[11px] text-secondary/70"
+                    >
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+                */}
               </div>
 
               <a

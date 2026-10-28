@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "menus",
     # django CMS add-ons
     "djangocms_text",
+    "djangocms_text.contrib.text_ckeditor4",
     "djangocms_link",
     "djangocms_alias",
     "djangocms_versioning",
@@ -109,6 +110,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "core.middleware.ApiNoCacheMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -238,6 +240,45 @@ CMS_PERMISSION = True
 X_FRAME_OPTIONS = "SAMEORIGIN"
 TEXT_INLINE_EDITING = True
 DJANGOCMS_VERSIONING_ALLOW_DELETING_VERSIONS = True
+
+# Use the bundled CKEditor 4 build for rich-text fields. It exposes the full
+# formatting toolbar (font family, font size, bold, italic, underline, colours,
+# alignment, lists, links, tables, source view, ...), which the TipTap default
+# does not provide for standalone HTMLFields such as CommunityPost.body.
+TEXT_EDITOR = "djangocms_text.contrib.text_ckeditor4.ckeditor4"
+
+# Toolbar used by the "body" editor on community posts/news in the admin.
+COMMUNITY_POST_EDITOR = {
+    "toolbar_HTMLField": [
+        ["Undo", "Redo", "-", "Find", "Replace", "-", "SelectAll"],
+        ["Format", "Styles", "Font", "FontSize"],
+        ["Bold", "Italic", "Underline", "Strike", "-", "Subscript", "Superscript"],
+        ["TextColor", "BGColor"],
+        ["JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock"],
+        ["NumberedList", "BulletedList", "-", "Outdent", "Indent"],
+        ["Blockquote", "HorizontalRule", "Table"],
+        ["Link", "Unlink", "Anchor"],
+        ["Image"],
+        ["RemoveFormat"],
+        ["Maximize", "ShowBlocks", "Source"],
+    ],
+    "font_names": (
+        "Montserrat/Montserrat, sans-serif;"
+        "IBM Plex Mono/'IBM Plex Mono', monospace;"
+        "Arial/Arial, Helvetica, sans-serif;"
+        "Georgia/Georgia, serif;"
+        "Times New Roman/'Times New Roman', Times, serif;"
+        "Courier New/'Courier New', Courier, monospace"
+    ),
+    "fontSize_sizes": (
+        "12/12px;14/14px;16/16px;18/18px;20/20px;24/24px;28/28px;32/32px;36/36px;48/48px"
+    ),
+    # Let editors upload from their computer instead of pasting a URL.
+    "filebrowserUploadUrl": "/admin/community-upload/?type=file",
+    "filebrowserImageUploadUrl": "/admin/community-upload/?type=image",
+    "filebrowserUploadMethod": "xhr",
+    "height": 420,
+}
 
 SILENCED_SYSTEM_CHECKS = ["treebeard.E001"]
 

@@ -56,32 +56,32 @@ const STAFF = [
   },
   {
     name: 'Alpha Omondi',
-    role: 'Apprentice',
+    role: 'Tech Mentor (Bocal Team)',
     bio: 'Supports technical delivery and apprentice progress on campus.',
     src: staff05,
   },
   {
     name: 'Bellah Oyucho',
-    role: 'Apprentice',
+    role: 'Tech Mentor (Bocal Team)',
     bio: 'Supports technical delivery and apprentice progress on campus.',
     src: staff06,
   },
   {
     name: 'Rodgers Kaunda',
-    role: 'Apprentice',
+    role: 'Tech Mentor (Bocal Team)',
     bio: 'Supports technical delivery and apprentice progress on campus.',
     src: staff07,
   },
   {
     name: 'Deril Okoth',
     role: 'Communications Lead',
-    bio: 'Leads communications and shares stories from the Zone01 community.',
+    bio: 'Leads communications and shares happenings from the Zone01 community.',
     src: staff08,
   },
   {
     name: 'Daisy Achieng',
     role: 'Communications Associate',
-    bio: 'Supports communications and community storytelling.',
+    bio: 'Supports communications and community details.',
     src: staff09,
   },
   {

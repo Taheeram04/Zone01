@@ -116,7 +116,10 @@ const PiscineCountdown = () => {
 
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/piscine/`, { signal: controller.signal });
+        const res = await fetch(`${API_BASE}/api/piscine/`, {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setConfig(parsePiscineConfig(await res.json()));
       } catch (error) {
