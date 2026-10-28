@@ -1,7 +1,7 @@
 import Hero from '../components/hero.jsx';
 import Stats from '../components/stats.jsx';
 import WhoCanApply from '../components/whocanapply.jsx';
-import WhoIsItFor from '../components/whoisitfor.jsx';
+import CompletedProjects from '../components/CompletedProjects.jsx';
 import WhyOurCampus from '../components/whyourcampus.jsx';
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
       <Hero />
       <Stats />
       <WhoCanApply />
-      <WhoIsItFor />
+      <CompletedProjects />
       <WhyOurCampus />
     </main>
   );

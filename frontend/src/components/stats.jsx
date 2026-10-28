@@ -12,7 +12,7 @@ const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
 const statColumns = [
   [
     { value: '$2,553', label: 'Highest Monthly Earning' },
-    { value: '257', label: 'Apprentices' },
+    { value: '202', label: 'Apprentices' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },

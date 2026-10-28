@@ -8,8 +8,8 @@ import whoIsItFor1 from '../assets/whoisitfor1.webp';
 import whoIsItFor1Small from '../assets/whoisitfor1-700.webp';
 import whoIsItFor2 from '../assets/whoisitfor2.webp';
 import whoIsItFor2Small from '../assets/whoisitfor2-360.webp';
-import whoIsItFor3 from '../assets/whoisitfor3.webp';
-import whoIsItFor3Small from '../assets/whoisitfor3-360.webp';
+import aokutu from '../assets/aokutu.JPG';
+import aokutuSmall from '../assets/aokutu-360.JPG';
 
 const targetAudience = [
   {
@@ -33,8 +33,8 @@ const targetAudience = [
     alt: 'Career switcher learner at Zone01 Kisumu',
   },
   {
-    image: whoIsItFor3,
-    small: whoIsItFor3Small,
+    image: aokutu,
+    small: aokutuSmall,
     width: 604,
     smallWidth: 360,
     title: 'EXPERIENCED PROFESSIONALS',
@@ -72,7 +72,7 @@ const WhoIsItFor = () => {
 
   return (
     <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
-      <Container>
+      <Container className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <KineticHeading
@@ -96,7 +96,7 @@ const WhoIsItFor = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={containerVariants}
-          className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-12 md:overflow-visible md:px-0 md:pb-0 md:justify-items-center lg:gap-16"
+          className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-6 lg:gap-8 md:overflow-visible md:px-0 md:pb-0"
         >
           {targetAudience.map((item) => (
             <motion.div
@@ -104,7 +104,7 @@ const WhoIsItFor = () => {
               variants={cardVariants}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="flex w-[85%] flex-none snap-center flex-col items-center text-center group cursor-default md:w-auto"
+              className="flex w-[85%] flex-none snap-center flex-col items-center text-center group cursor-default md:w-full"
             >
               {/* Image Frame with Aspect Ratio matching design */}
               <div className="relative w-full aspect-[4/3.5] sm:aspect-[4/4.3] rounded-2xl overflow-hidden bg-slate-100 shadow-sm">
@@ -119,7 +119,7 @@ const WhoIsItFor = () => {
               </div>
 
               {/* Category / Title */}
-              <h3 className="w-full text-center font-sans font-bold text-[18px] sm:text-[19px] md:text-[21px] text-primary tracking-wider uppercase mt-5 mb-2.5 md:mt-6 md:mb-3">
+              <h3 className="w-full text-center font-sans font-bold text-[15px] sm:text-[17px] md:text-[16px] lg:text-[18px] xl:text-[19px] text-primary tracking-wide uppercase mt-5 mb-2.5 md:mt-6 md:mb-3 whitespace-nowrap">
                 {item.title}
               </h3>
 
