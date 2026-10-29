@@ -4,7 +4,7 @@ One Django service hosts the whole product:
 
 * ``/api/``     - the read-only JSON API the React frontend consumes.
   ``/api/services/`` serves the Hire Talent service catalogue.
-* ``/admin/``   - the Django admin (content editing, applicants, events).
+* ``/admin/``   - the Django admin (content editing, events).
 * ``/healthz``  - liveness check.
 * ``/webhooks/whatsapp/`` - Meta WhatsApp Cloud API webhook (FAQ assistant).
 * everything else - the built React SPA (client-side routing), served by

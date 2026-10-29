@@ -734,6 +734,12 @@ snapshots) lives in `backend/README.md`.
 | `WHATSAPP_PHONE_NUMBER_ID` | _(empty)_ | WhatsApp sender's phone-number ID |
 | `WHATSAPP_APP_SECRET` | _(empty)_ | Verifies webhook signature (blank disables the check) |
 | `WHATSAPP_DRY_RUN` | `true` | Log replies instead of sending them |
+| `WHATSAPP_WELCOME_MESSAGE` | built-in greeting | English greeting on the first message of a conversation (again after 24h) |
+| `WHATSAPP_WELCOME_MESSAGE_SW` | built-in greeting | Swahili greeting when the first message is in Swahili |
+| `WHATSAPP_AI_ENABLED` | `true` | Use an LLM answer when a key is configured |
+| `WHATSAPP_AI_API_KEY` | _(empty)_ | Provider key; empty falls back to the FAQ keyword matcher |
+| `WHATSAPP_AI_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI-compatible `/chat/completions` endpoint |
+| `WHATSAPP_AI_MODEL` | `gpt-4o-mini` | Chat model used for grounded answers |
 
 ### Frontend (`frontend/.env`)
 
@@ -749,11 +755,12 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 
 | Endpoint | Returns |
 | -------- | ------- |
-| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `community`, `links`, `piscine` |
+| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `projects`, `community`, `links`, `piscine` |
 | `/api/partners/` | Partner list |
 | `/api/staff/` | Staff list |
 | `/api/news/` | Published news |
 | `/api/impact/` | Published impact stories (includes `report` download URL) |
+| `/api/projects/` | Active learner projects with image, gallery, founders, cohort, details, tech and website link |
 | `/api/community/` | Published community posts grouped by kind: `news`, `event`, `blog`, `podcast` |
 | `/api/links/` | Active header site links |
 | `/api/piscine/` | Next piscine date, active state, message and full upcoming schedule |

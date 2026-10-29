@@ -4,7 +4,8 @@ No external AI service is used: a visitor's message is scored against every
 active FAQ using token overlap weighted by inverse document frequency (IDF),
 with small bonuses for question-word overlap and fuzzy (typo-tolerant) matches.
 The single best answer is returned when its score clears a configurable
-threshold, otherwise ``None`` so the caller can send a fallback.
+threshold, otherwise ``None`` so the caller can stay silent and leave the
+question for the communication team.
 
 The whole thing is deterministic and cheap, which keeps it easy to test and to
 reason about. :class:`FaqMatcher` is a pure object over a list of
@@ -31,10 +32,14 @@ STOPWORDS = frozenset(
     is are was were be been being am do does did doing have has had having i me my we
     our you your he she it they them his her its this that these those as not no so
     can could would should will shall may might must about per via again there here what
-    which who whom whose when where why how all any some more most other such only own
+    which whom whose when where why how all any some more most other such only own now
     get got getting need needs want wants know make made take give tell say said see find
     look looking help please thanks thank hello hi hey ok okay just really very able
     going something anything everything
+    ya ni na wa za la kwa katika kwenye hii hiyo huo hizi hizo huyu hawa mimi wewe yeye
+    sisi ninyi wao au lakini pia tu je vipi tafadhali kuhusu leo ngapi gani mnatoa
+    unatoa tunatoa natoa ninaweza unaweza tunaweza naweza nataka unataka tunataka
+    naomba samahani asante karibu habari mambo jambo
     """.split()
 )
 
@@ -102,6 +107,14 @@ class FaqMatcher:
         add(getattr(item.category, "title", ""), _CATEGORY_WEIGHT)
         add(item.keywords, _KEYWORD_WEIGHT)
         add(item.answer, _ANSWER_WEIGHT)
+        # Translated questions and keywords make it possible to match a
+        # Swahili message to the right English-authored FAQ.
+        for translation in (getattr(item, "translations", {}) or {}).values():
+            if not isinstance(translation, dict):
+                continue
+            add(translation.get("question", ""), _QUESTION_WEIGHT)
+            add(translation.get("keywords", ""), _KEYWORD_WEIGHT)
+            add(translation.get("answer", ""), _ANSWER_WEIGHT)
         return terms
 
     @staticmethod
@@ -125,9 +138,11 @@ class FaqMatcher:
                 best = ratio
         return best if best >= _FUZZY_MIN_RATIO else 0.0
 
-    def _score(self, tokens, doc, question_tokens) -> float:
+    def _score(self, tokens, doc, question_tokens) -> tuple[float, int]:
+        """Return ``(score, matched_token_count)`` for one FAQ document."""
         matched = 0.0
         total = 0.0
+        matched_tokens = set()
         for token in tokens:
             weight = self._idf.get(token, self._max_idf)
             total += weight
@@ -136,36 +151,48 @@ class FaqMatcher:
                 # ones that only appear in the answer body.
                 strength = min(doc[token], _QUESTION_WEIGHT) / _QUESTION_WEIGHT
                 matched += weight * strength
+                matched_tokens.add(token)
             else:
                 fuzzy = self._fuzzy_match(token, doc)
                 if fuzzy:
                     matched += weight * fuzzy * 0.7
+                    matched_tokens.add(token)
         if total == 0:
-            return 0.0
+            return 0.0, 0
 
         score = matched / total
         # Reward messages that contain the whole question (or vice versa).
         if question_tokens and question_tokens <= set(tokens):
             score += 0.25
-        return min(score, 1.0)
+        return min(score, 1.0), len(matched_tokens)
 
     def best_match(self, message: str):
-        """Return ``(item, score)`` for the best answer, or ``(None, score)``."""
+        """Return ``(item, score)`` for the best answer, or ``(None, score)``.
+
+        A match also has to clear a coverage bar: a message with two or more
+        content words must match at least two of them. This prevents a single
+        incidental word (for example "Nairobi" in "what is the weather in
+        Nairobi?") from producing a confident but wrong answer. Anything that
+        does not clear the bar is left to the communication team.
+        """
         tokens = tokenize(message)
         if not tokens:
             return None, 0.0
 
         best_item = None
         best_score = 0.0
+        best_matched = 0
         for item, doc in zip(self.items, self.documents, strict=True):
             question_tokens = {t for t, w in doc.items() if w >= _QUESTION_WEIGHT}
-            score = self._score(tokens, doc, question_tokens)
+            score, matched = self._score(tokens, doc, question_tokens)
             if score > best_score:
                 best_score = score
                 best_item = item
+                best_matched = matched
 
         threshold = getattr(settings, "WHATSAPP_MATCH_THRESHOLD", 0.34)
-        if best_item is not None and best_score >= threshold:
+        required = 1 if len(set(tokens)) == 1 else 2
+        if best_item is not None and best_score >= threshold and best_matched >= required:
             return best_item, best_score
         return None, best_score
 

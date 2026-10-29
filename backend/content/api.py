@@ -11,6 +11,7 @@ Endpoints (all GET):
 * ``/api/staff/``
 * ``/api/news/``
 * ``/api/impact/``
+* ``/api/projects/`` - learner projects with images, founders, cohort and tech
 * ``/api/community/`` - news/event/blog/podcast posts grouped by kind
 * ``/api/links/``
 * ``/api/piscine/``
@@ -31,6 +32,7 @@ from content.models import (
     Page,
     Partner,
     PiscineDate,
+    Project,
     SiteLink,
     StaffMember,
 )
@@ -89,6 +91,39 @@ def serialize_impact(request, item):
         "report": report_url,
         "report_name": item.report.name if report_url and item.report else None,
         "order": item.order,
+    }
+
+
+def _split_csv(value):
+    """Split a comma-separated editor field into a clean list."""
+    return [part.strip() for part in (value or "").split(",") if part.strip()]
+
+
+def serialize_project(request, project):
+    gallery = list(project.gallery.all())
+    cover = _media_url(request, project.image)
+    if cover is None and gallery:
+        cover = _media_url(request, gallery[0].image)
+    return {
+        "id": project.id,
+        "name": project.name,
+        "slug": project.slug,
+        "founders": _split_csv(project.founders),
+        "cohort": project.cohort,
+        "description": project.description,
+        "tech": _split_csv(project.tech),
+        "website_url": project.website_url or None,
+        "image": cover,
+        "gallery": [
+            {
+                "id": picture.id,
+                "image": _media_url(request, picture.image),
+                "caption": picture.caption,
+                "order": picture.order,
+            }
+            for picture in gallery
+        ],
+        "order": project.order,
     }
 
 
@@ -262,6 +297,12 @@ def impact_list(request):
 
 
 @require_GET
+def project_list(request):
+    projects = Project.objects.filter(is_active=True).prefetch_related("gallery")
+    return JsonResponse({"results": [serialize_project(request, p) for p in projects]})
+
+
+@require_GET
 def community_list(request):
     return JsonResponse(
         {
@@ -316,6 +357,10 @@ def content_index(request):
             ],
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
+            ],
+            "projects": [
+                serialize_project(request, p)
+                for p in Project.objects.filter(is_active=True).prefetch_related("gallery")
             ],
             "community": _grouped_community_posts(request),
             "community_streams": _community_streams(),

@@ -7,7 +7,7 @@ from events.models import Event, EventRegistration
 class EventRegistrationInline(admin.TabularInline):
     model = EventRegistration
     extra = 0
-    autocomplete_fields = ("applicant",)
+    raw_id_fields = ("applicant",)
 
 
 @admin.register(Event)
@@ -39,7 +39,7 @@ class EventRegistrationAdmin(TrigramSearchMixin, admin.ModelAdmin):
     trigram_search_fields = ("full_name", "email", "phone")
     search_help_text = "Searches name, email, phone and the event title."
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ("applicant",)
+    raw_id_fields = ("applicant",)
     list_select_related = ("event", "applicant")
     # Skip the extra COUNT(*) over the whole table on every changelist load.
     show_full_result_count = False

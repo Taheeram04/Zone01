@@ -183,8 +183,17 @@ img, video, canvas, svg {
   to { transform: translate3d(-50%, 0, 0); }
 }
 
+@keyframes partner-marquee-loop {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-16.6667%, 0, 0); }
+}
+
 .animate-partner-marquee {
   animation: partner-marquee 55s linear infinite;
+}
+
+.animate-partner-marquee-loop {
+  animation: partner-marquee-loop 55s linear infinite;
 }
 
 .animate-kenburns {

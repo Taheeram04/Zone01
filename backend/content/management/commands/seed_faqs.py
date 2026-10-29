@@ -13,6 +13,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from content.faq_data import FAQ_SEED
+from content.faq_data_sw import FAQ_TRANSLATIONS_SW
 from content.models import FaqCategory, FaqItem
 
 
@@ -49,12 +50,15 @@ class Command(BaseCommand):
             kept_category_pks.append(category.pk)
 
             for item_order, item_data in enumerate(category_data["items"]):
+                translation = FAQ_TRANSLATIONS_SW.get(item_data["question"])
+                translations = {"sw": translation} if translation else {}
                 item, item_created = FaqItem.objects.update_or_create(
                     category=category,
                     question=item_data["question"],
                     defaults={
                         "answer": item_data["answer"],
                         "keywords": item_data.get("keywords", ""),
+                        "translations": translations,
                         "order": item_order,
                         "is_active": True,
                     },
