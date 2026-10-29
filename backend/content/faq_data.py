@@ -23,7 +23,8 @@ FAQ_SEED = [
                     "account, you can take the cognitive tests."
                 ),
                 "keywords": "apply, application, sign up, register, create account, join us, "
-                "how do i apply, application process, get started",
+                "how do i apply, application process, get started, kujiunga, maombi, kuomba, "
+                "kujisajili, ninaweza, jinsi ya kujiunga, nataka kujiunga",
             },
             {
                 "question": "What is the online cognitive test?",
@@ -50,7 +51,8 @@ FAQ_SEED = [
                     "the next Piscine dates."
                 ),
                 "keywords": "when can i apply, application deadline, when to apply, rolling basis, "
-                "application window, intake, applications open",
+                "application window, intake, applications open, lini kuomba, muda wa maombi, "
+                "nafasi",
             },
             {
                 "question": "How many times can I try the online cognitive test?",
@@ -73,7 +75,9 @@ FAQ_SEED = [
                     "disadvantaged backgrounds, refugees and ethnic minorities to apply."
                 ),
                 "keywords": "who can apply, who is eligible, eligible, eligibility, requirements, "
-                "age, over 18, qualifications, do i need experience, can girls apply, women",
+                "age, over 18, qualifications, do i need experience, can girls apply, women, "
+                "umri, sifa, mahitaji, nani anaweza kuomba, wanawake, kcse, grades, entry, "
+                "no degree, without degree, no qualifications",
             },
             {
                 "question": "What are the qualities required?",
@@ -149,7 +153,8 @@ FAQ_SEED = [
                     "Basin Mall in Kisumu."
                 ),
                 "keywords": "when piscine, where piscine, piscine date, next piscine, upcoming "
-                "piscine, location, venue, campus, dates, how long, 4 weeks, kisumu, lake basin mall",
+                "piscine, location, venue, campus, dates, how long, 4 weeks, kisumu, lake basin mall, "
+                "piscine iko wapi, piscine ni lini, mahali, wapi, muda, lini, tarehe",
             },
             {
                 "question": "I failed the Piscine, can I re-register?",
@@ -221,8 +226,8 @@ FAQ_SEED = [
                     "No, the training offered by Zone01 Kisumu is not an e-learning training. It is "
                     "a face-to-face training (on site)."
                 ),
-                "keywords": "e-learning, online training, distance learning, remote, study from home, "
-                "is it online, physical, on site",
+                "keywords": "e-learning, online training, online classes, online course, virtual, "
+                "zoom, distance learning, remote, study from home, is it online, physical, on site",
             },
             {
                 "question": "How can we learn without teachers and lessons?",
@@ -258,7 +263,8 @@ FAQ_SEED = [
                     "The campus is equipped to allow each learner to work on a computer. It is not "
                     "necessary to have a personal computer to be part of the training."
                 ),
-                "keywords": "laptop, computer, do i need a laptop, equipment, own computer, device",
+                "keywords": "laptop, computer, do i need a laptop, equipment, own computer, device, "
+                "kompyuta, laptop yangu, kifaa",
             },
             {
                 "question": "If I don't want to complete the training, can I drop out during the "
@@ -340,7 +346,9 @@ FAQ_SEED = [
                     "- 3 years guaranteed job contract."
                 ),
                 "keywords": "what is zone01, about the program, duration, 2 years, job contract, "
-                "overview, who is zone01",
+                "overview, who is zone01, duration, how long is the course, how long is the "
+                "program, course length, long, length, course, years, many, muda, miaka, wiki, "
+                "ni nini",
             },
             {
                 "question": "What are the qualities required by the Zone01 program / course?",
@@ -422,7 +430,8 @@ FAQ_SEED = [
                     "fees throughout the duration of the course."
                 ),
                 "keywords": "cost, fees, tuition, how much, price, free, do i pay, tuition-free, "
-                "registration fee",
+                "registration fee, bei, gharama, pesa, malipo, bure, ni bei gani, masomo, "
+                "gharama za masomo",
             },
             {
                 "question": "I don't have the means to support myself during the training. Are there "
@@ -438,7 +447,8 @@ FAQ_SEED = [
                     "period."
                 ),
                 "keywords": "scholarship, stipend, financial support, money, transport, food, "
-                "accommodation, allowance, 15000, stipend amount, bursary",
+                "accommodation, allowance, 15000, stipend amount, bursary, posho, msaada wa pesa, "
+                "malazi, chakula, usafiri",
             },
         ],
     },
@@ -508,6 +518,218 @@ FAQ_SEED = [
                 ),
                 "keywords": "diploma, certificate, degree, qualification, do i get a certificate, "
                 "graduation, papers",
+            },
+        ],
+    },
+    {
+        "slug": "contact-support",
+        "title": "Contact & Support",
+        "blurb": "How to reach a real person when you need one.",
+        "items": [
+            {
+                "question": "How can I contact the Zone01 team?",
+                "answer": (
+                    "Email info@zone01kisumu.ke and the team will get back to you. For application "
+                    "questions, use the Join us portal at learn.zone01kisumu.ke. For hiring or "
+                    "partnership enquiries, email Torsten@lakehub.co.ke."
+                ),
+                "keywords": "contact, contact you, email, email address, your email, address, "
+                "phone number, reach you, talk to someone, human, support, wasiliana, barua pepe, "
+                "simu, msaada, mawasiliano",
+            },
+            {
+                "question": "Where is the Zone01 Kisumu campus?",
+                "answer": (
+                    "Our campus is at LakeHub, Lake Basin Mall, in Kisumu. It is open 24 hours a "
+                    "day, 7 days a week for learners. Email info@zone01kisumu.ke if you need "
+                    "directions before visiting."
+                ),
+                "keywords": "where are you, where are you located, located, campus location, "
+                "address, directions, where is zone01, iko wapi, mahali, anwani, campus iko wapi",
+            },
+            {
+                "question": "Do you have a campus in Nairobi or other towns?",
+                "answer": (
+                    "All training and Piscines take place at our Kisumu campus, at LakeHub, Lake "
+                    "Basin Mall. There is no separate campus elsewhere; if you are selected you "
+                    "will attend in person in Kisumu."
+                ),
+                "keywords": "other campus, campus in nairobi, branch, campuses, another campus, "
+                "kampasi nyingine, tawi, nairobi campus",
+            },
+            {
+                "question": "I haven't received a reply to my application. What should I do?",
+                "answer": (
+                    "If you are shortlisted for a Piscine, we contact you by phone or email within "
+                    "the 2 weeks before it starts. If you do not hear from us, you were not "
+                    "shortlisted for that intake. Check your spam folder and the Join us portal, "
+                    "and email info@zone01kisumu.ke if you are unsure."
+                ),
+                "keywords": "no reply, no response, didn't hear back, application status, check "
+                "application, shortlisted, spam folder, application update, maombi, majibu, "
+                "hakuna jibu, hali ya maombi",
+            },
+            {
+                "question": "I can't log in to the application portal or I forgot my password.",
+                "answer": (
+                    "Use the 'Forgot password' link on learn.zone01kisumu.ke to reset it. If you "
+                    "still can't get in, email info@zone01kisumu.ke with your full name and the "
+                    "email address you registered with."
+                ),
+                "keywords": "forgot password, can't log in, login problem, reset password, account "
+                "access, portal, nimesahau nywila, kuingia, akaunti",
+            },
+            {
+                "question": "The cognitive test is not loading. What should I do?",
+                "answer": (
+                    "Use a stable internet connection and a modern browser such as Chrome, then "
+                    "reload the page. Don't start the test until you are ready, because it can't be "
+                    "paused or restarted. If it still fails, email info@zone01kisumu.ke with a "
+                    "screenshot."
+                ),
+                "keywords": "test not loading, technical problem, error, page frozen, test crashed, "
+                "browser, internet, mtihani, shida, hitilafu",
+            },
+            {
+                "question": "Can I visit the campus or attend an open day?",
+                "answer": (
+                    "Yes. We share open days and events on our website and social channels. To "
+                    "arrange a campus visit, email info@zone01kisumu.ke and the team will suggest a "
+                    "good time."
+                ),
+                "keywords": "visit, campus tour, open day, come to campus, see the campus, event, "
+                "kutembelea, ziara, tukio",
+            },
+            {
+                "question": "How do I report a problem or share feedback?",
+                "answer": (
+                    "Email info@zone01kisumu.ke with as much detail as possible, including a "
+                    "screenshot if it helps. We read every message and will follow up."
+                ),
+                "keywords": "feedback, complaint, report a problem, suggestion, issue, malalamiko, "
+                "maoni, ripoti",
+            },
+            {
+                "question": "What are the campus opening hours?",
+                "answer": (
+                    "The campus is open 24 hours a day, 7 days a week for learners. Email is the "
+                    "fastest way to reach the team, and we reply during working hours; for a visit, "
+                    "email first so the right person is available."
+                ),
+                "keywords": "office hours, opening hours, when are you open, call, visit time, "
+                "working hours, muda wa kazi, saa za kazi, saa za kufungua",
+            },
+        ],
+    },
+    {
+        "slug": "practicalities",
+        "title": "Practicalities & Campus Life",
+        "blurb": "Getting ready for campus, costs and day-to-day questions.",
+        "items": [
+            {
+                "question": "Can I apply if I live outside Kisumu?",
+                "answer": (
+                    "Yes, anyone can apply. The training is face-to-face in Kisumu, so if you are "
+                    "selected you will need to attend campus in person."
+                ),
+                "keywords": "outside kisumu, another county, relocate, move to kisumu, travel, "
+                "distance, nje ya kisumu, mkoa, kuhamia",
+            },
+            {
+                "question": "Can I reapply if I was not selected?",
+                "answer": (
+                    "If you were not shortlisted for a Piscine, you can apply again in a future "
+                    "intake. If you attended a Piscine and failed it, you must wait one year before "
+                    "applying again."
+                ),
+                "keywords": "reapply, apply again, not selected, unsuccessful, rejected, try again, "
+                "next intake, kuomba tena, hakuchaguliwa",
+            },
+            {
+                "question": "Is the Piscine free?",
+                "answer": (
+                    "Yes. The Piscine is part of the selection process and there is no fee to "
+                    "attend. The whole programme is tuition-free."
+                ),
+                "keywords": "piscine fee, pay for piscine, cost of piscine, free piscine, malipo ya "
+                "piscine, bure, gharama",
+            },
+            {
+                "question": "Can I miss a day during the Piscine?",
+                "answer": (
+                    "The Piscine is an intensive 4-week selection sprint and you need to be fully "
+                    "available for the whole period. If an emergency comes up, contact the team as "
+                    "soon as possible at info@zone01kisumu.ke."
+                ),
+                "keywords": "miss a day, absent during piscine, skip piscine, unavailable, "
+                "emergency, kutokuwepo, dharura",
+            },
+            {
+                "question": "Do I need a laptop or my own internet to join?",
+                "answer": (
+                    "No. The campus is equipped with computers and internet for learners, so you "
+                    "don't need your own laptop. For the online application and cognitive tests, "
+                    "you only need a device with a stable internet connection."
+                ),
+                "keywords": "laptop, computer, internet, wifi, data, device, simu, kompyuta, "
+                "mtandao, kifaa",
+            },
+            {
+                "question": "What language is the training in?",
+                "answer": (
+                    "Training materials and projects are in English, and our team can also assist "
+                    "you in Swahili. You don't need a language certificate to apply."
+                ),
+                "keywords": "language, language of instruction, teach, teaching, instruction, "
+                "medium of instruction, english, swahili, kiswahili, lugha, kizungu, certificate",
+            },
+            {
+                "question": "How should I prepare for the Piscine?",
+                "answer": (
+                    "There is nothing academic to revise - the Piscine tests how you learn and work "
+                    "with others. Come rested, ready for four intensive weeks, and bring your "
+                    "motivation. Computers are provided on campus."
+                ),
+                "keywords": "prepare for piscine, ready for piscine, what to bring, piscine "
+                "preparation, before piscine, kujiandaa, tayari",
+            },
+            {
+                "question": "Is accommodation or food provided?",
+                "answer": (
+                    "Learners arrange their own accommodation and meals in Kisumu. During the "
+                    "training, the monthly stipend helps with transport, food and accommodation "
+                    "costs. Email info@zone01kisumu.ke if you would like advice before the Piscine."
+                ),
+                "keywords": "accommodation, housing, hostel, where to stay, meals, food, malazi, "
+                "chakula, hosteli, mahali pa kulala, ninaweza, kupata, ninaweza kupata malazi",
+            },
+            {
+                "question": "How much is the monthly stipend and when does it start?",
+                "answer": (
+                    "Eligible learners receive Ksh 15,000 per month during the training to help with "
+                    "transport, food and accommodation. The team will confirm the exact start date "
+                    "and payment details when you enrol."
+                ),
+                "keywords": "stipend, allowance, monthly pay, when stipend, how much stipend, "
+                "posho, malipo ya kila mwezi, msaada wa pesa",
+            },
+            {
+                "question": "How can I hire Zone01 talent?",
+                "answer": (
+                    "Visit the Hire Talent page on zone01kisumu.ke or email Torsten@lakehub.co.ke "
+                    "with the role you are hiring for. You can also message the talent team on "
+                    "WhatsApp at wa.me/254748902779."
+                ),
+                "keywords": "hire talent, employer, recruit, hire developers, kuajiri, wafanyakazi",
+            },
+            {
+                "question": "How can I partner with or support Zone01?",
+                "answer": (
+                    "We would love to hear from you. Email info@zone01kisumu.ke or "
+                    "Torsten@lakehub.co.ke for partnership, sponsorship or hiring conversations."
+                ),
+                "keywords": "partner, partnership, sponsor, donate, support zone01, collaborate, "
+                "ushirikiano, kuchangia, msaada",
             },
         ],
     },

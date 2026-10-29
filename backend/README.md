@@ -316,11 +316,12 @@ CORS is controlled by `API_CORS_ALLOWED_ORIGINS`.
 
 | Endpoint           | Returns                                              |
 | ------------------ | ---------------------------------------------------- |
-| `/api/content/`    | everything in one request (partners, staff, news, impact, piscine, pages, faqs) |
+| `/api/content/`    | everything in one request (partners, staff, news, impact, projects, piscine, pages, faqs) |
 | `/api/partners/`   | partner list                                         |
 | `/api/staff/`      | staff list                                           |
 | `/api/news/`       | published news list                                  |
 | `/api/impact/`     | published impact list (includes `report` download URL)|
+| `/api/projects/`   | active projects with image, founders, cohort, tech and website link |
 | `/api/piscine/`    | next-piscine toggle, date and message                |
 | `/api/pages/`      | published pages with their sections                  |
 | `/api/pages/<slug>/` | a single page by slug, e.g. `/api/pages/about-us/` |

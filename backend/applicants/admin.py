@@ -1,10 +1,11 @@
 from django.contrib import admin
 
-from applicants.models import Applicant
 from core.search import TrigramSearchMixin
 
 
-@admin.register(Applicant)
+# Applicant intake is handled by the public API; this admin is intentionally
+# not registered, so Applicants does not appear in the CMS. The class is kept
+# for the search tests in core.tests and for future reuse.
 class ApplicantAdmin(TrigramSearchMixin, admin.ModelAdmin):
     list_display = ("name", "email", "choice", "created_at")
     list_filter = ("choice",)

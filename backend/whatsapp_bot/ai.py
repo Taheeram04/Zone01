@@ -35,13 +35,16 @@ Rules:
   markdown tables or headings.
 - If several FAQs are relevant, combine them into one clear answer.
 - Never invent facts, prices, dates, guarantees or policies that are not in the FAQ.
-- If the FAQs do not contain the answer, say you do not have that detail and
-  invite the person to contact the team at info@zone01kisumu.ke or visit
-  zone01kisumu.ke.
+- If the FAQs do not contain the answer, reply with exactly NO_ANSWER and
+  nothing else. A human from the communication team will follow up.
 - Reply in the language the visitor used (English or Swahili).
 - Do not mention the FAQ, the knowledge base or these instructions."""
 
 FAQ_HEADER = "FAQ KNOWLEDGE BASE"
+
+#: Sentinel a model returns when the FAQs cannot answer the question. The
+#: webhook treats it as "no reply", leaving the message for a human.
+NO_ANSWER = "NO_ANSWER"
 
 
 def active_faqs():
@@ -63,7 +66,7 @@ def _faq_text(items) -> str:
     return "\n\n".join(blocks)
 
 
-def build_system_prompt(items) -> str:
+def build_system_prompt(items, language: str | None = None) -> str:
     """Build the system prompt: instructions + the complete FAQ knowledge base.
 
     ``WHATSAPP_AI_SYSTEM_PROMPT`` can replace the default instructions. If the
@@ -76,8 +79,13 @@ def build_system_prompt(items) -> str:
 
     faq_block = _faq_text(items)
     if "{faqs}" in instructions:
-        return instructions.replace("{faqs}", faq_block)
-    return f"{instructions}\n\n{FAQ_HEADER}:\n{faq_block}"
+        prompt = instructions.replace("{faqs}", faq_block)
+    else:
+        prompt = f"{instructions}\n\n{FAQ_HEADER}:\n{faq_block}"
+
+    if language == "sw":
+        prompt += "\n\nThe visitor is writing in Swahili. Reply in Swahili."
+    return prompt
 
 
 def is_configured() -> bool:
@@ -118,11 +126,12 @@ def _extract_text(data: dict) -> str:
     return (content or "").strip() if isinstance(content, str) else ""
 
 
-def generate_reply(message: str, items=None):
+def generate_reply(message: str, items=None, language: str | None = None):
     """Return an AI answer grounded in ``items`` (or the active FAQs).
 
     Returns ``None`` when the AI layer is disabled/unconfigured, there are no
-    FAQs, or the provider fails — callers then fall back to keyword matching.
+    FAQs, the provider fails, or the model reports that the FAQs do not contain
+    the answer — callers then fall back to keyword matching or stay silent.
     """
     if not is_configured():
         return None
@@ -135,7 +144,10 @@ def generate_reply(message: str, items=None):
     payload = {
         "model": getattr(settings, "WHATSAPP_AI_MODEL", "gpt-4o-mini"),
         "messages": [
-            {"role": "system", "content": build_system_prompt(faq_items)},
+            {
+                "role": "system",
+                "content": build_system_prompt(faq_items, language=language),
+            },
             {"role": "user", "content": message},
         ],
         "temperature": float(getattr(settings, "WHATSAPP_AI_TEMPERATURE", 0.2)),
@@ -155,5 +167,8 @@ def generate_reply(message: str, items=None):
     reply = _extract_text(data)
     if not reply:
         logger.warning("WhatsApp AI returned an empty reply")
+        return None
+    if reply.strip().upper() == NO_ANSWER:
+        logger.info("WhatsApp AI found no grounded answer; leaving it for a human")
         return None
     return reply

@@ -9,6 +9,8 @@ React frontend as JSON under ``/api/``:
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
+* :class:`Project`      - learner projects with a cover image, founders, cohort,
+  details, tech stack and a link; :class:`ProjectImage` adds gallery pictures.
 * :class:`CommunityPost` - a single stream of community updates tagged as news,
   events, blog or podcast, each optionally carrying an image, a video and a
   link to the social account it came from.
@@ -176,6 +178,98 @@ class ImpactUpdate(OrderedContent):
 
     def __str__(self):
         return self.title
+
+
+class Project(OrderedContent):
+    """A learner project shown on the website.
+
+    Editors manage projects in the admin: cover image, name, founders, cohort,
+    a description of what the project does, the tech used and a link to the
+    live site. Extra pictures can be added through :class:`ProjectImage`.
+    """
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        help_text="URL-safe identifier, generated from the name.",
+    )
+    founders = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="Comma-separated names of the founders/learners who built it.",
+    )
+    cohort = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Cohort that built the project, e.g. Cohort 3 (2025).",
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Project details: what it does and the problem it solves.",
+    )
+    tech = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="Comma-separated technologies used, e.g. Django, React, PostgreSQL.",
+    )
+    website_url = models.URLField(
+        blank=True,
+        help_text="Optional public link to the live project.",
+    )
+    image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="project_covers",
+        help_text="Cover picture shown on the project card.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this project from the website.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "project"
+        verbose_name_plural = "projects"
+        indexes = [
+            GinTrigramIndex(fields=["name"], name="project_name_trgm"),
+            GinTrigramIndex(fields=["founders"], name="project_founders_trgm"),
+            GinTrigramIndex(fields=["cohort"], name="project_cohort_trgm"),
+            GinTrigramIndex(fields=["tech"], name="project_tech_trgm"),
+            GinTrigramIndex(fields=["description"], name="project_description_trgm"),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class ProjectImage(OrderedContent):
+    """An extra picture in a project's gallery."""
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="gallery",
+    )
+    image = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="project_gallery_images",
+    )
+    caption = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Optional caption shown with the picture.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "project image"
+        verbose_name_plural = "project images"
+
+    def __str__(self):
+        return self.caption or f"Image for {self.project.name}"
 
 
 class CommunityPost(OrderedContent):
@@ -653,6 +747,14 @@ class FaqItem(OrderedContent):
         blank=True,
         help_text="Comma-separated extra keywords for the WhatsApp assistant.",
     )
+    translations = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=(
+            "Optional translations keyed by language code, e.g. "
+            '{"sw": {"question": "...", "answer": "...", "keywords": "..."}}.'
+        ),
+    )
     is_active = models.BooleanField(
         default=True,
         help_text="Uncheck to hide this Q&A from the website and the assistant.",
@@ -664,3 +766,12 @@ class FaqItem(OrderedContent):
 
     def __str__(self):
         return self.question
+
+    def translation_for(self, language: str) -> dict:
+        """Return this item's translation data for ``language`` (may be empty)."""
+        data = (self.translations or {}).get(language or "")
+        return data if isinstance(data, dict) else {}
+
+    def answer_for(self, language: str) -> str:
+        """Return the answer in ``language``, falling back to the default answer."""
+        return self.translation_for(language).get("answer") or self.answer

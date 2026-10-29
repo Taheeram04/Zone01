@@ -5,7 +5,12 @@ One endpoint handles both halves of the Meta webhook contract:
 * ``GET``  - verification handshake (echo the ``hub.challenge`` when the token
   matches ``WHATSAPP_VERIFY_TOKEN``).
 * ``POST`` - event delivery. Each inbound text message is matched against the
-  FAQ knowledge base (see :mod:`whatsapp_bot.retrieval`) and answered.
+  FAQ knowledge base (see :mod:`whatsapp_bot.retrieval`) and answered in the
+  visitor's language. The first message of a conversation (or the first after
+  24 hours of silence) also gets a welcome message.
+
+If a question cannot be answered from the FAQs, no reply is sent: the message
+stays in the admin inbox for the communication team to handle personally.
 
 Processing is synchronous and always returns ``200`` to Meta, even when an
 internal error occurs, so a transient failure cannot trigger an endless retry
@@ -18,6 +23,7 @@ import hashlib
 import hmac
 import json
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from django.http import (
@@ -26,13 +32,47 @@ from django.http import (
     HttpResponseNotAllowed,
     JsonResponse,
 )
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from whatsapp_bot import ai, client
+from whatsapp_bot.i18n import SWAHILI, detect_language
 from whatsapp_bot.models import WhatsAppContact, WhatsAppMessage
-from whatsapp_bot.retrieval import get_matcher
+from whatsapp_bot.retrieval import get_matcher, tokenize
 
 logger = logging.getLogger(__name__)
+
+#: WhatsApp's customer-service window. A reply more than 24 hours after the
+#: last inbound message starts a new conversation, so we greet again.
+SESSION_WINDOW = timedelta(hours=24)
+
+#: Bare greetings. They get the welcome message but no FAQ answer.
+GREETING_WORDS = frozenset(
+    {
+        "hi",
+        "hello",
+        "hey",
+        "habari",
+        "jambo",
+        "mambo",
+        "sasa",
+        "vipi",
+        "niaje",
+        "hujambo",
+        "sijambo",
+        "habari yako",
+        "habari za asubuhi",
+        "habari za mchana",
+        "habari za jioni",
+        "mambo vipi",
+        "morning",
+        "afternoon",
+        "evening",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    }
+)
 
 
 @csrf_exempt
@@ -101,21 +141,70 @@ def _process(payload):
                 _handle_message(message, names, matcher)
 
 
-def _compose_reply(text, matcher):
-    """Return ``(reply_text, matched_faq | None, score)`` for an inbound message.
+def _compose_reply(text, matcher, language):
+    """Return ``(reply_text | None, matched_faq | None, score)``.
 
-    When the AI layer is configured it answers from the FAQ knowledge base with
-    a real language model; the keyword matcher still runs first so its best FAQ
-    is recorded for the audit trail and used as the fallback if the AI call
-    fails or is disabled.
+    The AI layer, when configured, answers from the FAQ knowledge base with a
+    real language model and mirrors the visitor's language. The keyword matcher
+    runs first so its best FAQ is recorded for the audit trail and used as the
+    fallback if the AI call fails or is disabled.
+
+    ``None`` means the question is not covered by the FAQs. The caller then
+    sends nothing, leaving the conversation for the communication team.
     """
     item, score = matcher.best_match(text)
-    ai_reply = ai.generate_reply(text, items=getattr(matcher, "items", None))
+    ai_reply = ai.generate_reply(
+        text,
+        items=getattr(matcher, "items", None),
+        language=language,
+    )
     if ai_reply:
         return ai_reply, item, score
     if item is not None:
-        return item.answer, item, score
-    return settings.WHATSAPP_FALLBACK_MESSAGE, None, score
+        return item.answer_for(language), item, score
+    return None, None, score
+
+
+def _welcome_for(language: str) -> str:
+    """Return the welcome message for ``language`` (English if untranslated)."""
+    setting = "WHATSAPP_WELCOME_MESSAGE_SW" if language == SWAHILI else "WHATSAPP_WELCOME_MESSAGE"
+    return (
+        getattr(settings, setting, "") or getattr(settings, "WHATSAPP_WELCOME_MESSAGE", "") or ""
+    ).strip()
+
+
+def _is_greeting(text: str) -> bool:
+    """Whether a message is only a greeting (so no FAQ answer is needed)."""
+    cleaned = " ".join(text.lower().strip("!.,?¿¡ ").split())
+    return not cleaned or cleaned in GREETING_WORDS or not tokenize(cleaned)
+
+
+def _starts_new_session(contact) -> bool:
+    """Whether this inbound message opens a fresh 24-hour conversation."""
+    if contact.message_count == 0:
+        return True
+    return timezone.now() - contact.last_seen > SESSION_WINDOW
+
+
+def _send_and_record(contact, wa_id, body, matched=None, score=None):
+    """Send one outbound message and persist it, logging any delivery error."""
+    outbound = WhatsAppMessage(
+        contact=contact,
+        direction=WhatsAppMessage.Direction.OUTBOUND,
+        body=body,
+        matched_faq=matched,
+        match_score=score,
+    )
+    try:
+        message_id, status = client.send_text(wa_id, body)
+        outbound.wa_message_id = message_id
+        outbound.status = status
+    except client.WhatsAppSendError as exc:
+        outbound.status = WhatsAppMessage.Status.FAILED
+        outbound.error = str(exc)
+        logger.warning("Failed to send WhatsApp reply to %s: %s", wa_id, exc)
+    outbound.save()
+    return outbound
 
 
 def _handle_message(message, names, matcher):
@@ -131,11 +220,13 @@ def _handle_message(message, names, matcher):
         return
 
     body = ((message.get("text") or {}).get("body") or "").strip()
+    language = detect_language(body)
     name = names.get(wa_id, "")
 
     contact, _created = WhatsAppContact.objects.get_or_create(
         wa_id=wa_id, defaults={"profile_name": name}
     )
+    new_session = _starts_new_session(contact)
     if name and name != contact.profile_name:
         contact.profile_name = name
     contact.message_count += 1
@@ -149,20 +240,14 @@ def _handle_message(message, names, matcher):
         status=WhatsAppMessage.Status.RECEIVED,
     )
 
-    reply, matched, score = _compose_reply(body, matcher)
-    outbound = WhatsAppMessage(
-        contact=contact,
-        direction=WhatsAppMessage.Direction.OUTBOUND,
-        body=reply,
-        matched_faq=matched,
-        match_score=score,
-    )
-    try:
-        message_id, status = client.send_text(wa_id, reply)
-        outbound.wa_message_id = message_id
-        outbound.status = status
-    except client.WhatsAppSendError as exc:
-        outbound.status = WhatsAppMessage.Status.FAILED
-        outbound.error = str(exc)
-        logger.warning("Failed to send WhatsApp reply to %s: %s", wa_id, exc)
-    outbound.save()
+    if new_session:
+        welcome = _welcome_for(language)
+        if welcome:
+            _send_and_record(contact, wa_id, welcome)
+        # A bare "hi"/"hello" is answered by the welcome itself.
+        if _is_greeting(body):
+            return
+
+    reply, matched, score = _compose_reply(body, matcher, language)
+    if reply:
+        _send_and_record(contact, wa_id, reply, matched, score)

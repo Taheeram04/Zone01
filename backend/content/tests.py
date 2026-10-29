@@ -29,6 +29,7 @@ from content.models import (
     PageSection,
     Partner,
     PiscineDate,
+    Project,
     SiteLink,
     StaffMember,
 )
@@ -857,6 +858,45 @@ class PageApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("pages", response.json())
+
+
+class ProjectApiTests(TestCase):
+    def test_project_list_returns_active_projects(self):
+        Project.objects.create(
+            name="AgriSense",
+            slug="agrisense",
+            founders="Amina Otieno, Brian Ochieng",
+            cohort="Cohort 3 (2025)",
+            description="Helps smallholder farmers spot crop disease early.",
+            tech="Django, React, PostgreSQL",
+            website_url="https://agrisense.example.com",
+        )
+        Project.objects.create(name="Hidden draft", slug="hidden", is_active=False)
+
+        response = self.client.get(reverse("content_api:project-list"))
+
+        self.assertEqual(response.status_code, 200)
+        results = response.json()["results"]
+        self.assertEqual(len(results), 1)
+        project = results[0]
+        self.assertEqual(project["name"], "AgriSense")
+        self.assertEqual(project["founders"], ["Amina Otieno", "Brian Ochieng"])
+        self.assertEqual(project["cohort"], "Cohort 3 (2025)")
+        self.assertEqual(project["tech"], ["Django", "React", "PostgreSQL"])
+        self.assertEqual(project["website_url"], "https://agrisense.example.com")
+        self.assertEqual(project["gallery"], [])
+        self.assertIsNone(project["image"])
+
+    def test_content_index_includes_projects(self):
+        Project.objects.create(name="WaterWatch", slug="waterwatch")
+
+        response = self.client.get(reverse("content_api:content-index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [project["name"] for project in response.json()["projects"]],
+            ["WaterWatch"],
+        )
 
 
 class SiteLinkApiTests(TestCase):

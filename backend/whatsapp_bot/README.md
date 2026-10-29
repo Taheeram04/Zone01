@@ -4,8 +4,8 @@ An automated WhatsApp agent for Zone01 Kisumu. When someone messages the
 Zone01 WhatsApp number, the agent reads the text, sends it to an AI model
 together with the active FAQ knowledge base, and replies with an answer grounded
 in those FAQs. If the AI layer is not configured (or the provider fails), it
-falls back to a deterministic keyword/IDF matcher, then to a friendly fallback
-message.
+falls back to a deterministic keyword/IDF matcher. If neither can answer, the
+bot stays silent and leaves the message for the communication team.
 
 The AI integration talks to any OpenAI-compatible `/chat/completions` endpoint
 (OpenAI, Azure gateways, Groq, OpenRouter, a local server, ...) and is
@@ -25,9 +25,12 @@ Meta WhatsApp Cloud API
 whatsapp_bot.views
     ├─ verify signature  (WHATSAPP_APP_SECRET)
     ├─ dedupe by message id
-    ├─ ai.generate_reply(text, FAQs)   → grounded answer (when configured)
-    ├─ retrieval.get_matcher().best_match(text) → fallback answer + audit FAQ
-    └─ client.send_text(...)         (or dry-run log)
+    ├─ first message of a conversation → welcome (English or Swahili)
+    ├─ detect the visitor's language (English / Swahili)
+    ├─ ai.generate_reply(text, FAQs, language) → grounded answer (when configured)
+    ├─ retrieval.get_matcher().best_match(text) → translated answer + audit FAQ
+    └─ no match → no reply; the message stays in the admin for a human
+       client.send_text(...)         (or dry-run log)
     │  reply
     ▼
 WhatsApp user
@@ -56,6 +59,20 @@ that long to appear. FAQ saves and deletes now invalidate the cache immediately
 (see `content/apps.py`), so new questions and answers are used on the next
 incoming message. The AI prompt is rebuilt from the active FAQs per request.
 
+## Languages
+
+Incoming messages are detected as English or Swahili from their text. The
+assistant answers in the visitor's language:
+
+- The seeded Swahili translations live in `content/faq_data_sw.py` and are
+  merged into `FaqItem.translations["sw"]` by `seed_faqs`. Refine them in
+  **Admin → FAQ items → translations** (or in the seed file) as needed.
+- An FAQ without a translation falls back to its English answer.
+- The welcome message has a matching `WHATSAPP_WELCOME_MESSAGE_SW`.
+- When the AI layer is enabled its prompt tells the model to reply in the
+  visitor's language; when the FAQs do not cover the question the model replies
+  with `NO_ANSWER`, which the webhook treats as "stay silent".
+
 ## 2. Configure the environment
 
 Add these to `backend/.env` (see `.env.example`):
@@ -68,8 +85,9 @@ Add these to `backend/.env` (see `.env.example`):
 | `WHATSAPP_APP_SECRET` | App secret, used to verify webhook signatures. |
 | `WHATSAPP_API_VERSION` | Graph API version (default `v21.0`). |
 | `WHATSAPP_DRY_RUN` | `true` (default) logs replies instead of sending them. |
-| `WHATSAPP_MATCH_THRESHOLD` | Minimum `0..1` match score before an answer is sent. |
-| `WHATSAPP_FALLBACK_MESSAGE` | Reply used when nothing matches. |
+| `WHATSAPP_MATCH_THRESHOLD` | Minimum `0..1` match score before an answer is sent; below it the bot stays silent. |
+| `WHATSAPP_WELCOME_MESSAGE` | English greeting sent on the first message of a conversation (and again after 24h of silence). Empty disables it. |
+| `WHATSAPP_WELCOME_MESSAGE_SW` | Swahili greeting used when the first message is in Swahili. |
 | `WHATSAPP_AI_ENABLED` | `true` (default) uses the AI answer when a key is set. |
 | `WHATSAPP_AI_API_KEY` | Key for the AI provider. Empty = keyword matching only. |
 | `WHATSAPP_AI_BASE_URL` | OpenAI-compatible base URL (default `https://api.openai.com/v1`). |
@@ -132,7 +150,8 @@ Run the automated tests:
 ## Tuning the matching
 
 - `WHATSAPP_MATCH_THRESHOLD` (default `0.34`) trades precision for recall. Raise
-  it if wrong answers slip through; lower it if real questions get the fallback.
+  it if wrong answers slip through; lower it if real questions are being left
+  for the communication team too often.
 - `keywords` on a `FaqItem` are the strongest signal. If a common phrasing is
   missed, add it there rather than lengthening the question.
 - The scorer weights question words and keywords above category/answer words,

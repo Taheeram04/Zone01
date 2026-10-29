@@ -337,13 +337,27 @@ WHATSAPP_APP_SECRET = env("WHATSAPP_APP_SECRET", default="")
 WHATSAPP_API_VERSION = env("WHATSAPP_API_VERSION", default="v21.0")
 WHATSAPP_DRY_RUN = env.bool("WHATSAPP_DRY_RUN", default=True)
 WHATSAPP_TIMEOUT = env.float("WHATSAPP_TIMEOUT", default=10.0)
-# Minimum match score (0..1) before an FAQ answer is sent instead of the fallback.
+# Minimum match score (0..1) before an FAQ answer is sent. When nothing clears
+# the threshold the assistant stays silent and the message is left for the
+# communication team in the admin inbox.
 WHATSAPP_MATCH_THRESHOLD = env.float("WHATSAPP_MATCH_THRESHOLD", default=0.34)
-WHATSAPP_FALLBACK_MESSAGE = env(
-    "WHATSAPP_FALLBACK_MESSAGE",
+# Sent automatically when someone starts a new conversation (their first
+# message, or the first after 24 hours of silence). Leave empty to disable.
+WHATSAPP_WELCOME_MESSAGE = env(
+    "WHATSAPP_WELCOME_MESSAGE",
     default=(
-        "Sorry, I couldn't find an answer to that. Please try rephrasing, or "
-        "contact the Zone01 Kisumu team directly and we'll help you."
+        "👋 Welcome to Zone01 Kisumu! We're a tuition-free software engineering "
+        "programme in Kisumu, Kenya. I'm the Zone01 assistant — ask me anything "
+        "about applications, the Piscine, courses, fees or events."
+    ),
+)
+# Swahili greeting used when the visitor's first message is in Swahili.
+WHATSAPP_WELCOME_MESSAGE_SW = env(
+    "WHATSAPP_WELCOME_MESSAGE_SW",
+    default=(
+        "👋 Karibu Zone01 Kisumu! Tuna programu ya bure ya uhandisi wa programu "
+        "huko Kisumu, Kenya. Mimi ni msaidizi wa Zone01 — niulize kuhusu maombi, "
+        "Piscine, masomo, ada au matukio."
     ),
 )
 

@@ -30,6 +30,8 @@ from content.models import (
     PageSection,
     Partner,
     PiscineDate,
+    Project,
+    ProjectImage,
     SiteLink,
     StaffMember,
 )
@@ -188,6 +190,51 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
             '<a href="{}" target="_blank" rel="noopener">Download</a>',
             url,
         )
+
+
+class ProjectImageInline(admin.TabularInline):
+    model = ProjectImage
+    extra = 1
+    fields = ("order", "image", "caption")
+    ordering = ("order", "id")
+
+
+@admin.register(Project)
+class ProjectAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
+    """Add, edit and delete learner projects and their picture galleries."""
+
+    list_display = ("preview", "name", "cohort", "founders", "tech", "is_active", "order")
+    list_display_links = ("name",)
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active", "cohort")
+    search_fields = ("name", "founders", "cohort", "tech", "description")
+    trigram_search_fields = ("name", "founders", "cohort", "tech", "description")
+    search_help_text = (
+        "Searches project name, founders, cohort, tech stack and description. "
+        "Results are ordered by how closely they match."
+    )
+    prepopulated_fields = {"slug": ("name",)}
+    readonly_fields = ("created_at",)
+    inlines = (ProjectImageInline,)
+    ordering = ("order", "id")
+    actions = ("delete_selected",)
+    show_full_result_count = False
+    save_on_top = True
+    fieldsets = (
+        ("Project", {"fields": ("name", "slug", "image")}),
+        (
+            "Details",
+            {
+                "fields": ("founders", "cohort", "description", "tech", "website_url"),
+                "description": (
+                    "Use commas for founders and technologies, e.g. "
+                    '"Amina Otieno, Brian Ochieng" and "Django, React, PostgreSQL".'
+                ),
+            },
+        ),
+        ("Publishing", {"fields": ("is_active", "order")}),
+        ("Timestamps", {"fields": ("created_at",), "classes": ("collapse",)}),
+    )
 
 
 @admin.register(CommunityPost)

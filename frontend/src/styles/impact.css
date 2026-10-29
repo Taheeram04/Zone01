@@ -1881,8 +1881,8 @@
 /* --- Hero proof strip --- */
 .impact-hero-metrics {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px 28px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px 20px;
   margin-top: clamp(34px, 5vh, 54px);
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.26);

@@ -112,11 +112,11 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="w-full bg-[#0063F9] text-white rounded-[6px] overflow-hidden pt-[64px] lg:pt-[96px] pb-[48px] px-[24px] sm:px-[40px] lg:px-[80px]"
+      className="w-full bg-[#0063F9] text-white rounded-[6px] overflow-hidden pt-[20px] lg:pt-[24px] pb-[16px] px-[24px] sm:px-[40px] lg:px-[80px]"
     >
-      <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-[64px]">
+      <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-[16px] lg:gap-[20px]">
         {/* Top Part: Logo on Left, Contact/Form/Social Column on Right */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-[56px] w-full">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-[20px] lg:gap-[24px] w-full">
           {/* 1. White Logo (Left) */}
           <motion.div
             initial="hidden"
@@ -135,24 +135,24 @@ const Footer = () => {
                 alt="Zone01 Kisumu"
                 width="311"
                 height="118"
-                className="w-[180px] sm:w-[220px] lg:w-[260px] h-auto object-contain"
+                className="w-[150px] sm:w-[180px] lg:w-[210px] h-auto object-contain"
               />
             </Link>
           </motion.div>
 
           {/* Right Column: Contact Block, Form, Social Row */}
-          <div className="w-full lg:w-[480px] max-w-full flex flex-col gap-[28px]">
+          <div className="w-full lg:w-[480px] max-w-full flex flex-col gap-[12px]">
             {/* 2. Contact Block */}
             <motion.div
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
               variants={getFadeUpVariant(1)}
-              className="flex flex-col gap-4 text-white"
+              className="flex flex-col gap-2 text-white"
             >
               {/* Address */}
               <div className="flex items-start gap-4">
                 <MapPin className="w-6 h-6 text-white shrink-0 mt-0.5" strokeWidth={2} aria-hidden="true" />
-                <p className="font-sans text-[18px] sm:text-[20px] leading-[1.4] text-white font-normal">
+                <p className="font-sans text-[16px] sm:text-[18px] leading-[1.4] text-white font-normal">
                   Lake Basin Mall, Kisumu-Vihiga Road. Kisumu, Kenya
                 </p>
               </div>
@@ -162,7 +162,7 @@ const Footer = () => {
                 <Phone className="w-6 h-6 text-white shrink-0" strokeWidth={2} aria-hidden="true" />
                 <a
                   href="tel:+254748902779"
-                  className="font-sans text-[18px] sm:text-[20px] text-white hover:underline transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-[2px]"
+                  className="font-sans text-[16px] sm:text-[18px] text-white hover:underline transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-[2px]"
                 >
                   +254 748 902 779
                 </a>
@@ -176,7 +176,7 @@ const Footer = () => {
               variants={getFadeUpVariant(2)}
               className="w-full"
             >
-              <h3 className="font-sans text-[22px] font-semibold text-white mb-3">
+              <h3 className="font-sans text-[20px] font-semibold text-white mb-1.5">
                 Join our community
               </h3>
               <form
@@ -193,11 +193,11 @@ const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="w-full min-w-0 h-[48px] bg-transparent border-0 px-4 sm:px-6 font-sans text-[15px] sm:text-[16px] text-[#092C3E] placeholder:text-[#0A4FBF] focus:outline-none focus:ring-0"
+                  className="w-full min-w-0 h-[44px] bg-transparent border-0 px-4 sm:px-6 font-sans text-[15px] sm:text-[16px] text-[#092C3E] placeholder:text-[#0A4FBF] focus:outline-none focus:ring-0"
                 />
                 <button
                   type="submit"
-                  className="h-[48px] px-6 sm:px-8 shrink-0 rounded-full bg-[#0063F9] text-white font-sans font-semibold text-[15px] sm:text-[16px] whitespace-nowrap hover:bg-[#092C3E] active:scale-[0.97] transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                  className="h-[44px] px-6 sm:px-8 shrink-0 rounded-full bg-[#0063F9] text-white font-sans font-semibold text-[15px] sm:text-[16px] whitespace-nowrap hover:bg-[#092C3E] active:scale-[0.97] transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                 >
                   {isSubscribed ? 'Subscribed!' : 'Get Started'}
                 </button>
@@ -209,7 +209,7 @@ const Footer = () => {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
               variants={getFadeUpVariant(3)}
-              className="flex items-center gap-[16px] flex-wrap"
+              className="flex items-center gap-[10px] flex-wrap"
             >
               {SOCIAL_ACCOUNTS.map(({ key, Icon, href, label, iconSize }) => (
                 <a
@@ -228,7 +228,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Part: 1px Animated Divider & Space-Between Row */}
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-2 w-full">
           {/* 1.1s Drawing 1px Divider */}
           <motion.div
             initial={prefersReduced ? false : { scaleX: 0 }}
@@ -244,18 +244,18 @@ const Footer = () => {
           />
 
           {/* Nav Links on Left, Copyright on Right */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 w-full pt-2">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-2 w-full pt-1">
             {/* Nav Links */}
             <nav
               aria-label="Footer Navigation"
-              className="flex flex-wrap items-center gap-x-[32px] lg:gap-x-[40px] gap-y-3"
+              className="flex flex-wrap items-center gap-x-[24px] lg:gap-x-[32px] gap-y-2"
             >
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
                   onClick={scrollToTop}
-                  className="group relative py-1 font-sans font-semibold text-[16px] sm:text-[18px] uppercase tracking-wider text-white transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 rounded-[2px]"
+                  className="group relative py-0.5 font-sans font-semibold text-[14px] sm:text-[16px] uppercase tracking-wider text-white transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 rounded-[2px]"
                 >
                   <span>{link.label}</span>
                   <span
@@ -267,7 +267,7 @@ const Footer = () => {
             </nav>
 
             {/* Copyright */}
-            <p className="font-sans text-[16px] sm:text-[18px] font-normal text-white shrink-0">
+            <p className="font-sans text-[14px] sm:text-[16px] font-normal text-white shrink-0">
               Copyright © 2026 Zone01 Kisumu
             </p>
           </div>

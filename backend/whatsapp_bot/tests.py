@@ -2,14 +2,17 @@
 
 import json
 import urllib.error
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from content.models import FaqCategory, FaqItem
 from whatsapp_bot import ai, retrieval
-from whatsapp_bot.models import WhatsAppMessage
+from whatsapp_bot.i18n import detect_language
+from whatsapp_bot.models import WhatsAppContact, WhatsAppMessage
 from whatsapp_bot.retrieval import FaqMatcher, tokenize
 
 
@@ -62,7 +65,7 @@ class RetrievalTests(TestCase):
         self.matcher = FaqMatcher(self.items)
 
     def test_matches_by_question_words(self):
-        item, score = self.matcher.best_match("how do I apply for the program")
+        item, score = self.matcher.best_match("how do I apply")
         self.assertEqual(item.question, "How to apply?")
         self.assertGreaterEqual(score, 0.34)
 
@@ -88,7 +91,7 @@ class RetrievalTests(TestCase):
     WHATSAPP_VERIFY_TOKEN="verify-me",
     WHATSAPP_APP_SECRET="",
     WHATSAPP_DRY_RUN=True,
-    WHATSAPP_FALLBACK_MESSAGE="Sorry, I could not find an answer for that.",
+    WHATSAPP_WELCOME_MESSAGE="",
 )
 class WebhookTests(TestCase):
     def setUp(self):
@@ -176,11 +179,11 @@ class WebhookTests(TestCase):
         self.assertEqual(outbound.matched_faq, self.item)
         self.assertEqual(outbound.status, WhatsAppMessage.Status.DRY_RUN)
 
-    def test_unknown_message_falls_back(self):
+    def test_unknown_message_gets_no_reply(self):
         self._post(self._payload("what is the weather in nairobi"))
-        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
-        self.assertIsNone(outbound.matched_faq)
-        self.assertEqual(outbound.body, "Sorry, I could not find an answer for that.")
+        self.assertFalse(
+            WhatsAppMessage.objects.filter(direction=WhatsAppMessage.Direction.OUTBOUND).exists()
+        )
 
     def test_duplicate_delivery_is_ignored(self):
         payload = self._payload("how do i apply")
@@ -205,7 +208,7 @@ class WebhookTests(TestCase):
     WHATSAPP_AI_ENABLED=True,
     WHATSAPP_AI_API_KEY="test-key",
     WHATSAPP_AI_MODEL="test-model",
-    WHATSAPP_FALLBACK_MESSAGE="Fallback reply.",
+    WHATSAPP_WELCOME_MESSAGE="",
 )
 class AIAnswerTests(TestCase):
     def setUp(self):
@@ -288,9 +291,175 @@ class AIAnswerTests(TestCase):
         outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
         self.assertEqual(outbound.body, self.item.answer)
 
+    def test_no_answer_sentinel_produces_no_reply(self):
+        fake = {"choices": [{"message": {"content": "NO_ANSWER"}}]}
+        with patch("whatsapp_bot.ai._post", return_value=fake):
+            self._post("what is the weather in nairobi")
+        self.assertFalse(
+            WhatsAppMessage.objects.filter(direction=WhatsAppMessage.Direction.OUTBOUND).exists()
+        )
+
+    def test_swahili_prompt_instructs_the_model(self):
+        prompt = ai.build_system_prompt([self.item], language="sw")
+        self.assertIn("Swahili", prompt)
+
     def test_faq_edits_clear_the_matcher_cache(self):
         retrieval.get_matcher()
         self.assertIsNotNone(retrieval._cache["matcher"])
         self.item.answer = "Updated answer."
         self.item.save()
         self.assertIsNone(retrieval._cache["matcher"])
+
+
+class LanguageDetectionTests(TestCase):
+    def test_english_is_the_default(self):
+        self.assertEqual(detect_language("How much is the tuition?"), "en")
+        self.assertEqual(detect_language(""), "en")
+
+    def test_swahili_questions_are_detected(self):
+        self.assertEqual(detect_language("Bei ya masomo ni ngapi?"), "sw")
+        self.assertEqual(detect_language("Ninaweza kujiunga vipi?"), "sw")
+        self.assertEqual(detect_language("Habari"), "sw")
+
+    def test_english_sentence_with_a_swahili_word_stays_english(self):
+        message = "I am applying from Nairobi and I would like to know the fees for the programme."
+        self.assertEqual(detect_language(message), "en")
+
+
+@override_settings(
+    WHATSAPP_APP_SECRET="",
+    WHATSAPP_DRY_RUN=True,
+    WHATSAPP_AI_ENABLED=False,
+    WHATSAPP_WELCOME_MESSAGE="Welcome to Zone01!",
+    WHATSAPP_WELCOME_MESSAGE_SW="Karibu Zone01!",
+)
+class WelcomeMessageTests(TestCase):
+    """The greeting is sent once per conversation, before the first answer."""
+
+    wa_id = "254700000003"
+
+    def setUp(self):
+        retrieval.clear_cache()
+        self.category = FaqCategory.objects.create(
+            slug="application-progress",
+            title="Application Progress",
+        )
+        self.item = FaqItem.objects.create(
+            category=self.category,
+            question="How to apply?",
+            answer="Create an account via Join us.",
+            keywords="apply, sign up, register",
+            translations={
+                "sw": {
+                    "question": "Jinsi ya kuomba?",
+                    "answer": "Fungua akaunti kupitia Join us.",
+                    "keywords": "kuomba, maombi, kujiunga",
+                }
+            },
+        )
+
+    def _post(self, text, mid):
+        payload = {
+            "entry": [
+                {
+                    "changes": [
+                        {
+                            "value": {
+                                "contacts": [
+                                    {
+                                        "wa_id": self.wa_id,
+                                        "profile": {"name": "Welcome Tester"},
+                                    }
+                                ],
+                                "messages": [
+                                    {
+                                        "from": self.wa_id,
+                                        "id": mid,
+                                        "type": "text",
+                                        "text": {"body": text},
+                                    }
+                                ],
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        return self.client.post(
+            reverse("whatsapp_bot:webhook"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def _outbound_bodies(self):
+        return [
+            message.body
+            for message in WhatsAppMessage.objects.filter(
+                direction=WhatsAppMessage.Direction.OUTBOUND
+            ).order_by("created_at")
+        ]
+
+    def test_first_message_gets_welcome_then_answer(self):
+        self._post("how do i apply", "wamid.W1")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Welcome to Zone01!", self.item.answer],
+        )
+        welcome = WhatsAppMessage.objects.filter(
+            direction=WhatsAppMessage.Direction.OUTBOUND
+        ).order_by("created_at")[0]
+        self.assertEqual(welcome.status, WhatsAppMessage.Status.DRY_RUN)
+
+    def test_greeting_gets_only_the_welcome(self):
+        self._post("hi", "wamid.W2")
+
+        self.assertEqual(self._outbound_bodies(), ["Welcome to Zone01!"])
+
+    def test_follow_up_in_the_same_session_skips_the_welcome(self):
+        self._post("hi", "wamid.W3")
+        self._post("how do i apply", "wamid.W4")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Welcome to Zone01!", self.item.answer],
+        )
+
+    def test_welcome_returns_after_24_hours_of_silence(self):
+        self._post("hi", "wamid.W5")
+        WhatsAppContact.objects.update(last_seen=timezone.now() - timedelta(hours=25))
+        self._post("how do i apply", "wamid.W6")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Welcome to Zone01!", "Welcome to Zone01!", self.item.answer],
+        )
+
+    def test_swahili_message_gets_swahili_welcome_and_answer(self):
+        self._post("Jinsi ya kuomba?", "wamid.SW1")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Karibu Zone01!", "Fungua akaunti kupitia Join us."],
+        )
+
+    def test_english_message_still_gets_english_answer(self):
+        self._post("how do i apply", "wamid.EN1")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Welcome to Zone01!", self.item.answer],
+        )
+
+    def test_untranslated_answer_falls_back_to_the_english_text(self):
+        self.item.translations = {}
+        self.item.keywords = "apply, sign up, register, jinsi, kuomba, maombi"
+        self.item.save()
+        retrieval.clear_cache()
+
+        self._post("Jinsi ya kuomba?", "wamid.SW2")
+
+        self.assertEqual(
+            self._outbound_bodies(),
+            ["Karibu Zone01!", self.item.answer],
+        )

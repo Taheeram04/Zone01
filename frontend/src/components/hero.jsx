@@ -317,36 +317,23 @@ const Hero = () => {
         <div className="w-full">
           <KineticHeading
             as="h1"
-            text={"Talent is everywhere.\nOpportunity is not."}
-            className="font-sans font-black text-white leading-[1.06] tracking-tight text-[30px] sm:text-[44px] md:text-[54px] lg:text-[66px] xl:text-[76px] 2xl:text-hero-h1 mb-3 sm:mb-4 md:mb-5"
+            text={"Africa's next generation\nof software engineers\nis being built in Kisumu"}
+            className="font-sans font-black text-white leading-[1.1] tracking-tight text-[28px] sm:text-[36px] md:text-[44px] lg:text-[50px] xl:text-[56px] 2xl:text-[62px] mb-3 sm:mb-4 md:mb-5"
             delay={0.05}
             stagger={0.02}
           />
 
           <p
-            className="font-sans font-bold text-white mb-3 sm:mb-4 max-w-full whitespace-nowrap leading-snug tracking-tight"
+            className="font-sans font-bold text-white mb-3 sm:mb-4 max-w-3xl leading-snug tracking-tight"
             style={{
               fontFamily: 'var(--brand-font-sans)',
-              fontSize: 'clamp(var(--brand-caption, 12px), 2vw, var(--brand-cta-size, 24px))',
+              fontSize: 'clamp(var(--brand-caption, 12px), 1.5vw, 18px)',
               fontWeight: 'var(--brand-weight-bold, 700)',
               color: 'var(--brand-white, #ffffff)',
               lineHeight: 1.25,
             }}
           >
-            Africa&apos;s next generation of software engineers is being built in Kisumu.
-          </p>
-
-          <p
-            className="font-sans text-white/90 mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed"
-            style={{
-              fontFamily: 'var(--brand-font-sans)',
-              fontSize: 'var(--brand-body, 16px)',
-              lineHeight: 1.6,
-            }}
-          >
-            We identify <span className="font-semibold text-white">top-potential</span> talent, overlooked
-            by traditional systems, and transform them into{' '}
-            <span className="font-semibold text-white">high-income, AI-ready software engineers</span> at scale
+            We identify top-potential talent, overlooked by traditional systems, and transform them into high-income, AI-ready software engineers at scale
           </p>
 
           <motion.div
