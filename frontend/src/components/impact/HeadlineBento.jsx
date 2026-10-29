@@ -81,7 +81,7 @@ export default function HeadlineBento() {
           <h3 className="hb-card-title">Increase in apprentice earnings</h3>
         </div>
         <ul className="hb-key-list">
-          <li><i className="hb-dot-mint" /><strong>90%</strong> in paid work (326 apprentices)</li>
+          <li><i className="hb-dot-mint" /><strong>90%</strong> in paid work (154 apprentices)</li>
           <li><i className="hb-dot-mint" /><strong>34%</strong> currently in training or selected for Cohort 3 (112 apprentices)</li>
         </ul>
       </motion.article>
@@ -166,17 +166,17 @@ export default function HeadlineBento() {
         </div>
         <div className="hb-income-grid">
           <div>
-            <div className="hb-income-label">Average monthly</div>
-            <div className="hb-income-value">{MONTHLY.value}</div>
+            <div className="hb-income-label">Average monthly income</div>
+            <div className="hb-income-value">{630}</div>
             <p className="hb-caption">{MONTHLY.note}</p>
           </div>
           <div>
-            <div className="hb-income-label">Average annual</div>
+            <div className="hb-income-label">Average annual income</div>
             <div className="hb-income-value">{ANNUAL.value}</div>
             <p className="hb-caption">{ANNUAL.note}</p>
           </div>
           <div>
-            <div className="hb-income-label">Top monthly</div>
+            <div className="hb-income-label">Top monthly earner</div>
             <div className="hb-income-value hb-income-value--accent">{TOP.value}</div>
             <p className="hb-caption">{TOP.note}</p>
           </div>

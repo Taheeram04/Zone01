@@ -20,9 +20,9 @@ export const HEADLINE_STATS = [
   { value: '417%', label: 'in apprentice earnings', },
   { value: '~2 weeks', label: 'Median time to employment after graduation', note: 'To first paid engagement' },
   { value: '35,891', label: 'Applications received', note: 'Open to anyone — no credentials required' },
-  { value: 'USD 630', label: 'Average monthly income', note: 'Approximately USD 7,560 per year' },
-  { value: 'USD 7,560', label: 'Average annual income', note: 'Annual, not monthly' },
-  { value: 'USD 2,533', label: 'Top monthly income', note: 'Among top earners' },
+  { value: 'USD 630', label: 'Average monthly income'},
+  { value: 'USD 7,560', label: 'Average annual income'},
+  { value: 'USD 2,533', label: 'Top monthly income'},
   { value: '2 women', label: 'Earning more than USD 2,300 per month', note: 'Reported gross monthly income' },
 ];
 
