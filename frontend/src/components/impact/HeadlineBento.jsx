@@ -7,7 +7,9 @@ import { HEADLINE_STATS } from '../../data/impact';
 
 const findStat = (label) => HEADLINE_STATS.find((stat) => stat.label === label) || { value: '', label: '', note: '' };
 
-const EARNINGS = findStat('Increase in earnings');
+const EARNINGS =
+  HEADLINE_STATS.find((stat) => stat.label.toLowerCase().includes('earnings')) ||
+  { value: '417%', label: 'in apprentice earnings', note: '' };
 // const PAID = findStat('Apprentices and graduates in paid work');
 // const SPEED = findStat('Median time to employment after graduation');
 // const COHORT = findStat('Inaugural cohort apprentices');
@@ -76,8 +78,7 @@ export default function HeadlineBento() {
         </div>
         <div className="hb-key-body">
           <BentoRing value={parseInt(EARNINGS.value, 10)} inView={inView} />
-          <h3 className="hb-card-title">Increase in earnings</h3>
-          <p className="hb-card-sub">In paid work</p>
+          <h3 className="hb-card-title">Increase in apprentice earnings</h3>
         </div>
         <ul className="hb-key-list">
           <li><i className="hb-dot-mint" /><strong>90%</strong> in paid work (326 apprentices)</li>
