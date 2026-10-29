@@ -103,6 +103,8 @@ export const HEADLINE_DATA = {
  * - Single-trigger IntersectionObserver motion with real text rendered from start and full reduced-motion support
  * - Responsive: 12-column desktop bento (lg:), 2 columns on tablet (min-[600px]:), 1 stacked column below 600px
  */
+const SHOW_DEMAND_CARD = false;
+
 export default function HeadlineResults() {
   const sectionRef = useRef(null);
 
@@ -650,6 +652,7 @@ export default function HeadlineResults() {
             {/* ========================================================================= */}
             {/* ROW 2 (RIGHT - 2): The 28,000+ Card with Funnel Line (Narrowing to 97) */}
             {/* ========================================================================= */}
+            {SHOW_DEMAND_CARD && (
             <div
               tabIndex={0}
               role="region"
@@ -723,6 +726,7 @@ export default function HeadlineResults() {
                 </p>
               </div>
             </div>
+            )}
 
             {/* ========================================================================= */}
             {/* ROW 3 (LEFT): Wide Income Card with 4 Rising Bars & $7,200 Badge */}
