@@ -1,6 +1,6 @@
 // components/impact/LatestReports.jsx
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, FileText } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, FileText } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -27,6 +27,8 @@ const formatDate = (value) => {
 
 export default function LatestReports() {
   const [reports, setReports] = useState(PLACEHOLDER_REPORTS);
+  const [expanded, setExpanded] = useState(false);
+  const visibleReports = expanded ? reports : reports.slice(0, 6);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -82,7 +84,7 @@ export default function LatestReports() {
         </header>
 
         <div className="impact-reports-grid">
-          {reports.map((report) => (
+          {visibleReports.map((report) => (
             <article className="impact-report-card" key={report.id || report.title}>
               <div className="impact-report-top">
                 <span className="impact-report-icon" aria-hidden="true">
@@ -114,6 +116,20 @@ export default function LatestReports() {
             </article>
           ))}
         </div>
+
+        {reports.length > 6 ? (
+          <div className="impact-reports-more">
+            <button
+              type="button"
+              className={`impact-reports-more-btn${expanded ? ' is-open' : ''}`}
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={expanded}
+            >
+              {expanded ? 'Show less' : 'Read more'}
+              <ChevronDown size={15} aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );
