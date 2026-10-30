@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from content.models import FaqCategory, FaqItem
-from whatsapp_bot import ai, retrieval
+from whatsapp_bot import ai, retrieval, views
 from whatsapp_bot.i18n import detect_language
 from whatsapp_bot.models import WhatsAppContact, WhatsAppMessage
 from whatsapp_bot.retrieval import FaqMatcher, tokenize
@@ -24,11 +24,16 @@ class _FakeCategory:
 class _FakeItem:
     """A lightweight stand-in so matcher logic can be tested without the DB."""
 
-    def __init__(self, question, answer, keywords="", category="General"):
+    def __init__(self, question, answer, keywords="", category="General", translations=None):
         self.question = question
         self.answer = answer
         self.keywords = keywords
         self.category = _FakeCategory(category)
+        self.translations = translations or {}
+
+    def answer_for(self, language):
+        translation = self.translations.get(language) or {}
+        return translation.get("answer") or self.answer
 
 
 class TokenizeTests(TestCase):
@@ -85,6 +90,74 @@ class RetrievalTests(TestCase):
         item, score = self.matcher.best_match("")
         self.assertIsNone(item)
         self.assertEqual(score, 0.0)
+
+
+class TranslatedRetrievalTests(TestCase):
+    """Swahili FAQ data must participate in matching, not just be stored."""
+
+    def setUp(self):
+        self.item = _FakeItem(
+            "How to apply?",
+            "Create an account via Join us.",
+            "apply, sign up, register",
+            translations={
+                "sw": {
+                    "question": "Jinsi ya kuomba?",
+                    "answer": "Fungua akaunti kupitia Join us.",
+                    "keywords": "kuomba, maombi, kujiunga, jisajili",
+                }
+            },
+        )
+        self.matcher = FaqMatcher([self.item])
+
+    def test_swahili_question_matches_through_its_translation(self):
+        item, score = self.matcher.best_match("Jinsi ya kuomba?")
+
+        self.assertIs(item, self.item)
+        self.assertGreaterEqual(score, 0.34)
+        self.assertEqual(item.answer_for("sw"), "Fungua akaunti kupitia Join us.")
+
+    def test_swahili_keywords_match_through_their_translation(self):
+        item, _ = self.matcher.best_match("Maombi ya kujiunga?")
+
+        self.assertIs(item, self.item)
+
+    def test_swahili_answer_falls_back_to_english_when_untranslated(self):
+        self.assertEqual(self.item.answer_for("fr"), self.item.answer)
+
+
+class ComposeReplyTests(TestCase):
+    """The removed fallback setting must never be read by the webhook."""
+
+    def setUp(self):
+        self.matcher = FaqMatcher(
+            [_FakeItem("How to apply?", "Create an account via Join us.", "apply, register")]
+        )
+
+    @override_settings(WHATSAPP_AI_ENABLED=False)
+    def test_unmatched_message_returns_no_reply(self):
+        reply, matched, score = views._compose_reply(
+            "what is the weather in nairobi", self.matcher, "en"
+        )
+
+        self.assertIsNone(reply)
+        self.assertIsNone(matched)
+        self.assertGreaterEqual(score, 0.0)
+
+    @override_settings(WHATSAPP_AI_ENABLED=False)
+    def test_matched_message_uses_the_requested_language(self):
+        item = _FakeItem(
+            "How to apply?",
+            "Create an account via Join us.",
+            "apply, register",
+            translations={"sw": {"answer": "Fungua akaunti kupitia Join us."}},
+        )
+        matcher = FaqMatcher([item])
+
+        reply, matched, _ = views._compose_reply("how do i apply", matcher, "sw")
+
+        self.assertIs(matched, item)
+        self.assertEqual(reply, "Fungua akaunti kupitia Join us.")
 
 
 @override_settings(
