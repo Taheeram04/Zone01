@@ -14,7 +14,7 @@ import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
-import impactBgWebm from '../../assets/impact-bg.webm';
+import impactBgVideo from '../../assets/impact-bg.mp4';
 import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
@@ -150,7 +150,7 @@ export default function ImpactPage({ children }) {
             poster={impactBgPoster}
             aria-hidden="true"
           >
-            <source src={impactBgWebm} type="video/webm" />
+            <source src={impactBgVideo} type="video/mp4" />
           </video>
         )}
         <div className="impact-hero-video-overlay" aria-hidden="true" />

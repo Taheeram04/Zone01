@@ -18,7 +18,7 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /healthz
-    preDeployCommand: python manage.py migrate --noinput && python manage.py ensure_public_media
+    preDeployCommand: python manage.py migrate --noinput && python manage.py ensure_public_media && python manage.py seed_report_files
     autoDeploy: true
     envVars:
       - key: DJANGO_SECRET_KEY
