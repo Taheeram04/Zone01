@@ -72,7 +72,6 @@ export default function LatestReports() {
     >
       <div className="impact-wrap">
         <header className="impact-reports-head">
-          <span className="impact-mono impact-reports-kicker">Evidence &amp; reports</span>
           <h2 id="impact-reports-title" className="impact-reports-title">
             Our latest reports
           </h2>

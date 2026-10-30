@@ -2244,7 +2244,7 @@
 .impact-reports-section {
   position: relative;
   width: 100%;
-  padding: clamp(56px, 7vw, 88px) 0;
+  padding: clamp(28px, 3.5vw, 44px) 0 clamp(56px, 7vw, 88px);
   background: #f4f8fd;
   overflow: hidden;
 }
@@ -2255,17 +2255,8 @@
   text-align: center;
 }
 
-.impact-reports-kicker {
-  display: inline-block;
-  color: var(--brand-primary);
-  font-size: var(--brand-caption, 12px);
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .impact-reports-title {
-  margin: 12px 0 0;
+  margin: 0;
   font-family: var(--brand-font-sans);
   font-size: clamp(30px, 3.4vw, 36px);
   font-weight: var(--brand-weight-black, 900);
