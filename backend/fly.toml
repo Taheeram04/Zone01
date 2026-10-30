@@ -10,7 +10,7 @@ primary_region = 'jnb'
   dockerfile = 'Dockerfile'
 
 [deploy]
-  release_command = 'python manage.py migrate --noinput'
+  release_command = 'python manage.py migrate --noinput && python manage.py ensure_public_media'
 
 [env]
   # Every public frontend origin that calls /api/ must be listed here, otherwise
