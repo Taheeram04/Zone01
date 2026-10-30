@@ -15,6 +15,7 @@ import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
 import impactBgWebm from '../../assets/impact-bg.webm';
+import impactBgFallback from '../../assets/impact-bg-fallback.mp4';
 import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
@@ -151,6 +152,7 @@ export default function ImpactPage({ children }) {
             aria-hidden="true"
           >
             <source src={impactBgWebm} type="video/webm" />
+            <source src={impactBgFallback} type="video/mp4" />
           </video>
         )}
         <div className="impact-hero-video-overlay" aria-hidden="true" />
