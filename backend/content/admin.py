@@ -198,7 +198,15 @@ class ReportAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
     """Upload the PDF reports shown in “Our latest reports” on /impact."""
 
     image_field = "cover"
-    list_display = ("preview", "title", "year", "report_link", "published_at", "is_published", "order")
+    list_display = (
+        "preview",
+        "title",
+        "year",
+        "report_link",
+        "published_at",
+        "is_published",
+        "order",
+    )
     list_display_links = ("title",)
     list_editable = ("is_published", "order")
     list_filter = ("is_published", "year", "published_at")
