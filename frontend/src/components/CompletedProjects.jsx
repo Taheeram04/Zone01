@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
+import chichwaImg from '../assets/Chichwa.png';
 
 /**
  * Completed Projects data.
@@ -10,10 +11,10 @@ const PROJECTS = [
     id: 'chichwa',
     number: '01',
     title: 'Chichwa',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
-    href: '#',
+    category: 'AgriTech & Marketplace',
+    description: 'A digital agricultural management and marketplace platform connecting farmers, cooperatives, and buyers across Kenya for transparent produce trading and direct market access.',
+    image: chichwaImg,
+    href: 'https://chichwa.ke/en/',
     panelBg: '#0063F9',
     textColor: '#FFFFFF',
   },
@@ -81,9 +82,13 @@ const EASE = [0.2, 0.7, 0.2, 1];
  * Displays a single project card with image placeholder, metadata, and hover/focus effects.
  */
 export const ProjectCard = ({ project }) => {
+  const isExternal = Boolean(project.href && (project.href.startsWith('http://') || project.href.startsWith('https://')));
+
   return (
     <a
       href={project.href || '#'}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       className="group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none"
     >
       {/* Top 240px Image Area */}
