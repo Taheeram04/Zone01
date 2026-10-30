@@ -392,13 +392,13 @@
   justify-content: space-between;
   gap: var(--brand-space-3, 12px);
   margin: var(--brand-space-5, 20px) 0 var(--brand-space-4, 16px);
-  min-height: 150px;
+  min-height: 158px;
 }
 
 .hb-women-bar {
   flex: 1 1 0;
   min-width: 0;
-  height: 150px;
+  height: 158px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -408,27 +408,30 @@
 
 .hb-women-value {
   font-family: var(--brand-font-mono, monospace);
-  font-size: var(--brand-caption, 12px);
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 1;
   color: var(--brand-white, #fff);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
 .hb-women-track {
   width: 100%;
-  max-width: 48px;
-  height: 96px;
+  max-width: 54px;
+  height: 104px;
   display: flex;
   align-items: flex-end;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 6px 6px 2px 2px;
+  background: rgba(3, 27, 58, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 7px 7px 2px 2px;
   overflow: hidden;
 }
 
 .hb-women-fill {
   width: 100%;
-  background: linear-gradient(180deg, #ffffff 0%, #bbd6ff 100%);
+  background: linear-gradient(180deg, #eafff8 0%, #2be4b5 100%);
   border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 18px rgba(43, 228, 181, 0.5);
 }
 
 .hb-women-label {
@@ -439,7 +442,7 @@
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .hb-gender .hb-card-foot { padding-top: var(--brand-space-4, 16px); }
