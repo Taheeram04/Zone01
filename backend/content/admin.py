@@ -32,6 +32,7 @@ from content.models import (
     PiscineDate,
     Project,
     ProjectImage,
+    Report,
     SiteLink,
     StaffMember,
 )
@@ -186,6 +187,47 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
             url = obj.report.url
         except ValueError:
             return "-"
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">Download</a>',
+            url,
+        )
+
+
+@admin.register(Report)
+class ReportAdmin(TrigramSearchMixin, admin.ModelAdmin):
+    """Upload the PDF reports shown in “Our latest reports” on /impact."""
+
+    list_display = ("title", "report_link", "published_at", "is_published", "order")
+    list_display_links = ("title",)
+    list_editable = ("is_published", "order")
+    list_filter = ("is_published", "published_at")
+    search_fields = ("title",)
+    trigram_search_fields = ("title",)
+    readonly_fields = ("created_at",)
+    ordering = ("order", "-published_at", "id")
+    fieldsets = (
+        (
+            "Report",
+            {
+                "fields": ("title", "report", "published_at"),
+                "description": (
+                    "Upload a PDF to replace the placeholder card on the Impact "
+                    "page. Reports appear automatically after saving."
+                ),
+            },
+        ),
+        ("Publishing", {"fields": ("is_published", "order")}),
+        ("Timestamps", {"fields": ("created_at",), "classes": ("collapse",)}),
+    )
+
+    @admin.display(description="File")
+    def report_link(self, obj):
+        if not obj.report:
+            return "Placeholder"
+        try:
+            url = obj.report.url
+        except ValueError:
+            return "Missing file"
         return format_html(
             '<a href="{}" target="_blank" rel="noopener">Download</a>',
             url,

@@ -9,6 +9,7 @@ React frontend as JSON under ``/api/``:
 * :class:`StaffMember`  - team members and their roles.
 * :class:`NewsUpdate`   - news posts (title, image, information).
 * :class:`ImpactUpdate` - impact stories (title, image, information, report PDF).
+* :class:`Report`      - downloadable PDF reports for the Impact page.
 * :class:`Project`      - learner projects with a cover image, founders, cohort,
   details, tech stack and a link; :class:`ProjectImage` adds gallery pictures.
 * :class:`CommunityPost` - a single stream of community updates tagged as news,
@@ -174,6 +175,41 @@ class ImpactUpdate(OrderedContent):
         ordering = ["order", "id"]
         indexes = [
             GinTrigramIndex(fields=["title"], name="impact_title_trgm"),
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+class Report(OrderedContent):
+    """A downloadable PDF report shown on the Impact page."""
+
+    title = models.CharField(
+        max_length=200,
+        help_text='Report name shown on the website, e.g. "2025 Annual Report".',
+    )
+    report = FilerFileField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="published_reports",
+        help_text="Upload the PDF. Leave empty to show a placeholder card.",
+    )
+    published_at = models.DateField(
+        default=timezone.localdate,
+        help_text="Publication date used for ordering and display.",
+    )
+    is_published = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this report from the website.",
+    )
+
+    class Meta(OrderedContent.Meta):
+        verbose_name = "report"
+        verbose_name_plural = "reports"
+        ordering = ["order", "-published_at", "id"]
+        indexes = [
+            GinTrigramIndex(fields=["title"], name="report_title_trgm"),
         ]
 
     def __str__(self):

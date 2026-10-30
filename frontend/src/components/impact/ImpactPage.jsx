@@ -13,6 +13,7 @@ import {
 } from '../../data/impact';
 import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
+import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
 import impactHeroImg from '../../assets/impacthero.webp';
 import startup1Img from '../../assets/zelani.webp';
@@ -213,6 +214,8 @@ export default function ImpactPage({ children }) {
 
         </div>
       </section>
+
+      <LatestReports />
 
       {/* STARTUPS (3 DISTINCT INTERACTIVE CARDS) */}
       <section className="impact-startups-section" id="startups" data-nav-theme="light">

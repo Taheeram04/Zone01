@@ -11,6 +11,7 @@ Endpoints (all GET):
 * ``/api/staff/``
 * ``/api/news/``
 * ``/api/impact/``
+* ``/api/reports/`` - downloadable PDF reports for the Impact page
 * ``/api/projects/`` - learner projects with images, founders, cohort and tech
 * ``/api/community/`` - news/event/blog/podcast posts grouped by kind
 * ``/api/links/``
@@ -33,6 +34,7 @@ from content.models import (
     Partner,
     PiscineDate,
     Project,
+    Report,
     SiteLink,
     StaffMember,
 )
@@ -97,6 +99,18 @@ def serialize_impact(request, item):
 def _split_csv(value):
     """Split a comma-separated editor field into a clean list."""
     return [part.strip() for part in (value or "").split(",") if part.strip()]
+
+
+def serialize_report(request, item):
+    report_url = _media_url(request, item.report)
+    return {
+        "id": item.id,
+        "title": item.title,
+        "report": report_url,
+        "report_name": item.report.name if report_url and item.report else None,
+        "published_at": item.published_at.isoformat() if item.published_at else None,
+        "order": item.order,
+    }
 
 
 def serialize_project(request, project):
@@ -297,6 +311,12 @@ def impact_list(request):
 
 
 @require_GET
+def report_list(request):
+    reports = Report.objects.filter(is_published=True)
+    return JsonResponse({"results": [serialize_report(request, r) for r in reports]})
+
+
+@require_GET
 def project_list(request):
     projects = Project.objects.filter(is_active=True).prefetch_related("gallery")
     return JsonResponse({"results": [serialize_project(request, p) for p in projects]})
@@ -357,6 +377,9 @@ def content_index(request):
             ],
             "impact": [
                 serialize_impact(request, i) for i in ImpactUpdate.objects.filter(is_published=True)
+            ],
+            "reports": [
+                serialize_report(request, r) for r in Report.objects.filter(is_published=True)
             ],
             "projects": [
                 serialize_project(request, p)
