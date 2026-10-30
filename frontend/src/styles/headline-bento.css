@@ -56,7 +56,7 @@
 }
 
 /* Grid placement */
-.hb-key { grid-column: span 6; grid-row: span 2; }
+.hb-key { grid-column: 4 / span 6; grid-row: span 2; }
 .hb-placement { grid-column: span 3; }
 .hb-speed { grid-column: span 3; }
 .hb-cohort { grid-column: span 3; }

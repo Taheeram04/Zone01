@@ -195,9 +195,9 @@ export default function ImpactPage({ children }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '16px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
+            style={{ margin: '32px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
           >
-            Headline results.
+            Headline results
           </motion.h2>
 
           <motion.p
