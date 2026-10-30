@@ -35,7 +35,7 @@ const ScrollToTop = () => {
           transition={{ type: 'spring', stiffness: 400, damping: 22 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.92 }}
-          className="fixed bottom-[calc(5.25rem_+_env(safe-area-inset-bottom))] right-[calc(1.5rem_+_env(safe-area-inset-right))] md:bottom-[calc(6.25rem_+_env(safe-area-inset-bottom))] md:right-[calc(2rem_+_env(safe-area-inset-right))] z-50 w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-primary text-white shadow-[0_4px_20px_rgba(0,99,249,0.45)] hover:bg-primary/90 transition-colors"
+          className="fixed bottom-[calc(5.25rem_+_env(safe-area-inset-bottom))] left-[calc(1.5rem_+_env(safe-area-inset-left))] md:bottom-[calc(6.25rem_+_env(safe-area-inset-bottom))] md:left-[calc(2rem_+_env(safe-area-inset-left))] z-50 w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-primary text-white shadow-[0_4px_20px_rgba(0,99,249,0.45)] hover:bg-primary/90 transition-colors"
         >
           <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6" />
         </motion.button>
