@@ -2245,7 +2245,7 @@
   position: relative;
   width: 100%;
   padding: clamp(28px, 3.5vw, 44px) 0 clamp(56px, 7vw, 88px);
-  background: #f4f8fd;
+  background: #0063f9;
   overflow: hidden;
 }
 
@@ -2262,7 +2262,7 @@
   font-weight: var(--brand-weight-black, 900);
   line-height: 1.12;
   letter-spacing: -0.02em;
-  color: var(--brand-black);
+  color: var(--brand-white, #fff);
 }
 
 .impact-reports-sub {
@@ -2271,7 +2271,7 @@
   font-family: var(--brand-font-sans);
   font-size: 16px;
   line-height: 1.6;
-  color: var(--brand-slate-body, #35507f);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .impact-reports-grid {

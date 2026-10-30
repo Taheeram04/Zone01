@@ -66,7 +66,7 @@ export default function LatestReports() {
   return (
     <section
       id="impact-reports"
-      data-nav-theme="light"
+      data-nav-theme="dark"
       aria-labelledby="impact-reports-title"
       className="impact-reports-section"
     >
