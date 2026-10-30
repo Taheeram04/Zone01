@@ -2291,6 +2291,34 @@
   color: rgba(255, 255, 255, 0.82);
 }
 
+.impact-reports-year {
+  margin-top: 30px;
+}
+
+.impact-reports-year:first-of-type {
+  margin-top: 0;
+}
+
+.impact-reports-year-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.impact-reports-year-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
 .impact-reports-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2300,10 +2328,7 @@
 .impact-report-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 32px;
-  min-height: 190px;
-  padding: 22px;
+  overflow: hidden;
   background: #ffffff;
   border: 1px solid var(--brand-line, #dce9ff);
   border-radius: 16px;
@@ -2317,35 +2342,58 @@
   box-shadow: 0 18px 34px -20px rgba(9, 44, 62, 0.34);
 }
 
-.impact-report-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+.impact-report-cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #eaf2ff;
 }
 
-.impact-report-icon {
-  display: inline-grid;
+.impact-report-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.impact-report-card:hover .impact-report-cover img {
+  transform: scale(1.04);
+}
+
+.impact-report-cover-fallback {
+  display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: #eaf2ff;
+  width: 100%;
+  height: 100%;
   color: var(--brand-primary);
 }
 
 .impact-report-type {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(4, 26, 54, 0.72);
+  color: #fff;
   font-family: var(--brand-font-mono, monospace);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #64748b;
+  backdrop-filter: blur(6px);
+}
+
+.impact-report-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px 20px 20px;
 }
 
 .impact-report-title {
   font-family: var(--brand-font-sans);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -2363,7 +2411,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 16px;
+  margin-top: auto;
+  padding-top: 16px;
   font-family: var(--brand-font-mono, monospace);
   font-size: 11px;
   font-weight: 600;

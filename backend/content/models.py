@@ -48,6 +48,11 @@ PISCINE_TIMEZONE = ZoneInfo("Africa/Nairobi")
 PISCINE_START_TIME = datetime.time(9, 0)
 
 
+def current_year():
+    """Return the current year for date-based model defaults."""
+    return timezone.now().year
+
+
 class OrderedContent(models.Model):
     """Shared behaviour for content that is listed in a fixed order."""
 
@@ -187,6 +192,17 @@ class Report(OrderedContent):
     title = models.CharField(
         max_length=200,
         help_text='Report name shown on the website, e.g. "2025 Annual Report".',
+    )
+    year = models.PositiveIntegerField(
+        default=current_year,
+        help_text="Report year, used to group reports on the website.",
+    )
+    cover = FilerImageField(
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="report_covers",
+        help_text="Cover image shown on the report card.",
     )
     report = FilerFileField(
         null=True,

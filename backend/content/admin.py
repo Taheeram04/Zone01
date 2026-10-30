@@ -194,13 +194,14 @@ class ImpactUpdateAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin)
 
 
 @admin.register(Report)
-class ReportAdmin(TrigramSearchMixin, admin.ModelAdmin):
+class ReportAdmin(ImagePreviewMixin, TrigramSearchMixin, admin.ModelAdmin):
     """Upload the PDF reports shown in “Our latest reports” on /impact."""
 
-    list_display = ("title", "report_link", "published_at", "is_published", "order")
+    image_field = "cover"
+    list_display = ("preview", "title", "year", "report_link", "published_at", "is_published", "order")
     list_display_links = ("title",)
     list_editable = ("is_published", "order")
-    list_filter = ("is_published", "published_at")
+    list_filter = ("is_published", "year", "published_at")
     search_fields = ("title",)
     trigram_search_fields = ("title",)
     readonly_fields = ("created_at",)
@@ -209,10 +210,10 @@ class ReportAdmin(TrigramSearchMixin, admin.ModelAdmin):
         (
             "Report",
             {
-                "fields": ("title", "report", "published_at"),
+                "fields": ("title", "year", "cover", "report", "published_at"),
                 "description": (
-                    "Upload a PDF to replace the placeholder card on the Impact "
-                    "page. Reports appear automatically after saving."
+                    "Upload a cover image for the card and the PDF for the "
+                    "download. Reports appear automatically after saving."
                 ),
             },
         ),

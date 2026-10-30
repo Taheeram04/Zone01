@@ -15,6 +15,7 @@ import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
 import impactBgVideo from '../../assets/impact-bg.mp4';
+import impactBgWebm from '../../assets/impact-bg.webm';
 import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
@@ -41,8 +42,8 @@ const HERO_METRICS = [
   { value: '97', label: 'cohort 1 apprentices' },
   { value: '107', label: 'cohort 2 apprentices' },
   { value: '90%', label: 'Employment rate' },
-  { value: '~2 weeks', label: 'to first job placement' },
-  { value: '35,891+', label: 'Applications received' },
+  { value: '2 weeks', label: 'to first job placement' },
+  { value: '35,891', label: 'Applications received' },
 ];
 
 /*
@@ -150,6 +151,7 @@ export default function ImpactPage({ children }) {
             poster={impactBgPoster}
             aria-hidden="true"
           >
+            <source src={impactBgWebm} type="video/webm" />
             <source src={impactBgVideo} type="video/mp4" />
           </video>
         )}

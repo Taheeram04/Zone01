@@ -106,6 +106,8 @@ def serialize_report(request, item):
     return {
         "id": item.id,
         "title": item.title,
+        "year": item.year,
+        "cover": _media_url(request, item.cover),
         "report": report_url,
         "report_name": item.report.name if report_url and item.report else None,
         "published_at": item.published_at.isoformat() if item.published_at else None,
