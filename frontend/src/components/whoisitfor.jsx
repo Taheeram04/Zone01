@@ -71,7 +71,7 @@ const WhoIsItFor = () => {
   const { trackRef, index, handleScroll, goTo } = useSnapCarousel(targetAudience.length);
 
   return (
-    <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
+    <section data-nav-theme="light" className="relative w-full bg-white pt-6 pb-16 md:pt-8 md:pb-24 overflow-hidden">
       <Container className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
