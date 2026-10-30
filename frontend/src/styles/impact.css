@@ -19,11 +19,6 @@
   box-sizing: border-box;
 }
 
-.impact-dotbg {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
-}
-
 /* ==========================================================================
    Section 1: Hero Section
    ========================================================================== */
@@ -36,10 +31,30 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   padding-top: clamp(80px, 9vh, 110px);
   padding-bottom: clamp(40px, 5vh, 64px);
   overflow: hidden;
+}
+
+.impact-hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.impact-hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 32, 84, 0.42) 0%, rgba(0, 54, 132, 0.26) 45%, rgba(0, 63, 160, 0.08) 100%),
+    linear-gradient(180deg, rgba(4, 26, 54, 0.1) 0%, rgba(0, 99, 249, 0.02) 55%, rgba(4, 26, 54, 0.3) 100%);
 }
 
 .impact-hero-grid {
@@ -84,6 +99,7 @@
   font-size: clamp(54px, 8.5vw, 132px);
   line-height: 0.93;
   letter-spacing: -0.04em;
+  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.38);
 }
 
 .impact-hero-body {
@@ -194,7 +210,7 @@
 @media (max-width: 980px) {
   .impact-hero-section {
     min-height: 100svh;
-    justify-content: flex-start;
+    justify-content: flex-end;
     padding-top: 88px;
     padding-bottom: 48px;
   }
@@ -1881,15 +1897,27 @@
 /* --- Hero proof strip --- */
 .impact-hero-metrics {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px 28px;
-  margin-top: clamp(34px, 5vh, 54px);
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.26);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: clamp(24px, 3vh, 36px);
 }
 
 .impact-hero-metric {
   min-width: 0;
+  padding: 14px 12px 13px;
+  text-align: center;
+  background: rgba(4, 26, 54, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.7);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.impact-hero-metric:hover {
+  background: rgba(4, 26, 54, 0.6);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-3px);
 }
 
 .impact-hero-metric-value {
@@ -1899,6 +1927,7 @@
   letter-spacing: -0.03em;
   color: #ffffff;
   white-space: nowrap;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.52);
 }
 
 .impact-hero-metric-label {
@@ -1909,6 +1938,7 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
 }
 
 /* --- Headline results intro --- */
@@ -2225,4 +2255,228 @@
   width: 26px;
   height: 1px;
   background: #7FB2FF;
+}
+
+/* --- Latest reports --- */
+.impact-reports-section {
+  position: relative;
+  width: 100%;
+  padding: clamp(28px, 3.5vw, 44px) 0 clamp(56px, 7vw, 88px);
+  background: #0063f9;
+  overflow: hidden;
+}
+
+.impact-reports-head {
+  max-width: 760px;
+  margin: 0 auto clamp(32px, 4vw, 44px);
+  text-align: center;
+}
+
+.impact-reports-title {
+  margin: 0;
+  font-family: var(--brand-font-sans);
+  font-size: clamp(30px, 3.4vw, 36px);
+  font-weight: var(--brand-weight-black, 900);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--brand-white, #fff);
+}
+
+.impact-reports-sub {
+  max-width: 620px;
+  margin: 14px auto 0;
+  font-family: var(--brand-font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.impact-reports-year {
+  margin-top: 30px;
+}
+
+.impact-reports-year:first-of-type {
+  margin-top: 0;
+}
+
+.impact-reports-year-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.impact-reports-year-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.impact-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.impact-report-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--brand-line, #dce9ff);
+  border-radius: 16px;
+  box-shadow: 0 10px 24px -20px rgba(9, 44, 62, 0.28);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.impact-report-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 99, 249, 0.35);
+  box-shadow: 0 18px 34px -20px rgba(9, 44, 62, 0.34);
+}
+
+.impact-report-cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #eaf2ff;
+}
+
+.impact-report-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.impact-report-card:hover .impact-report-cover img {
+  transform: scale(1.04);
+}
+
+.impact-report-cover-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--brand-primary);
+}
+
+.impact-report-type {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(4, 26, 54, 0.72);
+  color: #fff;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+.impact-report-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px 20px 20px;
+}
+
+.impact-report-title {
+  font-family: var(--brand-font-sans);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--brand-black);
+}
+
+.impact-report-date {
+  margin-top: 6px;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 11px;
+  color: #64748b;
+}
+
+.impact-report-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.impact-report-link:hover {
+  gap: 10px;
+  color: var(--brand-navy, #0a2e7a);
+}
+
+.impact-reports-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.impact-reports-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.impact-reports-more-btn:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--brand-primary);
+}
+
+.impact-reports-more-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.impact-reports-more-btn.is-open svg {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 900px) {
+  .impact-reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .impact-reports-section {
+    padding: 48px 0;
+  }
+
+  .impact-reports-grid {
+    grid-template-columns: 1fr;
+  }
 }

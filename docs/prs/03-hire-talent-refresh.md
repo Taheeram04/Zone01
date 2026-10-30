@@ -62,7 +62,7 @@ and the shared typography scale.
   animated height, fade/slide answer, pinned-on-keyboard behaviour.
 - `hire-request.jsx`: request section now uses the same primary blue as the
   metrics band, with the eyebrow removed and the form/typography refreshed.
-- `constants.js`: hiring inbox updated to `Torsten@lakehub.co.ke`
+- `constants.js`: hiring inbox updated to `talent@zone01kisumu.ke`
   (FAQ + request panel).
 
 ### Content and spacing

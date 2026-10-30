@@ -266,7 +266,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
                 lineHeight: 1.1,
                 marginBottom: 'clamp(12px, 1.5vw, 18px)',
               }}
-              text="From overlooked potential to paid employment"
+              text={'From overlooked potential to\npaid employment'}
             />
 
             <div className="space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal max-w-2xl">

@@ -1,21 +1,21 @@
 // components/impact/ImpactPage.jsx
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import '../../styles/impact.css';
 import '../../styles/impact-brand.css';
 import {
   IMPACT_HERO,
   REPORTING,
-  FUNNEL,
-  EMPLOYMENT_CARD,
+  // EMPLOYMENT_CARD,
   STARTUPS,
   STORIES,
 } from '../../data/impact';
 import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
+import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
-import impactHeroImg from '../../assets/impacthero.webp';
+import impactBgVideo from '../../assets/impact-bg.mp4';
+import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
 import startup3Img from '../../assets/startup-3.webp';
@@ -37,19 +37,15 @@ const STORY_IMAGES = {
 };
 
 const HERO_METRICS = [
-  { value: '86', label: 'In paid work' },
-  { value: '97', label: 'Inaugural apprentices' },
-  { value: '89%', label: 'Employment rate' },
-  { value: '~6 weeks', label: 'Median to first job' },
-  { value: '28,000+', label: 'Applications received' },
+  { value: '154', label: 'In paid work' },
+  { value: '97', label: 'cohort 1 apprentices' },
+  { value: '107', label: 'cohort 2 apprentices' },
+  { value: '90%', label: 'Employment rate' },
+  { value: '2 weeks', label: 'to first job placement' },
+  { value: '35,891', label: 'Applications received' },
 ];
 
-function DotGrid() {
-  return (
-    <div className="impact-dotbg" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.5 }} />
-  );
-}
-
+/*
 function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -90,10 +86,12 @@ function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
     </div>
   );
 }
+*/
 
 export default function ImpactPage({ children }) {
   const [activeStartup, setActiveStartup] = useState(null);
   const [activeStory, setActiveStory] = useState(null);
+  const reducedMotion = useReducedMotion();
 
 
   // Give the impact route its own title and description for search and sharing.
@@ -120,8 +118,6 @@ export default function ImpactPage({ children }) {
   const heroRef = useRef(null);
   const heroInView = useInView(heroRef, { once: true, amount: 0.2 });
 
-  const funnelRef = useRef(null);
-  const funnelInView = useInView(funnelRef, { once: true, amount: 0.15 });
 
   const startupsRef = useRef(null);
   const startupsInView = useInView(startupsRef, { once: true, amount: 0.12 });
@@ -134,40 +130,41 @@ export default function ImpactPage({ children }) {
       {/* HERO */}
       <section
         data-nav-theme="dark"
-        className="impact-hero-section impact-dotbg"
+        className="impact-hero-section"
       >
-        <DotGrid />
+        {reducedMotion ? (
+          <img
+            src={impactBgPoster}
+            alt=""
+            aria-hidden="true"
+            className="impact-hero-video"
+          />
+        ) : (
+          <video
+            className="impact-hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={impactBgPoster}
+            aria-hidden="true"
+          >
+            <source src={impactBgVideo} type="video/mp4" />
+          </video>
+        )}
+        <div className="impact-hero-video-overlay" aria-hidden="true" />
         <div ref={heroRef} className="impact-wrap" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <div className="impact-hero-grid">
             <div className="impact-hero-content">
-              <h1 className="impact-hero-title">
-                <span className="impact-hero-title-our" style={{ color: 'var(--brand-white)' }}>{IMPACT_HERO.headlinePart1}</span>{' '}
-                <span className="impact-hero-title-impact" style={{ color: 'var(--brand-black)' }}>{IMPACT_HERO.headlinePart2}</span>
+              <h1 className="sr-only">
+                {IMPACT_HERO.headlinePart1} {IMPACT_HERO.headlinePart2}
               </h1>
-              <p className="impact-hero-body">{IMPACT_HERO.body}</p>
               <div className="impact-hero-actions">
                 <a href={IMPACT_HERO.cta1.href} className="impact-hero-btn-primary">
                   {IMPACT_HERO.cta1.label}
                 </a>
-                <Link to={IMPACT_HERO.cta2.href} className="impact-hero-btn-secondary">
-                  {IMPACT_HERO.cta2.label}
-                </Link>
               </div>
-            </div>
-            <div className="impact-hero-image-wrap">
-              <div className="impact-hero-card">
-                <img
-                  src={impactHeroImg}
-                  alt={IMPACT_HERO.photoAlt}
-                  width={2750}
-                  height={3437}
-                  fetchPriority="high"
-                  decoding="async"
-                  loading="eager"
-                  className="impact-hero-img"
-                />
-              </div>
-              <div className="impact-hero-tagline">{IMPACT_HERO.tagline}</div>
             </div>
           </div>
 
@@ -194,9 +191,9 @@ export default function ImpactPage({ children }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '16px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
+            style={{ margin: '32px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
           >
-            Headline results.
+            Headline results
           </motion.h2>
 
           <motion.p
@@ -211,82 +208,10 @@ export default function ImpactPage({ children }) {
 
           <HeadlineBento />
 
-          <motion.h2
-            id="selection"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '64px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
-          >
-            Selection, <span style={{ color: 'var(--brand-primary)' }}>employment</span> and income
-          </motion.h2>
-
-          <div ref={funnelRef} style={{ maxWidth: '1160px', margin: '72px auto 0', display: 'flex', flexWrap: 'wrap', gap: '56px', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ flex: '1.3 1 400px', minWidth: 0 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-                {FUNNEL.map((step, idx) => (
-                  <motion.div
-                    key={idx}
-                    className="impact-funnel-step"
-                    initial={{ opacity: 0, scale: 0.9, y: -20 }}
-                    animate={funnelInView ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.9, y: -20 }}
-                    transition={{ duration: 0.7, delay: idx * 0.16, ease: [0.16, 1, 0.3, 1] }}
-                    whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                    style={{
-                      width: step.width,
-                      background: step.bg,
-                      color: 'var(--brand-white)',
-                      clipPath: idx === 0 ? 'polygon(0 0,100% 0,89% 100%,11% 100%)' : idx === 1 ? 'polygon(0 0,100% 0,88.5% 100%,11.5% 100%)' : idx === 2 ? 'polygon(0 0,100% 0,86.7% 100%,13.3% 100%)' : 'polygon(0 0,100% 0,86.4% 100%,13.6% 100%)',
-                      padding: idx === 3 ? '30px 0 34px' : '30px 0',
-                      boxSizing: 'border-box',
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '4px 14px',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textAlign: 'center',
-                      boxShadow: '0 8px 24px -6px rgba(0,0,0,0.18)',
-                    }}
-                  >
-                    <span style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 'var(--brand-weight-medium)', fontSize: 'clamp(var(--brand-section-sm), 4.2vw, var(--brand-stat-lg))', letterSpacing: '-.02em' }}>
-                      <CountUp value={step.value} inView={funnelInView} delay={idx * 0.16 + 0.1} />
-                    </span>
-                    <span className="impact-monoc" style={{ fontSize: 'var(--brand-caption)', whiteSpace: 'pre-line' }}>{step.label}</span>
-                    <span className="impact-funnel-note">{step.note}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 40, scale: 0.95 }}
-              animate={funnelInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 40, scale: 0.95 }}
-              transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              style={{ flex: '1 1 340px', minWidth: 0, maxWidth: '440px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(160deg, var(--brand-navy) 0%, var(--brand-primary) 100%)', color: 'var(--brand-white)', borderRadius: 'var(--brand-radius-lg)', padding: '44px 40px', boxSizing: 'border-box', minHeight: '420px', display: 'flex', flexDirection: 'column' }}
-            >
-              <div style={{ position: 'absolute', right: '-90px', bottom: '-90px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle,#2F83FF,#0063F9 70%)' }} />
-              <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', position: 'relative' }}>{EMPLOYMENT_CARD.title}</div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,.45)', marginTop: '20px', position: 'relative' }} />
-              <div className="impact-employment-main">
-                <ProgressRing value={parseInt(EMPLOYMENT_CARD.percentage, 10)} inView={funnelInView} />
-                <div style={{ flex: '1 1 150px', minWidth: 0 }}>
-                  <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-tint-strong)' }}>{EMPLOYMENT_CARD.subtext}</div>
-                  <div style={{ display: 'flex', gap: '26px', marginTop: '14px' }}>
-                    {EMPLOYMENT_CARD.breakdown.map((item) => (
-                      <div key={item.label}>
-                        <div style={{ fontFamily: 'var(--brand-font-mono)', fontWeight: 'var(--brand-weight-medium)', fontSize: 'var(--brand-stat-sm)', lineHeight: 1, letterSpacing: '-.02em' }}>{item.value}</div>
-                        <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', marginTop: 'var(--brand-space-2, 8px)', color: 'var(--brand-tint-strong)' }}>{item.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', marginTop: 'auto', paddingTop: 'var(--brand-space-8, 32px)', position: 'relative', lineHeight: 1.5 }}>{EMPLOYMENT_CARD.note}</div>
-            </motion.div>
-          </div>
         </div>
       </section>
+
+      <LatestReports />
 
       {/* STARTUPS (3 DISTINCT INTERACTIVE CARDS) */}
       <section className="impact-startups-section" id="startups" data-nav-theme="light">
