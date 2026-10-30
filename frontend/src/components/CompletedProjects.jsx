@@ -255,26 +255,6 @@ export default function CompletedProjects() {
               esports, travel and career technology.
             </motion.p>
           </div>
-
-          {/* Primary Button */}
-          <motion.div variants={fadeUpVariants} className="shrink-0">
-            <a
-              href="#"
-              className="group inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#0063F9] text-white font-sans font-semibold text-body-m rounded-[4px] hover:bg-[#092C3E] hover:-translate-y-[3px] transition-all duration-300 ease-out focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
-            >
-              <span>View all projects</span>
-              <svg
-                className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-[6px] group-focus-visible:translate-x-[6px] motion-reduce:transform-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </a>
-          </motion.div>
         </motion.div>
 
         {/* Cards Grid */}
