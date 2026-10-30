@@ -15,7 +15,6 @@ import { KineticHeading } from './whocanapply.jsx';
 import StoryDialog from './story-dialog.jsx';
 import { plainText } from '../lib/plain-text.js';
 import { SOCIAL_LINKS, socialByKey } from '../social.js';
-import communityHeroImg from '../assets/community-hero.webp';
 
 /*
  * "Community Hub" — the four content streams that live under Our Staff.
@@ -62,52 +61,6 @@ const GROUPS = [
     accent: '#F59E0B',
   },
 ];
-
-// Shown in development when the API cannot be reached, so the section is never
-// blank while editors are still filling the CMS.
-const FALLBACK = {
-  news: [
-    {
-      id: 1,
-      title: 'US Embassy delegation visits Zone01 Kisumu',
-      summary: 'Partners toured the campus and met our learners building real products.',
-      image: communityHeroImg,
-      platform: 'linkedin',
-      external_url: 'https://www.linkedin.com/company/zone01kisumu/',
-      published_at: '2026-09-28T09:00:00+03:00',
-    },
-  ],
-  event: [
-    {
-      id: 2,
-      title: 'Piscine #7 kick-off',
-      summary: 'Four weeks of peer-to-peer immersion start on campus.',
-      platform: 'instagram',
-      external_url: 'https://www.instagram.com/zone01_kisumu/',
-      event_date: '2026-11-02T09:00:00+03:00',
-      published_at: '2026-09-20T09:00:00+03:00',
-    },
-  ],
-  blog: [
-    {
-      id: 3,
-      title: 'Why peer learning beats lectures',
-      summary: 'How collaboration turns raw potential into job-ready engineers.',
-      platform: 'website',
-      published_at: '2026-09-10T09:00:00+03:00',
-    },
-  ],
-  podcast: [
-    {
-      id: 4,
-      title: 'Voices of Zone01 — Episode 1',
-      summary: 'Learners and coaches on the mindset it takes to finish the Piscine.',
-      video_url: 'https://www.youtube.com/@Zone01Kisumu',
-      platform: 'youtube',
-      published_at: '2026-09-01T09:00:00+03:00',
-    },
-  ],
-};
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -367,9 +320,9 @@ const CommunityFeed = () => {
         setStreams(Array.isArray(payload.streams) ? payload.streams : null);
       } catch (error) {
         if (error?.name === 'AbortError') return;
-        // Keep the last good payload; in development fall back to samples so
-        // the design is visible without the backend running.
-        setGroups((prev) => prev ?? (import.meta.env.DEV ? FALLBACK : null));
+        // Keep the last good payload; otherwise leave the section empty until
+        // the CMS loads instead of showing sample posts.
+        setGroups((prev) => prev ?? null);
       }
     };
 
