@@ -45,12 +45,6 @@ const HERO_METRICS = [
   { value: '35,891+', label: 'Applications received' },
 ];
 
-function DotGrid() {
-  return (
-    <div className="impact-dotbg" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.5 }} />
-  );
-}
-
 /*
 function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
   const radius = (size - stroke) / 2;
@@ -136,7 +130,7 @@ export default function ImpactPage({ children }) {
       {/* HERO */}
       <section
         data-nav-theme="dark"
-        className="impact-hero-section impact-dotbg"
+        className="impact-hero-section"
       >
         {reducedMotion ? (
           <img
@@ -160,7 +154,6 @@ export default function ImpactPage({ children }) {
           </video>
         )}
         <div className="impact-hero-video-overlay" aria-hidden="true" />
-        <DotGrid />
         <div ref={heroRef} className="impact-wrap" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <div className="impact-hero-grid">
             <div className="impact-hero-content">
