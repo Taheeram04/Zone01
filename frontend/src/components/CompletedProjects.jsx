@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Container } from './layout.jsx';
+import olpsKenyaImg from '../assets/projects/olps-kenya.webp';
+import bongoHubImg from '../assets/projects/bongohub.webp';
 import algocdkImg from '../assets/projects/algocdk.webp';
 import argusImg from '../assets/projects/argus.webp';
 import efpitchImg from '../assets/projects/efpitch.webp';
@@ -13,6 +15,28 @@ import replayLabbImg from '../assets/projects/replaylabb.webp';
  * Sourced from the learner project submission sheet.
  */
 const PROJECTS = [
+  {
+    id: 'olps-kenya',
+    title: 'OLPS Kenya',
+    category: 'Health · Community',
+    description:
+      'Founded in 1992, OLPS restores health and dignity through HIV care, maternal health, education and livelihood programmes for vulnerable families in Kisumu and across Kenya.',
+    image: olpsKenyaImg,
+    href: 'https://olpskenya.org/',
+    panelBg: '#201509',
+    textColor: '#FFFFFF',
+  },
+  {
+    id: 'bongohub',
+    title: 'BongoHub',
+    category: 'Creative Network · Community',
+    description:
+      'A community-driven network connecting 50+ creatives, projects and places across East Africa — from artists and filmmakers to designers and social entrepreneurs.',
+    image: bongoHubImg,
+    href: 'https://www.bongohub.net/',
+    panelBg: '#241307',
+    textColor: '#FFFFFF',
+  },
   {
     id: 'algocdk',
     title: 'Algocdk',
