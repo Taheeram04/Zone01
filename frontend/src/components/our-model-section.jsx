@@ -20,7 +20,7 @@ const OurModelSection = ({ heading = 'How Our Model Works' }) => {
       id="our-model"
       data-nav-theme="light"
       aria-label="How Our Model Works steps"
-      className="relative w-full overflow-hidden bg-white pb-16 pt-4 sm:pb-20 sm:pt-5 md:pb-24 md:pt-6 lg:pb-28 lg:pt-8"
+      className="relative w-full overflow-hidden bg-white pb-10 pt-4 sm:pb-12 sm:pt-5 md:pb-14 md:pt-6 lg:pb-16 lg:pt-8"
     >
       <Container className="relative">
         <motion.h2
