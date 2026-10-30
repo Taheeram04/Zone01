@@ -1,7 +1,6 @@
 // components/impact/ImpactPage.jsx
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import '../../styles/impact.css';
 import '../../styles/impact-brand.css';
 import {
@@ -15,7 +14,8 @@ import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
-import impactHeroImg from '../../assets/impacthero.webp';
+import impactBgVideo from '../../assets/impact-bg.mp4';
+import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
 import startup3Img from '../../assets/startup-3.webp';
@@ -97,6 +97,7 @@ function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
 export default function ImpactPage({ children }) {
   const [activeStartup, setActiveStartup] = useState(null);
   const [activeStory, setActiveStory] = useState(null);
+  const reducedMotion = useReducedMotion();
 
 
   // Give the impact route its own title and description for search and sharing.
@@ -137,38 +138,40 @@ export default function ImpactPage({ children }) {
         data-nav-theme="dark"
         className="impact-hero-section impact-dotbg"
       >
+        {reducedMotion ? (
+          <img
+            src={impactBgPoster}
+            alt=""
+            aria-hidden="true"
+            className="impact-hero-video"
+          />
+        ) : (
+          <video
+            className="impact-hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={impactBgPoster}
+            aria-hidden="true"
+          >
+            <source src={impactBgVideo} type="video/mp4" />
+          </video>
+        )}
+        <div className="impact-hero-video-overlay" aria-hidden="true" />
         <DotGrid />
         <div ref={heroRef} className="impact-wrap" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <div className="impact-hero-grid">
             <div className="impact-hero-content">
-              <h1 className="impact-hero-title">
-                <span className="impact-hero-title-our" style={{ color: 'var(--brand-white)' }}>{IMPACT_HERO.headlinePart1}</span>{' '}
-                <span className="impact-hero-title-impact" style={{ color: 'var(--brand-black)' }}>{IMPACT_HERO.headlinePart2}</span>
+              <h1 className="sr-only">
+                {IMPACT_HERO.headlinePart1} {IMPACT_HERO.headlinePart2}
               </h1>
-              <p className="impact-hero-body">{IMPACT_HERO.body}</p>
               <div className="impact-hero-actions">
                 <a href={IMPACT_HERO.cta1.href} className="impact-hero-btn-primary">
                   {IMPACT_HERO.cta1.label}
                 </a>
-                <Link to={IMPACT_HERO.cta2.href} className="impact-hero-btn-secondary">
-                  {IMPACT_HERO.cta2.label}
-                </Link>
               </div>
-            </div>
-            <div className="impact-hero-image-wrap">
-              <div className="impact-hero-card">
-                <img
-                  src={impactHeroImg}
-                  alt={IMPACT_HERO.photoAlt}
-                  width={2750}
-                  height={3437}
-                  fetchPriority="high"
-                  decoding="async"
-                  loading="eager"
-                  className="impact-hero-img"
-                />
-              </div>
-              <div className="impact-hero-tagline">{IMPACT_HERO.tagline}</div>
             </div>
           </div>
 
