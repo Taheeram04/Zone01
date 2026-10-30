@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/layout.jsx';
 import Home from './pages/Home.jsx';
 
@@ -24,9 +24,24 @@ const RouteFallback = () => (
   </div>
 );
 
+function ScrollToTopOnNavigate() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
-    <Suspense fallback={<RouteFallback />}>
+    <>
+      <ScrollToTopOnNavigate />
+      <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route
           path="/"
@@ -102,6 +117,7 @@ function App() {
         ))}
       </Routes>
     </Suspense>
+    </>
   );
 }
 
