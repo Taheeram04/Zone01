@@ -53,8 +53,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(0, 32, 84, 0.62) 0%, rgba(0, 54, 132, 0.42) 45%, rgba(0, 63, 160, 0.2) 100%),
-    linear-gradient(180deg, rgba(4, 26, 54, 0.18) 0%, rgba(0, 99, 249, 0.04) 55%, rgba(4, 26, 54, 0.42) 100%);
+    linear-gradient(90deg, rgba(0, 32, 84, 0.42) 0%, rgba(0, 54, 132, 0.26) 45%, rgba(0, 63, 160, 0.08) 100%),
+    linear-gradient(180deg, rgba(4, 26, 54, 0.1) 0%, rgba(0, 99, 249, 0.02) 55%, rgba(4, 26, 54, 0.3) 100%);
 }
 
 .impact-hero-grid {
