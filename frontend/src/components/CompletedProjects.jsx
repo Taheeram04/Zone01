@@ -225,7 +225,7 @@ export default function CompletedProjects() {
       ref={sectionRef}
       id="completed-projects"
       aria-labelledby="completed-projects-title"
-      className="relative w-full bg-[#F3F7FF] pt-[72px] pb-[48px] lg:pt-[120px] lg:pb-[64px]"
+      className="relative w-full bg-[#F3F7FF] pt-[72px] pb-[32px] lg:pt-[120px] lg:pb-[40px]"
     >
       <Container>
         {/* Header Row */}
