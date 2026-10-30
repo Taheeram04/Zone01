@@ -2361,10 +2361,6 @@
   color: var(--brand-navy, #0a2e7a);
 }
 
-.impact-report-link--pending {
-  color: #94a3b8;
-}
-
 @media (max-width: 900px) {
   .impact-reports-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

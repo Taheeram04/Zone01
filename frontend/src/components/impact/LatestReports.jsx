@@ -88,9 +88,9 @@ export default function LatestReports() {
                 <span className="impact-report-icon" aria-hidden="true">
                   <FileText size={20} strokeWidth={1.9} />
                 </span>
-                <span className="impact-report-type">
-                  {report.report ? 'PDF' : 'Placeholder'}
-                </span>
+                {report.report ? (
+                  <span className="impact-report-type">PDF</span>
+                ) : null}
               </div>
 
               <div>
@@ -109,11 +109,7 @@ export default function LatestReports() {
                     View Report
                     <ArrowUpRight size={14} aria-hidden="true" />
                   </a>
-                ) : (
-                  <span className="impact-report-link impact-report-link--pending">
-                    Report coming soon
-                  </span>
-                )}
+                ) : null}
               </div>
             </article>
           ))}
