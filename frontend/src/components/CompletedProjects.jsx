@@ -1,76 +1,82 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Container } from './layout.jsx';
+import algocdkImg from '../assets/projects/algocdk.webp';
+import argusImg from '../assets/projects/argus.webp';
+import efpitchImg from '../assets/projects/efpitch.webp';
+import kisumuExplorersImg from '../assets/projects/kisumu-explorers.webp';
+import yayaAiImg from '../assets/projects/yaya-ai.webp';
+import replayLabbImg from '../assets/projects/replaylabb.webp';
 
 /**
  * Completed Projects data.
- * Easily edit or extend project entries here.
+ * Sourced from the learner project submission sheet.
  */
 const PROJECTS = [
   {
-    id: 'chichwa',
-    number: '01',
-    title: 'Chichwa',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
-    href: '#',
-    panelBg: '#0063F9',
+    id: 'algocdk',
+    title: 'Algocdk',
+    category: 'Fintech · Trading',
+    description:
+      'An algorithmic trading platform for Deriv with market analysis, bot automation and custom indicators.',
+    image: algocdkImg,
+    href: 'https://algocdk.site',
+    panelBg: '#06182E',
     textColor: '#FFFFFF',
   },
   {
-    id: 'chiro',
-    number: '02',
-    title: 'Chiro',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
-    href: '#',
-    panelBg: '#092C3E',
+    id: 'argus',
+    title: 'Argus',
+    category: 'AI · Developer Tooling',
+    description:
+      'An AI agent command centre for monitoring coding agents, catching failures and approving work from your phone.',
+    image: argusImg,
+    href: 'https://argus-web.netlify.app/',
+    panelBg: '#050806',
     textColor: '#FFFFFF',
   },
   {
-    id: 'flexi-ride',
-    number: '03',
-    title: 'Flexi Ride',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
-    href: '#',
-    panelBg: '#BBD6FF',
-    textColor: '#092C3E',
-  },
-  {
-    id: 'lms',
-    number: '04',
-    title: 'LMS',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
-    href: '#',
-    panelBg: '#0A4FBF',
+    id: 'efpitch',
+    title: 'efpitch',
+    category: 'Esports · Tournaments',
+    description:
+      'A remote eFootball tournament platform with verified scores, anti-cheat checks and nationwide access.',
+    image: efpitchImg,
+    href: 'https://efpitch.com',
+    panelBg: '#1B0E05',
     textColor: '#FFFFFF',
   },
   {
-    id: 'local-leaders-fund',
-    number: '05',
-    title: 'Local Leaders Fund',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
+    id: 'kisumu-explorers',
+    title: 'Kisumu Explorers',
+    category: 'Travel · Community',
+    description:
+      'Hikes, tours and community adventures that help builders unplug, explore Kisumu and touch grass.',
+    image: kisumuExplorersImg,
     href: '#',
-    panelBg: '#E6F0FF',
-    textColor: '#092C3E',
+    panelBg: '#07231A',
+    textColor: '#FFFFFF',
   },
   {
-    id: 'replay-lab',
-    number: '06',
-    title: 'Replay Lab',
-    category: '[Category]',
-    description: '[One or two lines on what was built and who it serves.]',
-    image: '',
+    id: 'yaya-ai',
+    title: 'Yaya AI',
+    category: 'AI · Careers',
+    description:
+      'An AI job-automation platform that helps candidates apply to more roles in less time.',
+    image: yayaAiImg,
     href: '#',
-    panelBg: '#0063F9',
+    panelBg: '#170B2E',
+    textColor: '#FFFFFF',
+  },
+  {
+    id: 'replaylabb',
+    title: 'ReplayLabb',
+    category: 'Developer Tools · API Debugging',
+    description:
+      'A local-first API debugging app that captures traffic, redacts secrets and replays failures to prove fixes.',
+    image: replayLabbImg,
+    href: 'https://replaylabb.vercel.app/',
+    panelBg: '#080D0D',
     textColor: '#FFFFFF',
   },
 ];
@@ -124,17 +130,6 @@ export const ProjectCard = ({ project }) => {
             </span>
           </div>
         )}
-
-        {/* Item number at top left (01 to 06) */}
-        <span
-          className="absolute top-4 left-4 z-20 font-mono text-body-s font-medium tracking-wider transition-transform duration-300 ease-out group-hover:translate-x-[6px] group-focus-visible:translate-x-[6px] motion-reduce:transform-none motion-reduce:transition-none"
-          style={{
-            color: project.image ? '#FFFFFF' : project.textColor,
-            textShadow: project.image ? '0 1px 3px rgba(0,0,0,0.6)' : 'none',
-          }}
-        >
-          {project.number}
-        </span>
       </div>
 
       {/* Body with 28px padding */}
@@ -238,9 +233,9 @@ export default function CompletedProjects() {
           initial="hidden"
           animate={headerInView ? 'visible' : 'hidden'}
           variants={headerContainerVariants}
-          className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 sm:mb-14 lg:mb-16"
+          className="flex flex-col items-center text-center gap-6 mb-12 sm:mb-14 lg:mb-16"
         >
-          <div className="max-w-none">
+          <div className="max-w-5xl">
             {/* H2 Title */}
             <motion.h2
               id="completed-projects-title"
@@ -250,12 +245,14 @@ export default function CompletedProjects() {
               Real projects, built and delivered by our learners.
             </motion.h2>
 
-            {/* Placeholder Paragraph */}
+            {/* Section intro */}
             <motion.p
               variants={fadeUpVariants}
-              className="font-sans text-[16px] md:text-body-l font-normal text-[#3B5566] leading-relaxed max-w-2xl"
+              className="mx-auto font-sans text-[16px] md:text-body-l font-normal text-[#3B5566] leading-relaxed max-w-2xl"
             >
-              [A showcase of production software, digital solutions, and community systems engineered and deployed by our apprentices.]
+              Explore production software, digital products and community platforms built by
+              Zone01 Kisumu apprentices — from trading tools and developer infrastructure to
+              esports, travel and career technology.
             </motion.p>
           </div>
 
