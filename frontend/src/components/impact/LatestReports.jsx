@@ -43,6 +43,8 @@ const formatDate = (value) => {
   return Number.isNaN(date.getTime()) ? '' : dateFormatter.format(date);
 };
 
+const HIDDEN_REPORT_YEARS = new Set([2026]);
+
 const normalizeReport = (report) => ({
   ...report,
   year:
@@ -94,6 +96,7 @@ export default function LatestReports() {
     () =>
       reports
         .map(normalizeReport)
+        .filter((report) => !HIDDEN_REPORT_YEARS.has(report.year))
         .sort(
           (a, b) =>
             b.year - a.year ||
@@ -104,6 +107,15 @@ export default function LatestReports() {
   );
 
   const visibleReports = expanded ? orderedReports : orderedReports.slice(0, 6);
+
+  const groupedReports = useMemo(() => {
+    const groups = new Map();
+    visibleReports.forEach((report) => {
+      if (!groups.has(report.year)) groups.set(report.year, []);
+      groups.get(report.year).push(report);
+    });
+    return [...groups.entries()].sort((a, b) => b[0] - a[0]);
+  }, [visibleReports]);
 
   return (
     <section
@@ -123,42 +135,47 @@ export default function LatestReports() {
           </p>
         </header>
 
-        <div className="impact-reports-grid">
-          {visibleReports.map((report) => (
-            <article className="impact-report-card" key={report.id || report.title}>
-              <div className="impact-report-cover">
-                {report.cover ? (
-                  <img src={report.cover} alt="" loading="lazy" />
-                ) : (
-                  <span className="impact-report-cover-fallback" aria-hidden="true">
-                    <FileText size={28} strokeWidth={1.6} />
-                  </span>
-                )}
-                {report.report ? <span className="impact-report-type">PDF</span> : null}
-              </div>
+        {groupedReports.map(([year, yearReports]) => (
+          <div className="impact-reports-year" key={year}>
+            <h3 className="impact-reports-year-title">{year}</h3>
+            <div className="impact-reports-grid">
+              {yearReports.map((report) => (
+                <article className="impact-report-card" key={report.id || report.title}>
+                  <div className="impact-report-cover">
+                    {report.cover ? (
+                      <img src={report.cover} alt="" loading="lazy" />
+                    ) : (
+                      <span className="impact-report-cover-fallback" aria-hidden="true">
+                        <FileText size={28} strokeWidth={1.6} />
+                      </span>
+                    )}
+                    {report.report ? <span className="impact-report-type">PDF</span> : null}
+                  </div>
 
-              <div className="impact-report-body">
-                <h4 className="impact-report-title">{report.title}</h4>
-                {report.published_at ? (
-                  <p className="impact-report-date">{formatDate(report.published_at)}</p>
-                ) : null}
+                  <div className="impact-report-body">
+                    <h4 className="impact-report-title">{report.title}</h4>
+                    {report.published_at ? (
+                      <p className="impact-report-date">{formatDate(report.published_at)}</p>
+                    ) : null}
 
-                {report.report ? (
-                  <a
-                    className="impact-report-link"
-                    href={report.report}
-                    download={report.report_name || `${report.title}.pdf`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Download Report
-                    <Download size={14} aria-hidden="true" />
-                  </a>
-                ) : null}
-              </div>
-            </article>
-          ))}
-        </div>
+                    {report.report ? (
+                      <a
+                        className="impact-report-link"
+                        href={report.report}
+                        download={report.report_name || `${report.title}.pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Download Report
+                        <Download size={14} aria-hidden="true" />
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
 
         {orderedReports.length > 6 ? (
           <div className="impact-reports-more">
