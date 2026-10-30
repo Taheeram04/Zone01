@@ -39,9 +39,7 @@ class Command(BaseCommand):
         try:
             client = default_storage.connection.meta.client
         except Exception as exc:  # pragma: no cover - provider configuration
-            self.stderr.write(
-                self.style.WARNING(f"Could not connect to media storage: {exc}")
-            )
+            self.stderr.write(self.style.WARNING(f"Could not connect to media storage: {exc}"))
             return
 
         policy = {
@@ -70,26 +68,16 @@ class Command(BaseCommand):
                 },
             )
         except Exception as exc:
-            self.stderr.write(
-                self.style.WARNING(f"Could not clear public-access block: {exc}")
-            )
+            self.stderr.write(self.style.WARNING(f"Could not clear public-access block: {exc}"))
 
         try:
             client.put_bucket_acl(Bucket=bucket, ACL="public-read")
-            self.stdout.write(
-                self.style.SUCCESS(f"Public-read ACL applied to {bucket}.")
-            )
+            self.stdout.write(self.style.SUCCESS(f"Public-read ACL applied to {bucket}."))
         except Exception as exc:
-            self.stderr.write(
-                self.style.WARNING(f"Could not apply public-read ACL: {exc}")
-            )
+            self.stderr.write(self.style.WARNING(f"Could not apply public-read ACL: {exc}"))
 
         try:
             client.put_bucket_policy(Bucket=bucket, Policy=json.dumps(policy))
-            self.stdout.write(
-                self.style.SUCCESS(f"Public read policy applied to {bucket}.")
-            )
+            self.stdout.write(self.style.SUCCESS(f"Public read policy applied to {bucket}."))
         except Exception as exc:
-            self.stderr.write(
-                self.style.WARNING(f"Could not apply bucket policy: {exc}")
-            )
+            self.stderr.write(self.style.WARNING(f"Could not apply bucket policy: {exc}"))
