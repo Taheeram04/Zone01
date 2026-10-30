@@ -1,6 +1,6 @@
 // components/impact/LatestReports.jsx
 import { useEffect, useMemo, useState } from 'react';
-import { Download, FileText } from 'lucide-react';
+import { Download, ChevronDown, FileText } from 'lucide-react';
 import annual2025Cover from '../../assets/reports/annual-2025.webp';
 import q1_2025Cover from '../../assets/reports/q1-2025.webp';
 import q2_2025Cover from '../../assets/reports/q2-2025.webp';
@@ -53,6 +53,7 @@ const normalizeReport = (report) => ({
 
 export default function LatestReports() {
   const [reports, setReports] = useState(PLACEHOLDER_REPORTS);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -102,7 +103,7 @@ export default function LatestReports() {
     [reports]
   );
 
-  const visibleReports = orderedReports;
+  const visibleReports = expanded ? orderedReports : orderedReports.slice(0, 6);
 
   const groupedReports = useMemo(() => {
     const groups = new Map();
@@ -172,6 +173,20 @@ export default function LatestReports() {
             </div>
           </div>
         ))}
+
+        {orderedReports.length > 6 ? (
+          <div className="impact-reports-more">
+            <button
+              type="button"
+              className={`impact-reports-more-btn${expanded ? ' is-open' : ''}`}
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={expanded}
+            >
+              {expanded ? 'Show less' : 'Read more'}
+              <ChevronDown size={15} aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );
