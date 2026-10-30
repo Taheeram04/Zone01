@@ -385,37 +385,61 @@
 
 .hb-income-value--accent { color: var(--brand-primary, #0063f9); }
 
-/* Gender equity */
-.hb-people {
+/* Women — cohort bar chart */
+.hb-women-chart {
   display: flex;
-  gap: var(--brand-space-4, 16px);
-  margin: var(--brand-space-8, 32px) 0 var(--brand-space-5, 20px);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--brand-space-3, 12px);
+  margin: var(--brand-space-5, 20px) 0 var(--brand-space-4, 16px);
+  min-height: 150px;
 }
 
-.hb-person {
-  position: relative;
-  width: 72px;
-  height: 84px;
+.hb-women-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 150px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: var(--brand-space-2, 8px);
+}
+
+.hb-women-value {
+  font-family: var(--brand-font-mono, monospace);
+  font-size: var(--brand-caption, 12px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--brand-white, #fff);
+}
+
+.hb-women-track {
+  width: 100%;
+  max-width: 48px;
+  height: 96px;
+  display: flex;
+  align-items: flex-end;
   background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: var(--brand-radius-lg, 6px);
+  border-radius: 6px 6px 2px 2px;
+  overflow: hidden;
 }
 
-.hb-person svg {
-  width: 34px;
-  height: 34px;
-  fill: none;
-  stroke: var(--brand-white, #fff);
-  stroke-width: 1.8;
-  stroke-linecap: round;
+.hb-women-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #bbd6ff 100%);
+  border-radius: 6px 6px 0 0;
 }
 
-.hb-person .hb-dot-mint {
-  position: absolute;
-  bottom: 8px;
+.hb-women-label {
+  font-family: var(--brand-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .hb-gender .hb-card-foot { padding-top: var(--brand-space-4, 16px); }

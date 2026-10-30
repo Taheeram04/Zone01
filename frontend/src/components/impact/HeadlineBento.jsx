@@ -17,7 +17,13 @@ const EARNINGS =
 const MONTHLY = findStat('Average monthly income');
 const ANNUAL = findStat('Average annual income');
 const TOP = findStat('Top monthly income');
-const WOMEN = findStat('Earning more than USD 2,300 per month');
+const WOMEN_COHORTS = [
+  { label: 'Cohort 1', value: 17 },
+  { label: 'Cohort 2', value: 36 },
+  { label: 'Cohort 3', value: 45 },
+];
+const WOMEN_TOTAL = WOMEN_COHORTS.reduce((sum, cohort) => sum + cohort.value, 0);
+const WOMEN_MAX = Math.max(...WOMEN_COHORTS.map((cohort) => cohort.value));
 
 function BentoRing({ value, inView }) {
   const safeValue = Number.isFinite(value) ? value : 0;
@@ -183,25 +189,36 @@ export default function HeadlineBento() {
         </div>
       </motion.article>
 
-      {/* Gender equity */}
-      <motion.article className="hb-card hb-card--blue hb-gender" {...card(6)}>
+      {/* Women — cohort distribution */}
+      <motion.article className="hb-card hb-card--blue hb-gender hb-women" {...card(6)}>
         <div className="hb-card-top">
-          <span className="hb-eyebrow">Gender equity</span>
-          <span className="hb-badge"><i className="hb-dot-mint" />Top 2%</span>
+          <span className="hb-eyebrow">Women</span>
+          <span className="hb-badge"><i className="hb-dot-mint" />By cohort</span>
         </div>
-        <div className="hb-people" aria-hidden="true">
-          <span className="hb-person">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>
-            <i className="hb-dot-mint" />
-          </span>
-          <span className="hb-person">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>
-            <i className="hb-dot-mint" />
-          </span>
+        <div
+          className="hb-women-chart"
+          role="img"
+          aria-label={`Women per cohort: ${WOMEN_COHORTS.map((cohort) => `${cohort.label}, ${cohort.value}`).join('; ')}.`}
+        >
+          {WOMEN_COHORTS.map((cohort, index) => (
+            <div className="hb-women-bar" key={cohort.label}>
+              <span className="hb-women-value">{cohort.value}</span>
+              <div className="hb-women-track">
+                <motion.div
+                  className="hb-women-fill"
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${(cohort.value / WOMEN_MAX) * 100}%` }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.9, delay: 0.15 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </div>
+              <span className="hb-women-label">{cohort.label}</span>
+            </div>
+          ))}
         </div>
         <div className="hb-card-foot">
-          <div className="hb-stat hb-stat--light">{WOMEN.value}</div>
-          <p className="hb-caption hb-caption--light">{WOMEN.label}</p>
+          <div className="hb-stat hb-stat--light">{WOMEN_TOTAL}</div>
+          <p className="hb-caption hb-caption--light">Women across cohorts 1–3</p>
         </div>
       </motion.article>
     </div>
