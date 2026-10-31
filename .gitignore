@@ -35,3 +35,6 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Media source files (large videos)
+frontend/public/videos/impact.mp4
