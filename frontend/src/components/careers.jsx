@@ -1,255 +1,229 @@
 // components/careers.jsx
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Search, Sparkles, ArrowRight, Infinity as InfinityIcon } from 'lucide-react';
-import { FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { APPLICATION_URL } from '../constants.js';
-import aiPortrait from '../assets/ai-portrait-card.webp';
-import aiRobot from '../assets/ai-robot.webp';
-import aiDuo from '../assets/ai-duo.webp';
-import aiCyborg from '../assets/ai-cyborg.webp';
-import devopsCentral from '../assets/devops-central-card.webp';
-import devopsTl from '../assets/devops-tl-thumb.webp';
-import devopsMl from '../assets/devops-ml-thumb.webp';
-import devopsTr from '../assets/devops-tr-thumb.webp';
-import javaCentral from '../assets/java-central.webp';
-import javaTl from '../assets/java-tl-thumb.webp';
-import javaTr from '../assets/java-tr-thumb.webp';
-import javaBl from '../assets/java-bl-thumb.webp';
+import artificialIntelligence from '../assets/careers/artificial-intelligence.webp';
+import cloudDevOps from '../assets/careers/cloud-devops.webp';
+import javaFullstack from '../assets/careers/java-fullstack.webp';
+import videoGames from '../assets/careers/video-games-development.webp';
+import webApp from '../assets/careers/web-app-development.webp';
+import mobileApp from '../assets/careers/mobile-app-development.webp';
+import dataEngineering from '../assets/careers/data-engineering.webp';
+import cyberSecurity from '../assets/careers/cyber-security.webp';
+import blockchain from '../assets/careers/blockchain.webp';
 import './careers.css';
 
 /*
- * "Careers" — an interactive 3D carousel of tech-branch mobile screens.
+ * "Career Paths" — a 3D carousel of flat career-path profile cards.
  *
- * Three branches share one viewport / electric-blue screen. Moving between them
- * runs a 180° Y-axis flip while the screen's layers pull forward on the Z-axis
- * and collapse back. Each branch has its own satellite UI (AI, DevOps and JAVA
- * have bespoke layouts).
+ * The stage is viewed from a shallow isometric angle. The incoming card
+ * swings in on the vertical Y axis from the side of the stage while the
+ * outgoing card spins away and slides off-screen, both pushed into depth so
+ * the swap reads as one continuous camera move. Each card carries its own
+ * solid backdrop colour, so the next profile is revealed as the cards trade
+ * places with momentum-based spring easing.
  */
 
 const BRANCHES = [
-  { name: 'Artificial Intelligence', image: aiPortrait, cutout: true, theme: 'ai' },
-  { name: 'Dev Ops', image: devopsCentral, theme: 'devops' },
-  { name: 'JAVA FullStack', image: javaCentral, theme: 'java' },
+  { name: 'Artificial Intelligence', image: artificialIntelligence },
+  { name: 'Cloud & DevOps', image: cloudDevOps },
+  { name: 'Java FullStack', image: javaFullstack },
+  { name: 'Video Games Development', image: videoGames },
+  { name: 'Web App Development', image: webApp },
+  { name: 'Mobile App Development', image: mobileApp },
+  { name: 'Data Engineering', image: dataEngineering },
+  { name: 'Cyber Security', image: cyberSecurity },
+  { name: 'Blockchain', image: blockchain },
 ];
 
-const FLIP_MS = 440;
 const AUTO_MS = 4600;
+
+const cardVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? '120%' : '-120%',
+    y: direction > 0 ? 18 : -18,
+    z: -150,
+    rotateY: direction > 0 ? 82 : -82,
+    rotateX: 10,
+    rotateZ: direction > 0 ? 5.5 : -5.5,
+    scale: 0.82,
+    opacity: 0,
+    filter: 'blur(10px)',
+  }),
+  center: {
+    x: 0,
+    y: 0,
+    z: 0,
+    rotateY: 0,
+    rotateX: 4.5,
+    rotateZ: 0,
+    scale: 1,
+    opacity: 1,
+    filter: 'blur(0px)',
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? '-120%' : '120%',
+    y: direction > 0 ? -14 : 14,
+    z: -110,
+    rotateY: direction > 0 ? -82 : 82,
+    rotateX: 10,
+    rotateZ: direction > 0 ? -5.5 : 5.5,
+    scale: 0.84,
+    opacity: 0,
+    filter: 'blur(10px)',
+  }),
+};
+
+const reducedCardVariants = {
+  enter: { opacity: 0, x: 0, z: 0, rotateY: 0, rotateX: 0, rotateZ: 0, scale: 1 },
+  center: { opacity: 1, x: 0, z: 0, rotateY: 0, rotateX: 0, rotateZ: 0, scale: 1 },
+  exit: { opacity: 0, x: 0, z: 0, rotateY: 0, rotateX: 0, rotateZ: 0, scale: 1 },
+};
+
+const cardTransition = {
+  x: { type: 'spring', stiffness: 380, damping: 32, mass: 0.78 },
+  y: { type: 'spring', stiffness: 340, damping: 30, mass: 0.78 },
+  z: { type: 'spring', stiffness: 320, damping: 30, mass: 0.78 },
+  rotateY: { type: 'spring', stiffness: 310, damping: 27, mass: 0.78 },
+  rotateX: { type: 'spring', stiffness: 300, damping: 28, mass: 0.78 },
+  rotateZ: { type: 'spring', stiffness: 320, damping: 27, mass: 0.78 },
+  scale: { type: 'spring', stiffness: 380, damping: 27, mass: 0.78 },
+  filter: { duration: 0.26, ease: 'easeOut' },
+  opacity: { duration: 0.2, ease: 'easeOut' },
+};
+
+const posterTransition = {
+  type: 'spring',
+  stiffness: 240,
+  damping: 27,
+  mass: 0.9,
+};
 
 const Careers = () => {
   const [active, setActive] = useState(0);
-  const [rotation, setRotation] = useState(0);
-  const [peak, setPeak] = useState(false);
-  const [instant, setInstant] = useState(false);
-
-  const busy = useRef(false);
-  const activeRef = useRef(0);
-  const timers = useRef([]);
-  const reduced = useRef(
-    typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
-
-  const clearAsync = useCallback(() => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  }, []);
-
-  const goTo = useCallback((target) => {
-    if (busy.current || target === activeRef.current) return;
-
-    if (reduced.current) {
-      activeRef.current = target;
-      setActive(target);
-      return;
-    }
-
-    busy.current = true;
-    setPeak(true);
-    setRotation(90);
-
-    timers.current.push(
-      setTimeout(() => {
-        activeRef.current = target;
-        setActive(target);
-        setInstant(true);
-        setRotation(-90);
-        setPeak(false);
-
-        timers.current.push(
-          setTimeout(() => {
-            setInstant(false);
-            setRotation(0);
-            timers.current.push(
-              setTimeout(() => {
-                busy.current = false;
-              }, FLIP_MS + 60),
-            );
-          }, 40),
-        );
-      }, FLIP_MS),
-    );
-  }, []);
+  const [direction, setDirection] = useState(1);
+  const [paused, setPaused] = useState(false);
+  const reduced = useReducedMotion();
+  const branch = BRANCHES[active];
 
   useEffect(() => {
-    if (reduced.current) return undefined;
-    const t = setTimeout(() => goTo((activeRef.current + 1) % BRANCHES.length), AUTO_MS);
-    return () => clearTimeout(t);
-  }, [active, goTo]);
+    if (reduced || paused) return undefined;
+    const timer = setTimeout(() => {
+      setDirection(1);
+      setActive((current) => (current + 1) % BRANCHES.length);
+    }, AUTO_MS);
+    return () => clearTimeout(timer);
+  }, [active, reduced, paused]);
 
-  useEffect(() => clearAsync, [clearAsync]);
+  const goTo = (target) => {
+    if (target === active) return;
+    setDirection(target > active ? 1 : -1);
+    setActive(target);
+  };
 
-  const branch = BRANCHES[active];
+  // Arrow buttons wrap around, so "previous" from the first path lands on the last.
+  const step = (delta) => {
+    setDirection(delta);
+    setActive((current) => (current + delta + BRANCHES.length) % BRANCHES.length);
+  };
 
   return (
     <section id="careers" data-nav-theme="light" aria-labelledby="careers-title" className="careers">
-      <div className="careers__head">
-        <h2 id="careers-title" className="careers__title">
-          Career Paths
-        </h2>
-        <p className="careers__subtitle">
-          What is your true passion? Pursue a career path of your choice and become an expert through real world experience.
-
-        </p>
+      <div aria-hidden="true" className="careers__backdrop">
+        <span className="careers__blob careers__blob--tr" />
+        <span className="careers__blob careers__blob--lm" />
+        <span className="careers__blob careers__blob--rm" />
+        <span className="careers__blob careers__blob--bl" />
+        <span className="careers__blob careers__blob--br" />
       </div>
 
-      <div className="careers__stage">
-        <div
-          className={`careers__device careers__device--${branch.theme}${peak ? ' is-peak' : ''}${instant ? ' is-instant' : ''}`}
-          style={{ transform: `rotateY(${rotation}deg)` }}
-        >
-          <div className="careers__card">
-            <span className="careers__corner careers__corner--tl" aria-hidden="true" />
-            <span className="careers__corner careers__corner--tr" aria-hidden="true" />
-            <span className="careers__corner careers__corner--bl" aria-hidden="true" />
-            <span className="careers__corner careers__corner--br" aria-hidden="true" />
-
-            <div className="careers__top">
-              <p className="careers__eyebrow">Zone01 Kisumu</p>
-              <h3 className="careers__branch">{branch.name}</h3>
-            </div>
-
-            <span className="careers__glow" aria-hidden="true" />
-            <span className="careers__halo" aria-hidden="true" />
-
-            <div className={`careers__portrait${branch.cutout ? ' is-cutout' : ''}`}>
-              <img src={branch.image} alt={branch.name} />
-            </div>
-
-            {branch.theme === 'ai' && (
-              <>
-                <span className="careers__dash" aria-hidden="true" />
-                <img className="careers__sat careers__sat--robot" src={aiRobot} alt="" aria-hidden="true" />
-                <div className="careers__sat careers__duo">
-                  <img src={aiDuo} alt="" aria-hidden="true" />
-                  <p className="careers__duo-text">Start your AI knowledge here</p>
-                  <span className="careers__duo-pill">AI STARTER</span>
-                </div>
-                <img className="careers__sat careers__sat--cyborg" src={aiCyborg} alt="" aria-hidden="true" />
-                <span className="careers__sat careers__toggle">
-                  <i aria-hidden="true" />
-                  <b>Specialize</b>
-                </span>
-              </>
-            )}
-
-            {branch.theme === 'devops' && (
-              <>
-                <img className="careers__sat careers__dev careers__dev--tl" src={devopsTl} alt="" aria-hidden="true" />
-                <img className="careers__sat careers__dev careers__dev--ml" src={devopsMl} alt="" aria-hidden="true" />
-                <img className="careers__sat careers__dev careers__dev--tr" src={devopsTr} alt="" aria-hidden="true" />
-
-                <span className="careers__sat careers__toggle">
-                  <i aria-hidden="true" />
-                  <b>Specialize</b>
-                </span>
-
-                <span className="careers__sat careers__bubble">No teachers, only mentors!</span>
-
-                <div className="careers__sat careers__widget">
-                  <span className="careers__widget-search">
-                    <Search size={11} strokeWidth={2.5} />
-                    <span>How to be a DevOps Engineer</span>
-                  </span>
-                  <span className="careers__widget-join">Join zone01 Kisumu</span>
-                  <span className="careers__widget-foot">
-                    <span className="careers__widget-ig" aria-hidden="true">
-                      <FaInstagram size={14} />
-                    </span>
-                    <span className="careers__widget-badge">
-                      <i aria-hidden="true">
-                        <InfinityIcon size={15} strokeWidth={2.4} />
-                      </i>
-                      <b>Devops</b>
-                    </span>
-                  </span>
-                </div>
-              </>
-            )}
-
-            {branch.theme === 'java' && (
-              <>
-                <img className="careers__sat careers__jv careers__jv--tl" src={javaTl} alt="" aria-hidden="true" />
-                <img className="careers__sat careers__jv careers__jv--tr" src={javaTr} alt="" aria-hidden="true" />
-                <img className="careers__sat careers__jv careers__jv--bl" src={javaBl} alt="" aria-hidden="true" />
-
-                <span className="careers__sat careers__jv-bubble careers__jv-bubble--left">
-                  Welcome to Zone01
-                </span>
-                <span className="careers__sat careers__jv-bubble careers__jv-bubble--right">
-                  Guaranteed path to employment
-                </span>
-              </>
-            )}
-
-            {branch.theme === 'generic' && (
-              <>
-                <span className="careers__sat careers__pill">Welcome to Zone01</span>
-                <span className="careers__sat careers__search">
-                  <Search size={13} strokeWidth={2.5} />
-                  <span>Find your path</span>
-                </span>
-                <span className="careers__sat careers__badge" aria-hidden="true">
-                  <Sparkles size={15} strokeWidth={2.5} />
-                </span>
-                <span className="careers__sat careers__social" aria-hidden="true">
-                  <i>
-                    <FaInstagram size={13} />
-                  </i>
-                  <i>
-                    <FaXTwitter size={12} />
-                  </i>
-                  <i>
-                    <FaLinkedinIn size={12} />
-                  </i>
-                </span>
-              </>
-            )}
-
-            <a
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="careers__cta"
-            >
-              Start Today
-              <ArrowRight size={16} strokeWidth={2.5} />
-            </a>
-          </div>
+      <div className="careers__content">
+        <div className="careers__head">
+          <h2 id="careers-title" className="careers__title">
+            Career Paths
+          </h2>
+          <p className="careers__subtitle">
+            What is your true passion? Pursue a career path of your choice and become an
+            expert through real world experience.
+          </p>
         </div>
-      </div>
 
-      <div className="careers__dots" role="tablist" aria-label="Tech branches">
-        {BRANCHES.map((b, i) => (
+        <div
+          className="careers__carousel"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+        >
           <button
-            key={b.name}
             type="button"
-            role="tab"
-            aria-selected={i === active}
-            aria-label={b.name}
-            className={`careers__dot${i === active ? ' is-active' : ''}`}
-            onClick={() => goTo(i)}
-          />
-        ))}
+            className="careers__nav careers__nav--prev"
+            aria-label="Previous career path"
+            aria-controls="careers-stage"
+            onClick={() => step(-1)}
+          >
+            <ChevronLeft aria-hidden="true" size={22} strokeWidth={2.5} />
+          </button>
+
+          <div className="careers__stage" id="careers-stage">
+            <AnimatePresence initial={false} custom={direction} mode="sync">
+              <motion.a
+                key={branch.name}
+                custom={direction}
+                variants={reduced ? reducedCardVariants : cardVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={reduced ? { duration: 0 } : cardTransition}
+                href={APPLICATION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="careers__card"
+                aria-label={`Start ${branch.name} at Zone01 Kisumu (opens in a new tab)`}
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                <motion.img
+                  key={branch.image}
+                  src={branch.image}
+                  alt={branch.name}
+                  className="careers__image"
+                  loading="eager"
+                  decoding="async"
+                  initial={reduced ? false : { scale: 1.14 }}
+                  animate={{ scale: 1 }}
+                  transition={reduced ? { duration: 0 } : posterTransition}
+                />
+                <span aria-hidden="true" className="careers__ring" />
+                <span aria-hidden="true" className="careers__sheen" />
+              </motion.a>
+            </AnimatePresence>
+          </div>
+
+          <button
+            type="button"
+            className="careers__nav careers__nav--next"
+            aria-label="Next career path"
+            aria-controls="careers-stage"
+            onClick={() => step(1)}
+          >
+            <ChevronRight aria-hidden="true" size={22} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="careers__dots" role="tablist" aria-label="Tech branches">
+          {BRANCHES.map((b, i) => (
+            <button
+              key={b.name}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              aria-label={b.name}
+              className={`careers__dot${i === active ? ' is-active' : ''}`}
+              onClick={() => goTo(i)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Button from './button.jsx';
+import { ArrowRight } from 'lucide-react';
 import { Container } from './layout.jsx';
 import { KineticHeading } from './whocanapply.jsx';
-import { APPLICATION_URL } from '../constants.js';
+import { APPLICATION_URL, PARTNER_WHATSAPP_URL } from '../constants.js';
 import heroImg1 from '../assets/001.webp';
 import heroImg2 from '../assets/002.webp';
 import heroImg3 from '../assets/003.webp';
@@ -116,7 +116,10 @@ const PiscineCountdown = () => {
 
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/piscine/`, { signal: controller.signal });
+        const res = await fetch(`${API_BASE}/api/piscine/`, {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setConfig(parsePiscineConfig(await res.json()));
       } catch (error) {
@@ -314,40 +317,55 @@ const Hero = () => {
         <div className="w-full">
           <KineticHeading
             as="h1"
-            text={"Talent is everywhere.\nOpportunity is not."}
-            className="font-sans font-black text-white leading-[1.06] tracking-tight text-[30px] sm:text-[44px] md:text-[54px] lg:text-[66px] xl:text-[76px] 2xl:text-hero-h1 mb-3 sm:mb-4 md:mb-5"
+            text={"Africa's next generation\nof software engineers\nis being built in Kisumu"}
+            className="font-sans font-black text-white leading-[1.1] tracking-tight text-[28px] sm:text-[36px] md:text-[44px] lg:text-[50px] xl:text-[56px] 2xl:text-[62px] mb-3 sm:mb-4 md:mb-5"
             delay={0.05}
             stagger={0.02}
           />
 
-          <p className="font-mono text-white/90 text-sm sm:text-base lg:text-[17px] mb-6 sm:mb-6 md:mb-7 max-w-2xl lg:max-w-3xl leading-relaxed">
-            We identify <span className="font-semibold text-white">top-potential</span> talent, overlooked
-            by traditional systems, and transform them into{' '}
-            <span className="font-semibold text-white">high-income, AI-ready software engineers</span> at scale
+          <p
+            className="font-sans font-bold text-white mb-3 sm:mb-4 max-w-3xl leading-snug tracking-tight"
+            style={{
+              fontFamily: 'var(--brand-font-sans)',
+              fontSize: 'clamp(var(--brand-caption, 12px), 1.5vw, 18px)',
+              fontWeight: 'var(--brand-weight-bold, 700)',
+              color: 'var(--brand-white, #ffffff)',
+              lineHeight: 1.25,
+            }}
+          >
+            We identify top-potential talent, overlooked by traditional systems, and transform them into high-income, AI-ready software engineers at scale
           </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4"
+            className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 md:gap-5"
           >
-            <Button
-              variant="primary"
+            <button
+              type="button"
+              onClick={() => navigate('/hire')}
+              className="brand-btn brand-btn--primary w-full sm:w-auto"
+            >
+              Hire Talent
+            </button>
+            <a
               href={APPLICATION_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto"
+              className="brand-btn brand-btn--outline-white w-full sm:w-auto"
             >
               Apply Now
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/hire')}
-              className="w-full sm:w-auto !bg-transparent !border-white !text-white hover:!bg-white hover:!text-black-900"
+            </a>
+            <a
+              href={PARTNER_WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="brand-link-arrow w-full sm:w-auto justify-center sm:justify-start py-2 sm:py-0 px-2"
             >
-              Hire Talent
-            </Button>
+              <span>Partner with us</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </a>
           </motion.div>
         </div>
       </Container>

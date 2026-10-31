@@ -4,9 +4,9 @@
 
 export const HERO_STATS = [
   { value: '28,000+', label: 'Applicants screened for potential' },
-  { value: '86 / 97', label: 'Inaugural cohort in paid work' },
+  { value: 'Top 1%', label: 'Selected for intensive engineering training' },
   { value: '40', label: 'Countries on the 01 standard' },
-  { value: '5 days', label: 'Typical shortlist turnaround' },
+  { value: '72 hours', label: 'Typical shortlist turnaround' },
 ];
 
 export const DIFFERENTIATORS = [
@@ -130,22 +130,22 @@ export const HIRING_OPTIONS = [
 export const PROCESS_STEPS = [
   {
     index: '01',
-    title: 'Share the brief',
+    title: 'Request a talent shortlist',
     body: 'Role, skills, seniority and start date. It takes about five minutes.',
   },
   {
     index: '02',
-    title: 'Receive a shortlist',
+    title: 'Host an internship or project',
     body: 'Matched, screened profiles with project evidence, typically within five working days.',
   },
   {
     index: '03',
-    title: 'Meet the talent',
+    title: 'Become a hiring partner',
     body: 'Technical interviews with your team. We coordinate logistics, references and feedback.',
   },
   {
     index: '04',
-    title: 'Onboard with support',
+    title: 'Build a delivery team in Kisumu',
     body: 'Offer, onboarding and a check-in with our talent team at 30 and 90 days.',
   },
 ];

@@ -8,7 +8,7 @@ import {
   IMPACT_HERO,
   REPORTING,
   FUNNEL,
-  EMPLOYMENT_CARD,
+  // EMPLOYMENT_CARD,
   STARTUPS,
   STORIES,
 } from '../../data/impact';
@@ -37,11 +37,12 @@ const STORY_IMAGES = {
 };
 
 const HERO_METRICS = [
-  { value: '86', label: 'In paid work' },
-  { value: '97', label: 'Inaugural apprentices' },
-  { value: '89%', label: 'Employment rate' },
-  { value: '~6 weeks', label: 'Median to first job' },
-  { value: '28,000+', label: 'Applications received' },
+  { value: '154', label: 'In paid work' },
+  { value: '97', label: 'cohort 1 apprentices' },
+  { value: '107', label: 'cohort 2 apprentices' },
+  { value: '90%', label: 'Employment rate' },
+  { value: '~2 weeks', label: 'to first job placement' },
+  { value: '35,891+', label: 'Applications received' },
 ];
 
 function DotGrid() {
@@ -50,6 +51,7 @@ function DotGrid() {
   );
 }
 
+/*
 function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -90,6 +92,7 @@ function ProgressRing({ value, inView, size = 142, stroke = 12 }) {
     </div>
   );
 }
+*/
 
 export default function ImpactPage({ children }) {
   const [activeStartup, setActiveStartup] = useState(null);
@@ -259,6 +262,7 @@ export default function ImpactPage({ children }) {
               </div>
             </div>
 
+            {/*
             <motion.div
               initial={{ opacity: 0, x: 40, scale: 0.95 }}
               animate={funnelInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 40, scale: 0.95 }}
@@ -284,6 +288,7 @@ export default function ImpactPage({ children }) {
               </div>
               <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', marginTop: 'auto', paddingTop: 'var(--brand-space-8, 32px)', position: 'relative', lineHeight: 1.5 }}>{EMPLOYMENT_CARD.note}</div>
             </motion.div>
+            */}
           </div>
         </div>
       </section>

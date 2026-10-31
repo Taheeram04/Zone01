@@ -7,17 +7,20 @@ import { HEADLINE_STATS } from '../../data/impact';
 
 const findStat = (label) => HEADLINE_STATS.find((stat) => stat.label === label) || { value: '', label: '', note: '' };
 
-const EMPLOYMENT = findStat('Employment rate');
-const PAID = findStat('Apprentices and graduates in paid work');
-const SPEED = findStat('Median time to employment after graduation');
-const COHORT = findStat('Inaugural cohort apprentices');
-const DEMAND = findStat('Applications received');
+const EARNINGS = findStat('Increase in earnings');
+// const PAID = findStat('Apprentices and graduates in paid work');
+// const SPEED = findStat('Median time to employment after graduation');
+// const COHORT = findStat('Inaugural cohort apprentices');
+// const DEMAND = findStat('Applications received');
 const MONTHLY = findStat('Average monthly income');
 const ANNUAL = findStat('Average annual income');
 const TOP = findStat('Top monthly income');
 const WOMEN = findStat('Earning more than USD 2,300 per month');
 
 function BentoRing({ value, inView }) {
+  const safeValue = Number.isFinite(value) ? value : 0;
+  const progress = Math.min(100, Math.max(0, safeValue));
+
   return (
     <div className="hb-ring" aria-hidden="true">
       <svg viewBox="0 0 160 160">
@@ -28,18 +31,19 @@ function BentoRing({ value, inView }) {
           r="66"
           className="hb-ring-value"
           initial={{ strokeDashoffset: 2 * Math.PI * 66 }}
-          whileInView={{ strokeDashoffset: 2 * Math.PI * 66 * (1 - value / 100) }}
+          whileInView={{ strokeDashoffset: 2 * Math.PI * 66 * (1 - progress / 100) }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 1.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />
       </svg>
       <span className="hb-ring-label">
-        <CountUp value={`${value}%`} inView={inView} delay={0.3} duration={1.4} />
+        <CountUp value={`${safeValue}%`} inView={inView} delay={0.3} duration={1.4} />
       </span>
     </div>
   );
 }
 
+/*
 function Dots() {
   return (
     <div className="hb-dots" aria-hidden="true">
@@ -49,6 +53,7 @@ function Dots() {
     </div>
   );
 }
+*/
 
 export default function HeadlineBento() {
   const gridRef = useRef(null);
@@ -70,17 +75,17 @@ export default function HeadlineBento() {
           <span className="hb-badge"><i className="hb-dot-mint" />Primary metric</span>
         </div>
         <div className="hb-key-body">
-          <BentoRing value={parseInt(EMPLOYMENT.value, 10)} inView={inView} />
-          <h3 className="hb-card-title">Employment rate</h3>
+          <BentoRing value={parseInt(EARNINGS.value, 10)} inView={inView} />
+          <h3 className="hb-card-title">Increase in earnings</h3>
           <p className="hb-card-sub">In paid work</p>
         </div>
         <ul className="hb-key-list">
-          <li><i className="hb-dot-mint" /><strong>89%</strong> in paid work (86 apprentices)</li>
-          <li><i className="hb-dot-mint" /><strong>11%</strong> in training (11 apprentices)</li>
+          <li><i className="hb-dot-mint" /><strong>90%</strong> in paid work (326 apprentices)</li>
+          <li><i className="hb-dot-mint" /><strong>34%</strong> currently in training or selected for Cohort 3 (112 apprentices)</li>
         </ul>
       </motion.article>
 
-      {/* Placement — dot matrix */}
+      {/* Placement — dot matrix (commented out)
       <motion.article className="hb-card hb-placement" {...card(1)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Placement</span>
@@ -92,8 +97,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{PAID.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Speed — weeks to hire slider */}
+      {/* Speed — weeks to hire slider (commented out)
       <motion.article className="hb-card hb-speed" {...card(2)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Speed</span>
@@ -114,8 +120,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{SPEED.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Cohort — dashed ring */}
+      {/* Cohort — dashed ring (commented out)
       <motion.article className="hb-card hb-cohort" {...card(3)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Cohort</span>
@@ -128,8 +135,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{COHORT.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Demand — applications arc */}
+      {/* Demand — applications arc (commented out)
       <motion.article className="hb-card hb-card--blue hb-demand" {...card(4)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow">Demand</span>
@@ -147,6 +155,7 @@ export default function HeadlineBento() {
           <p className="hb-caption hb-caption--light">{DEMAND.label}</p>
         </div>
       </motion.article>
+      */}
 
       {/* Income — three income outcomes */}
       <motion.article className="hb-card hb-income" {...card(5)}>

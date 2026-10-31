@@ -30,10 +30,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY Zone01web/backend/requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY Zone01web/backend/ .
+COPY backend/ .
 COPY --from=frontend /build/dist ./frontend_dist
 
 RUN adduser --disabled-password --gecos "" app \

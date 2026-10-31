@@ -7,7 +7,7 @@ The project is **two applications**:
 
 | Part | Tech | Location | Runs on |
 | ---- | ---- | -------- | ------- |
-| **Backend** | Django 5 + django CMS 5 + PostgreSQL | `Zone01web/backend/` | `:8000` |
+| **Backend** | Django 5 + django CMS 5 + PostgreSQL | `backend/` | `:8000` |
 | **Frontend** | React 19 + Vite 8 + Tailwind 4 | `frontend/` | `:5173` |
 
 ---
@@ -89,24 +89,23 @@ Zone01/
 │   ├── vite.config.js               # Dev proxy for /api
 │   ├── .env.example
 │   └── package.json
-└── Zone01web/
-    └── backend/                     # Django project
-        ├── manage.py
-        ├── config/                  # settings.py, urls.py, wsgi/asgi
-        ├── core/                    # health check + admin frontend-status board
-        ├── content/                 # site content models + JSON API
-        ├── services/                # Hire Talent service catalogue + JSON API
-        ├── applicants/              # applicant intake & review
-        ├── events/                  # events & registrations
-        ├── whatsapp_bot/            # WhatsApp FAQ assistant (webhook + matching)
-        ├── templates/               # CMS page templates + admin overrides
-        ├── static/
-        ├── docker-compose.yml       # local PostgreSQL only
-        ├── Dockerfile               # backend-only image (used by Fly)
-        ├── Makefile                 # backend dev shortcuts
-        ├── requirements.txt / -dev.txt
-        ├── .env.example
-        └── README.md
+└── backend/                         # Django project
+    ├── manage.py
+    ├── config/                      # settings.py, urls.py, wsgi/asgi
+    ├── core/                        # health check + admin frontend-status board
+    ├── content/                     # site content models + JSON API
+    ├── services/                    # Hire Talent service catalogue + JSON API
+    ├── applicants/                  # applicant intake & review
+    ├── events/                      # events & registrations
+    ├── whatsapp_bot/                # WhatsApp FAQ assistant (webhook + matching)
+    ├── templates/                   # CMS page templates + admin overrides
+    ├── static/
+    ├── docker-compose.yml           # local PostgreSQL only
+    ├── Dockerfile                   # backend-only image (used by Fly)
+    ├── Makefile                     # backend dev shortcuts
+    ├── requirements.txt / -dev.txt
+    ├── .env.example
+    └── README.md
 ```
 
 ---
@@ -131,12 +130,12 @@ Install these once:
 
 ## Part A — Backend setup
 
-All backend commands run from `Zone01web/backend/`.
+All backend commands run from `backend/`.
 
 ### A.1 Create the virtual environment
 
 ```bash
-cd Zone01web/backend
+cd backend
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 ```
@@ -391,7 +390,7 @@ WhiteNoise. No second web server, proxy or CORS setup is required.
 make install
 
 # start PostgreSQL (or use your own local server and backend/.env)
-cd Zone01web/backend && docker compose up -d postgres && cd ../..
+cd backend && docker compose up -d postgres && cd ../..
 
 # build the SPA if needed, apply migrations, then run Django
 make serve               # http://localhost:8000
@@ -436,10 +435,10 @@ If you prefer separate terminals:
 
 ```bash
 # Terminal 1 — database
-cd Zone01web/backend && docker compose up -d postgres
+cd backend && docker compose up -d postgres
 
 # Terminal 2 — backend
-cd Zone01web/backend && source .venv/bin/activate && make run
+cd backend && source .venv/bin/activate && make run
 
 # Terminal 3 — frontend (hot reload)
 cd frontend && npm run dev
@@ -458,7 +457,7 @@ cd frontend && npm run dev
 1. Edit the model, e.g. `content/models.py`.
 2. Create a migration:
    ```bash
-   cd Zone01web/backend
+   cd backend
    make makemigrations
    ```
 3. Apply it:
@@ -516,7 +515,7 @@ make lint     # check
 make fmt       # auto-format
 ```
 
-Ruff is configured in `Zone01web/backend/pyproject.toml`; migrations are excluded.
+Ruff is configured in `backend/pyproject.toml`; migrations are excluded.
 
 ### D.6 Code style (frontend)
 
@@ -532,7 +531,7 @@ ESLint config lives in `frontend/eslint.config.js`.
 The backend `Makefile` wraps `pg_dump`/`pg_restore` for local and staging use:
 
 ```bash
-cd Zone01web/backend
+cd backend
 make db-backup                                    # -> backups/zone01-<timestamp>.dump
 make db-restore FILE=backups/zone01-2026-10-07-174432.dump
 ```
@@ -540,7 +539,7 @@ make db-restore FILE=backups/zone01-2026-10-07-174432.dump
 Both read `DATABASE_URL` from the environment, falling back to `.env`.
 `db-restore` uses `--clean --if-exists`, so restore into the database you intend
 to overwrite — or a throwaway one for a restore drill. Backups are written to
-`backups/` (git-ignored). See `Zone01web/backend/README.md` for the hosted
+`backups/` (git-ignored). See `backend/README.md` for the hosted
 (Fly.io) snapshot procedure.
 
 ---
@@ -550,7 +549,7 @@ to overwrite — or a throwaway one for a restore drill. Backups are written to
 ### E.1 Backend
 
 ```bash
-cd Zone01web/backend
+cd backend
 make test      # python manage.py test
 make lint      # ruff check .
 make check     # django check + migration drift check
@@ -589,7 +588,7 @@ npm run build        # catches build-time errors
 
 ### E.3 CI
 
-`.github/workflows/backend-ci.yml` runs, for changes under `Zone01web/backend/`
+`.github/workflows/backend-ci.yml` runs, for changes under `backend/`
 against a `postgres:16` service:
 
 1. `ruff check .` and `ruff format --check .`
@@ -637,11 +636,11 @@ disk.
 
 The backend and frontend can still deploy as **two Fly apps**, backed by a
 third app running unmanaged Fly Postgres. Config files:
-`Zone01web/backend/fly.toml` and `frontend/fly.toml`.
+`backend/fly.toml` and `frontend/fly.toml`.
 
 | Fly app | Runs | Config |
 | ------- | ---- | ------ |
-| `zone01-kisumu-api` | Django + gunicorn | `Zone01web/backend/fly.toml` |
+| `zone01-kisumu-api` | Django + gunicorn | `backend/fly.toml` |
 | `zone01-kisumu-web` | React bundle via nginx | `frontend/fly.toml` |
 | `zone01-kisumu-db` | Unmanaged Postgres | created with `fly postgres create` |
 
@@ -649,7 +648,7 @@ One-time setup:
 
 ```bash
 # Backend app
-cd Zone01web/backend
+cd backend
 fly launch --no-deploy --copy-config
 
 # Database
@@ -678,7 +677,7 @@ fly deploy
 make docker-up            # or: fly deploy from the repo root with the root Dockerfile
 
 # Two-app Fly deployment
-cd Zone01web/backend && fly deploy
+cd backend && fly deploy
 cd frontend && fly deploy
 ```
 
@@ -692,7 +691,7 @@ cd frontend && fly deploy
 - Hit `/healthz` — it should report `status: ok`.
 
 The full, authoritative deployment walkthrough (media bucket, backups,
-snapshots) lives in `Zone01web/backend/README.md`.
+snapshots) lives in `backend/README.md`.
 
 ---
 
@@ -714,7 +713,7 @@ snapshots) lives in `Zone01web/backend/README.md`.
 
 ## Appendix A — Environment variables
 
-### Backend (`Zone01web/backend/.env`)
+### Backend (`backend/.env`)
 
 | Variable | Default | Purpose |
 | -------- | ------- | ------- |
@@ -735,6 +734,12 @@ snapshots) lives in `Zone01web/backend/README.md`.
 | `WHATSAPP_PHONE_NUMBER_ID` | _(empty)_ | WhatsApp sender's phone-number ID |
 | `WHATSAPP_APP_SECRET` | _(empty)_ | Verifies webhook signature (blank disables the check) |
 | `WHATSAPP_DRY_RUN` | `true` | Log replies instead of sending them |
+| `WHATSAPP_WELCOME_MESSAGE` | built-in greeting | English greeting on the first message of a conversation (again after 24h) |
+| `WHATSAPP_WELCOME_MESSAGE_SW` | built-in greeting | Swahili greeting when the first message is in Swahili |
+| `WHATSAPP_AI_ENABLED` | `true` | Use an LLM answer when a key is configured |
+| `WHATSAPP_AI_API_KEY` | _(empty)_ | Provider key; empty falls back to the FAQ keyword matcher |
+| `WHATSAPP_AI_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI-compatible `/chat/completions` endpoint |
+| `WHATSAPP_AI_MODEL` | `gpt-4o-mini` | Chat model used for grounded answers |
 
 ### Frontend (`frontend/.env`)
 
@@ -750,11 +755,12 @@ Base path `/api/`. All endpoints are **read-only `GET`** and controlled by CORS.
 
 | Endpoint | Returns |
 | -------- | ------- |
-| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `community`, `links`, `piscine` |
+| `/api/content/` | Everything in one request: `partners`, `staff`, `news`, `impact`, `projects`, `community`, `links`, `piscine` |
 | `/api/partners/` | Partner list |
 | `/api/staff/` | Staff list |
 | `/api/news/` | Published news |
 | `/api/impact/` | Published impact stories (includes `report` download URL) |
+| `/api/projects/` | Active learner projects with image, gallery, founders, cohort, details, tech and website link |
 | `/api/community/` | Published community posts grouped by kind: `news`, `event`, `blog`, `podcast` |
 | `/api/links/` | Active header site links |
 | `/api/piscine/` | Next piscine date, active state, message and full upcoming schedule |
@@ -824,7 +830,7 @@ It uses the Meta WhatsApp Cloud API and a keyword/IDF matcher (no external AI).
 
 1. Seed the FAQ knowledge base:
    ```bash
-   cd Zone01web/backend
+   cd backend
    make migrate
    .venv/bin/python manage.py seed_faqs
    ```
@@ -835,7 +841,7 @@ It uses the Meta WhatsApp Cloud API and a keyword/IDF matcher (no external AI).
 
 Keep `WHATSAPP_DRY_RUN=true` (the default) to log replies without sending them
 while you test. Full instructions, tuning tips and the go-live checklist are in
-[`Zone01web/backend/whatsapp_bot/README.md`](../Zone01web/backend/whatsapp_bot/README.md).
+[`backend/whatsapp_bot/README.md`](../backend/whatsapp_bot/README.md).
 
 | Endpoint | Methods | Purpose |
 | -------- | ------- | ------- |

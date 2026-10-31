@@ -79,7 +79,7 @@ const ServicesSection = ({ services }) => {
       <Container>
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-sans text-[1.875rem] font-black leading-[1.1] tracking-[-0.02em] text-secondary sm:text-section-headline">
-            Our Services
+            Our services
           </h2>
           <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
             From a single specialist to a full delivery team, we make hiring easy,
@@ -99,7 +99,7 @@ const ServicesSection = ({ services }) => {
             <div
               role="tablist"
               aria-label="Our services"
-              className="grid grid-cols-2 border-b border-white/20 md:grid-cols-4"
+              className="grid grid-cols-2 border-b border-white/20 md:grid-cols-5"
             >
               {services.map((service, index) => {
                 const selected = index === safeActive;
