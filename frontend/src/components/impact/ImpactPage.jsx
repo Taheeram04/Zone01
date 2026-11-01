@@ -19,9 +19,9 @@ import impactHeroImg from '../../assets/impacthero.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
 import startup3Img from '../../assets/startup-3.webp';
-import storyPlaceholder1 from '../../assets/story-placeholder-1.webp';
-import storyPlaceholder2 from '../../assets/story-placeholder-2.webp';
-import storyPlaceholder3 from '../../assets/impact6.webp';
+import impactStory1Img from '../../assets/impactstory1.png';
+import impactStory2Img from '../../assets/impactstory2.png';
+import impactStory3Img from '../../assets/impactstory3.png';
 
 const STARTUP_IMAGES = {
   'startup-1': startup1Img,
@@ -30,10 +30,10 @@ const STARTUP_IMAGES = {
 };
 
 const STORY_IMAGES = {
-  'story-1': storyPlaceholder1,
-  'story-2': storyPlaceholder2,
-  'story-3': storyPlaceholder3,
-  'impact6': storyPlaceholder3,
+  'story-1': impactStory1Img,
+  'story-2': impactStory2Img,
+  'story-3': impactStory3Img,
+  'impact6': impactStory3Img,
 };
 
 const HERO_METRICS = [
@@ -596,6 +596,7 @@ export default function ImpactPage({ children }) {
                     src={STORY_IMAGES[story.imageKey]}
                     alt={story.headline}
                     className="ri-story-img"
+                    style={{ objectPosition: story.imagePosition || 'center 20%' }}
                     loading="lazy"
                   />
                 </div>
@@ -639,7 +640,12 @@ export default function ImpactPage({ children }) {
                 <img
                   src={STORY_IMAGES[activeStory.imageKey]}
                   alt={activeStory.headline}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: activeStory.imagePosition || 'center 20%',
+                  }}
                 />
                 <button
                   type="button"
