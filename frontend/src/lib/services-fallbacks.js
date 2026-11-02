@@ -19,7 +19,7 @@ const service = (name, description, order) => ({
 
 export const FALLBACK_SERVICES = [
   service(
-    'Software Development as a Service',
+    'Software Development as a Service (SAAs)',
     'We build customised software solutions for global clients. Our milestone-based payment model ensures we only proceed to the next phase when you are happy with the solution.',
     1,
   ),
