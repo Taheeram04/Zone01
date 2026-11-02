@@ -108,13 +108,35 @@ const PROJECTS = [
 const EASE = [0.2, 0.7, 0.2, 1];
 
 /**
+ * Only absolute web URLs should open outside the site. Relative paths, hash
+ * links, mailto:, tel: and other schemes stay in the current tab.
+ */
+const isExternalHref = (href) => {
+  if (!href) return false;
+
+  try {
+    const url = new URL(href, window.location.origin);
+    return (
+      (url.protocol === 'http:' || url.protocol === 'https:') &&
+      url.origin !== window.location.origin
+    );
+  } catch {
+    return false;
+  }
+};
+
+/**
  * ProjectCard Component
  * Displays a single project card with image placeholder, metadata, and hover/focus effects.
  */
 export const ProjectCard = ({ project }) => {
+  const isExternal = isExternalHref(project.href);
+
   return (
     <a
       href={project.href || '#'}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       className="group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none"
     >
       {/* Top 240px Image Area */}
@@ -266,7 +288,7 @@ export default function CompletedProjects() {
               variants={fadeUpVariants}
               className="font-sans font-black text-[#092C3E] text-[30px] md:text-section-headline leading-[1.15] tracking-tight mb-4 2xl:whitespace-nowrap"
             >
-              Real projects, built and delivered by our learners.
+              Real projects, built and delivered by our learners
             </motion.h2>
 
             {/* Section intro */}

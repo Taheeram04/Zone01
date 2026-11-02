@@ -82,39 +82,38 @@ const reducedCardVariants = {
 };
 
 const cardTransition = {
-  x: { type: 'spring', stiffness: 380, damping: 32, mass: 0.78 },
-  y: { type: 'spring', stiffness: 340, damping: 30, mass: 0.78 },
-  z: { type: 'spring', stiffness: 320, damping: 30, mass: 0.78 },
-  rotateY: { type: 'spring', stiffness: 310, damping: 27, mass: 0.78 },
-  rotateX: { type: 'spring', stiffness: 300, damping: 28, mass: 0.78 },
-  rotateZ: { type: 'spring', stiffness: 320, damping: 27, mass: 0.78 },
-  scale: { type: 'spring', stiffness: 380, damping: 27, mass: 0.78 },
-  filter: { duration: 0.26, ease: 'easeOut' },
-  opacity: { duration: 0.2, ease: 'easeOut' },
+  x: { type: 'spring', stiffness: 300, damping: 31, mass: 0.82 },
+  y: { type: 'spring', stiffness: 270, damping: 29, mass: 0.82 },
+  z: { type: 'spring', stiffness: 255, damping: 29, mass: 0.82 },
+  rotateY: { type: 'spring', stiffness: 245, damping: 26, mass: 0.82 },
+  rotateX: { type: 'spring', stiffness: 240, damping: 27, mass: 0.82 },
+  rotateZ: { type: 'spring', stiffness: 255, damping: 26, mass: 0.82 },
+  scale: { type: 'spring', stiffness: 300, damping: 26, mass: 0.82 },
+  filter: { duration: 0.34, ease: 'easeOut' },
+  opacity: { duration: 0.27, ease: 'easeOut' },
 };
 
 const posterTransition = {
   type: 'spring',
-  stiffness: 240,
-  damping: 27,
-  mass: 0.9,
+  stiffness: 210,
+  damping: 26,
+  mass: 0.95,
 };
 
 const Careers = () => {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [paused, setPaused] = useState(false);
   const reduced = useReducedMotion();
   const branch = BRANCHES[active];
 
   useEffect(() => {
-    if (reduced || paused) return undefined;
+    if (reduced) return undefined;
     const timer = setTimeout(() => {
       setDirection(1);
       setActive((current) => (current + 1) % BRANCHES.length);
     }, AUTO_MS);
     return () => clearTimeout(timer);
-  }, [active, reduced, paused]);
+  }, [active, reduced]);
 
   const goTo = (target) => {
     if (target === active) return;
@@ -149,13 +148,7 @@ const Careers = () => {
           </p>
         </div>
 
-        <div
-          className="careers__carousel"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-        >
+        <div className="careers__carousel">
           <button
             type="button"
             className="careers__nav careers__nav--prev"

@@ -14,7 +14,7 @@ import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
 import gdgBgImg from '../../assets/gdg.jpg';
-import impactBgVideo from '../../assets/impact-bg.mp4';
+import impactBgVideo from '../../assets/Our Impact.mp4';
 import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';
 import startup2Img from '../../assets/startup-2.webp';
@@ -120,7 +120,7 @@ export default function ImpactPage({ children }) {
 
 
   const startupsRef = useRef(null);
-  const startupsInView = useInView(startupsRef, { once: true, amount: 0.12 });
+  const startupsInView = useInView(startupsRef, { once: true, amount: 0.15 });
 
   const storiesRef = useRef(null);
   const storiesInView = useInView(storiesRef, { once: true, amount: 0.15 });
@@ -215,8 +215,13 @@ export default function ImpactPage({ children }) {
 
       {/* STARTUPS (3 DISTINCT INTERACTIVE CARDS) */}
       <section className="impact-startups-section" id="startups" data-nav-theme="light">
-        <div className="impact-wrap">
-          <div className="impact-startups-header">
+        <div className="impact-wrap" ref={startupsRef}>
+          <motion.div
+            className="impact-startups-header"
+            initial={{ opacity: 0, y: 24 }}
+            animate={startupsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div>
               <h2 className="impact-startups-title">
                 Companies built by <span style={{ color: 'var(--brand-primary)' }}>Zone01 Kisumu</span> talent.
@@ -225,9 +230,9 @@ export default function ImpactPage({ children }) {
             <div className="impact-mono" style={{ color: 'var(--brand-navy)', fontSize: 'var(--brand-caption)' }}>
               3 Active Cohort 1 Ventures
             </div>
-          </div>
+          </motion.div>
 
-          <div ref={startupsRef} className="impact-startups-grid">
+          <div className="impact-startups-grid">
             {STARTUPS.map((startup, idx) => {
               const cardClass = startup.theme === 'featured'
                 ? 'startup-card startup-card-featured'
@@ -239,9 +244,10 @@ export default function ImpactPage({ children }) {
                 <motion.article
                   key={startup.id}
                   className={cardClass}
-                  initial={{ opacity: 0, y: 35 }}
-                  animate={startupsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 35 }}
-                  transition={{ duration: 0.7, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0, x: 70, scale: 0.94 }}
+                  animate={startupsInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 70, scale: 0.94 }}
+                  transition={{ duration: 0.8, delay: idx * 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -4, transition: { duration: 0.25 } }}
                 >
                   <div className="startup-card-banner">
                     <img

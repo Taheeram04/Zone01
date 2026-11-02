@@ -300,30 +300,13 @@ const OrbitShowcase = ({
             className="absolute inset-0 overflow-hidden rounded-full"
             style={{ transformStyle: 'preserve-3d', willChange: 'transform, opacity' }}
           >
-            {hero?.wide ? (
-              <>
-                <img
-                  src={hero.src}
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 h-full w-full scale-110 object-cover blur-md"
-                />
-                <img
-                  src={hero.src}
-                  alt={hero.alt || ''}
-                  draggable="false"
-                  className="relative h-full w-full object-contain"
-                />
-              </>
-            ) : (
-              <img
-                src={hero?.src}
-                alt={hero?.alt || ''}
-                draggable="false"
-                className="h-full w-full object-cover"
-                style={{ objectPosition: hero?.position }}
-              />
-            )}
+            <img
+              src={hero?.src}
+              alt={hero?.alt || ''}
+              draggable="false"
+              className="h-full w-full object-cover"
+              style={{ objectPosition: hero?.position }}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -368,7 +351,7 @@ const OrbitShowcase = ({
                   src={slide.src}
                   alt=""
                   draggable="false"
-                  className={slide.wide ? 'h-full w-full object-contain' : 'h-full w-full object-cover'}
+                  className="h-full w-full object-cover"
                 />
               </span>
             </button>
