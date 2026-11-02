@@ -11,7 +11,6 @@ import {
   FaPlay,
 } from 'react-icons/fa6';
 import { Container } from './layout.jsx';
-import { KineticHeading } from './whocanapply.jsx';
 import StoryDialog from './story-dialog.jsx';
 import { plainText } from '../lib/plain-text.js';
 import { SOCIAL_LINKS, socialByKey } from '../social.js';
@@ -364,30 +363,12 @@ const CommunityFeed = () => {
       ref={sectionRef}
       id="community-hub"
       data-nav-theme="light"
-      aria-labelledby="community-hub-title"
+      aria-label="Community Hub"
       className="relative w-full overflow-hidden bg-white py-16 md:py-24"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       <Container className="relative">
-        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-          <KineticHeading
-            as="h2"
-            id="community-hub-title"
-            text="Community Hub"
-            className="font-sans font-black leading-tight tracking-tight text-secondary text-[30px] md:text-section-headline"
-          />
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-black-900/65 sm:text-base"
-          >
-            The latest news, events, blog posts and podcast episodes from the
-            Zone01 Kisumu community.
-          </motion.p>
-        </div>
-
         {/* Group accordion — only active streams with posts are shown */}
         {resolved.length > 0 && (
           <div className="mx-auto flex max-w-5xl flex-col gap-3">
