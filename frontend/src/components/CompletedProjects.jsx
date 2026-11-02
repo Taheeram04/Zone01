@@ -89,7 +89,8 @@ const PROJECTS = [
     description:
       'Hikes, tours and community adventures that help builders unplug, explore Kisumu and touch grass.',
     image: kisumuExplorersImg,
-    href: '#',
+    href: null,
+    comingSoon: true,
     panelBg: '#07231A',
     textColor: '#FFFFFF',
   },
@@ -100,7 +101,8 @@ const PROJECTS = [
     description:
       'An AI job-automation platform that helps candidates apply to more roles in less time.',
     image: yayaAiImg,
-    href: '#',
+    href: null,
+    comingSoon: true,
     panelBg: '#170B2E',
     textColor: '#FFFFFF',
   },
@@ -143,13 +145,24 @@ const isExternalHref = (href) => {
  */
 export const ProjectCard = ({ project }) => {
   const isExternal = isExternalHref(project.href);
+  const isComingSoon = Boolean(project.comingSoon || !project.href);
+  const Card = isComingSoon ? 'div' : 'a';
+  const cardProps = isComingSoon
+    ? {}
+    : {
+        href: project.href,
+        target: isExternal ? '_blank' : undefined,
+        rel: isExternal ? 'noopener noreferrer' : undefined,
+      };
 
   return (
-    <a
-      href={project.href || '#'}
-      target={isExternal ? '_blank' : undefined}
-      rel={isExternal ? 'noopener noreferrer' : undefined}
-      className="group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none"
+    <Card
+      {...cardProps}
+      className={`group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none ${
+        isComingSoon
+          ? 'cursor-default'
+          : 'hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2'
+      }`}
     >
       {/* Top 240px Image Area */}
       <div
@@ -188,6 +201,12 @@ export const ProjectCard = ({ project }) => {
             </span>
           </div>
         )}
+
+        {isComingSoon && (
+          <span className="absolute right-3 top-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#0A4FBF] shadow-sm">
+            Coming soon
+          </span>
+        )}
       </div>
 
       {/* Body with 28px padding */}
@@ -209,28 +228,47 @@ export const ProjectCard = ({ project }) => {
           </p>
         </div>
 
-        {/* View project link-style label */}
-        <div className="inline-flex items-center gap-2 font-sans text-body-m font-semibold text-[#0063F9]">
-          <span>View project</span>
-          <svg
-            className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-[8px] group-focus-visible:translate-x-[8px] motion-reduce:transform-none"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </div>
+        {/* View project / coming-soon label */}
+        {isComingSoon ? (
+          <div className="inline-flex items-center gap-2 font-sans text-body-m font-semibold text-[#3B5566]">
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 2" />
+            </svg>
+            <span>Coming soon</span>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-2 font-sans text-body-m font-semibold text-[#0063F9]">
+            <span>View project</span>
+            <svg
+              className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-[8px] group-focus-visible:translate-x-[8px] motion-reduce:transform-none"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* 4px bar sweeping across bottom edge from left to right */}
-      <span
-        aria-hidden="true"
-        className="absolute bottom-0 left-0 right-0 h-[4px] bg-[#0063F9] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transform-none motion-reduce:transition-none"
-      />
-    </a>
+      {!isComingSoon && (
+        <span
+          aria-hidden="true"
+          className="absolute bottom-0 left-0 right-0 h-[4px] bg-[#0063F9] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transform-none motion-reduce:transition-none"
+        />
+      )}
+    </Card>
   );
 };
 
