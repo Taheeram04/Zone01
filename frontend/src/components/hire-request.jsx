@@ -119,16 +119,14 @@ const Field = ({ label, name, error, required = false, children }) => (
 );
 
 /**
- * Talent request form. Submitting validates the brief and opens WhatsApp with
- * the full request pre-filled (the team's live employer channel), with an
- * email fallback that carries exactly the same copy. If the browser blocks the
- * WhatsApp pop-up, the success panel says so and offers email + copy paths.
+ * Talent request form. Submitting validates the brief and opens the visitor's
+ * email app with the full request addressed to the talent team. The success
+ * panel repeats the email link and offers a copy fallback.
  */
 const HireRequest = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sent
-  const [delivery, setDelivery] = useState('whatsapp'); // whatsapp | blocked
   const [copied, setCopied] = useState(false);
 
   const handleChange = (event) => {
@@ -143,7 +141,6 @@ const HireRequest = () => {
   };
 
   const brief = buildBrief(form);
-  const whatsappUrl = hireWhatsAppUrl(brief);
   const mailtoUrl = `mailto:${HIRE_EMAIL}?subject=${encodeURIComponent(
     `Talent request — ${form.organisation || 'Zone01 employer'}`,
   )}&body=${encodeURIComponent(brief)}`;
@@ -161,23 +158,12 @@ const HireRequest = () => {
     }
 
     setErrors({});
-
-    // Open a blank tab first so we can tell whether the pop-up was blocked.
-    // `noopener` makes window.open() return null even on success, so we sever
-    // the opener reference ourselves before navigating.
-    let popup;
-    try {
-      popup = window.open('about:blank', '_blank');
-      if (popup) {
-        popup.opener = null;
-        popup.location.replace(whatsappUrl);
-      }
-    } catch {
-      popup = null;
-    }
-
-    setDelivery(popup ? 'whatsapp' : 'blocked');
     setStatus('sent');
+
+    // Hand the request to the visitor's email app, pre-addressed to the
+    // talent team. The success panel keeps a link in case the mail client
+    // does not open automatically.
+    window.location.href = mailtoUrl;
   };
 
   const handleCopy = async () => {
@@ -195,7 +181,6 @@ const HireRequest = () => {
     setForm(EMPTY_FORM);
     setErrors({});
     setStatus('idle');
-    setDelivery('whatsapp');
     setCopied(false);
   };
 
@@ -218,7 +203,7 @@ const HireRequest = () => {
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <div>
             <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-white sm:text-section-headline">
-              Request a talent shortlist.
+              Request a talent shortlist
             </h2>
             <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-white sm:text-body-l">
               Tell us what you are hiring for. Shortlist requests are typically
@@ -283,47 +268,16 @@ const HireRequest = () => {
                   Your brief is ready.
                 </h3>
                 <p className="mt-3 max-w-md font-sans text-body-m leading-relaxed text-black-900/65">
-                  {delivery === 'blocked'
-                    ? 'Your browser blocked the WhatsApp window, but your brief is ready. Send it by email or copy it below.'
-                    : 'We opened WhatsApp with your request pre-filled — review and send it to reach the talent team. Prefer email? Send the same brief from your inbox.'}
+                  We opened your email app with the request pre-filled and
+                  addressed to <strong>{HIRE_EMAIL}</strong> — review and send it
+                  to reach the talent team. If it did not open, use the button
+                  below or copy the brief.
                 </p>
-
-                {delivery === 'blocked' && (
-                  <div
-                    role="status"
-                    className="mt-4 max-w-md rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
-                  >
-                    <p className="font-sans text-body-m font-semibold text-amber-900">
-                      Pop-up blocked — nothing has been sent yet.
-                    </p>
-                    <p className="mt-1 font-sans text-body-s leading-relaxed text-amber-900/80">
-                      Use <strong>Email the brief</strong> or copy it below. Your
-                      answers are safe.
-                    </p>
-                  </div>
-                )}
 
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-body-m font-semibold transition-colors ${
-                      delivery === 'blocked'
-                        ? 'border border-primary text-primary hover:bg-primary hover:text-white'
-                        : 'bg-primary text-white hover:bg-primary/90'
-                    }`}
-                  >
-                    Open WhatsApp again
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </a>
-                  <a
                     href={mailtoUrl}
-                    className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-body-m font-semibold transition-colors ${
-                      delivery === 'blocked'
-                        ? 'bg-primary text-white hover:bg-primary/90'
-                        : 'border border-primary text-primary hover:bg-primary hover:text-white'
-                    }`}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-sans text-body-m font-semibold text-white transition-colors hover:bg-primary/90"
                   >
                     <Mail className="h-4 w-4" aria-hidden="true" />
                     Email the brief
@@ -346,7 +300,7 @@ const HireRequest = () => {
                     </span>
                   </button>
                   <span className="font-mono text-body-s text-black-900/70">
-                    Same text as the WhatsApp message
+                    Same text as the email
                   </span>
                 </div>
 
@@ -588,9 +542,9 @@ const HireRequest = () => {
                 </button>
 
                 <p className="mt-3 text-center font-sans text-[11px] leading-relaxed text-black-900/70">
-                  Submitting opens WhatsApp with your brief pre-filled, so you can
-                  review it before sending. We only use these details to respond
-                  to your request.
+                  Submitting opens your email app with the brief pre-filled and
+                  addressed to {HIRE_EMAIL}, so you can review it before sending.
+                  We only use these details to respond to your request.
                 </p>
               </form>
             )}
