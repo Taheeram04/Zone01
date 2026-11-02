@@ -8,8 +8,8 @@ import whoIsItFor1 from '../assets/whoisitfor1.webp';
 import whoIsItFor1Small from '../assets/whoisitfor1-700.webp';
 import whoIsItFor2 from '../assets/whoisitfor2.webp';
 import whoIsItFor2Small from '../assets/whoisitfor2-360.webp';
-import aokutu from '../assets/aokutu.JPG';
-import aokutuSmall from '../assets/aokutu-360.JPG';
+import aokutu from '../assets/aokutu.webp';
+import aokutuSmall from '../assets/aokutu-360.webp';
 
 const targetAudience = [
   {
