@@ -1,7 +1,7 @@
 # Zone01
 
 - `frontend/` — React (Vite) website
-- `Zone01web/backend/` — Django CMS backend and JSON API
+- `backend/` — Django CMS backend and JSON API
 
 The production shape is **one service**: Django serves the React SPA, the JSON
 API, the admin and static assets. The root `Dockerfile` builds both; the root
@@ -14,7 +14,7 @@ make install             # backend + frontend dependencies
 make docker-up           # whole app on http://localhost:8000
 ```
 
-Or without Docker (use an existing PostgreSQL and `Zone01web/backend/.env`):
+Or without Docker (use an existing PostgreSQL and `backend/.env`):
 
 ```bash
 make install

@@ -6,22 +6,22 @@ import { KineticHeading } from './whocanapply.jsx';
 import { useSnapCarousel } from '../hooks/useSnapCarousel.js';
 
 // Headline figure kept in the white card.
-const primaryStat = { value: '$7,250', label: 'Average Annual Income' };
+const primaryStat = { value: '$7,560', label: 'Average Annual Income' };
 
 // Two stacked stat columns shown next to the card.
 const statColumns = [
   [
     { value: '$2,553', label: 'Highest Monthly Earning' },
-    { value: '257', label: 'Apprentices' },
+    { value: '326', label: 'Apprentices selected' },
   ],
   [
     { value: '90%', label: 'Employment Rate' },
-    { value: '1,576', label: 'Apprentices trained in Golang' },
+    { value: '3,567', label: 'Youths trained in Golang' },
   ],
 ];
 
 // Featured figure, vertically centred in the right column.
-const featuredStat = { value: '30,057', label: 'Applications' };
+const featuredStat = { value: '35,891', label: 'Applications' };
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -125,7 +125,7 @@ const Stats = () => {
   } = useSnapCarousel(mobileStats.length);
 
   return (
-    <section ref={sectionRef} data-nav-theme="dark" className="relative bg-primary overflow-hidden py-16 md:py-24">
+    <section ref={sectionRef} data-nav-theme="dark" className="relative bg-primary overflow-hidden pt-8 pb-16 md:pt-10 md:pb-24">
       <Container className="relative z-10">
         <motion.div
           initial="hidden"
@@ -135,7 +135,7 @@ const Stats = () => {
         >
           <KineticHeading
             as="h2"
-            className="font-mono font-bold text-sm md:text-base text-white uppercase tracking-wide mb-8 md:mb-10"
+            className="font-mono font-bold text-sm md:text-base text-white uppercase tracking-wide mb-10 md:mb-14"
             text="Our Impact"
             delay={0.05}
           />
@@ -206,7 +206,7 @@ const Stats = () => {
                 duration={2}
                 delay={0.1}
                 inView={isInView}
-                className="block font-sans font-extrabold text-primary text-5xl sm:text-6xl xl:text-7xl mb-2 leading-none whitespace-nowrap"
+                className="block font-sans font-extrabold text-primary text-4xl sm:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl mb-2 leading-none whitespace-nowrap"
               />
               <p className="font-mono font-bold text-sm text-black-900 max-w-[190px]">
                 {primaryStat.label}
@@ -260,7 +260,7 @@ const Stats = () => {
                 duration={2}
                 delay={0.35}
                 inView={isInView}
-                className="block font-sans font-extrabold text-primary text-5xl sm:text-6xl xl:text-7xl mb-2 leading-none whitespace-nowrap"
+                className="block font-sans font-extrabold text-primary text-4xl sm:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl mb-2 leading-none whitespace-nowrap"
               />
               <p className="font-mono font-bold text-sm text-black-900 max-w-[190px]">
                 {featuredStat.label}

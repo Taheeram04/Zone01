@@ -6,7 +6,7 @@ export const APPLICATION_URL = 'https://learn.zone01kisumu.ke/';
 export const HIRE_WHATSAPP_URL = 'https://wa.me/254748902779';
 
 // Shared inbox for written talent requests and employer follow-ups.
-export const HIRE_EMAIL = 'Torsten@lakehub.co.ke';
+export const HIRE_EMAIL = 'talent@zone01kisumu.ke';
 
 export const hireWhatsAppUrl = (message) =>
   `${HIRE_WHATSAPP_URL}?text=${encodeURIComponent(message)}`;
@@ -17,4 +17,8 @@ export const hireContactUrl = (serviceName) => {
     : "Hi Zone01, I'd like to talk to an expert about hiring talent.";
   return hireWhatsAppUrl(message);
 };
+
+export const PARTNER_WHATSAPP_URL = hireWhatsAppUrl(
+  "Hi Zone01 Kisumu, I'd like to explore partnering with your organization."
+);
 

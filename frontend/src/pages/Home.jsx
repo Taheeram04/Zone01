@@ -1,6 +1,7 @@
 import Hero from '../components/hero.jsx';
 import Stats from '../components/stats.jsx';
 import WhoCanApply from '../components/whocanapply.jsx';
+import PartnersRibbon from '../components/partners-ribbon.jsx';
 import CompletedProjects from '../components/CompletedProjects.jsx';
 import WhyOurCampus from '../components/whyourcampus.jsx';
 
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <Stats />
       <WhoCanApply />
+      <PartnersRibbon />
       <CompletedProjects />
       <WhyOurCampus />
     </main>

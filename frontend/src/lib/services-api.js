@@ -2,7 +2,7 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function fetchServices({ signal } = {}) {
-  const response = await fetch(`${API_BASE}/api/services/`, { signal });
+  const response = await fetch(`${API_BASE}/api/services/`, { signal, cache: 'no-store' });
   if (!response.ok) {
     throw new Error(`Services request failed (${response.status})`);
   }

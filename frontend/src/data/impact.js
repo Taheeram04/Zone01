@@ -3,7 +3,7 @@ export const IMPACT_HERO = {
   headlinePart1: 'Our',
   headlinePart2: 'impact',
   body: "Eighty-six of our first 97 apprentices are now in paid tech work, and the median graduate found a first paid role in about six weeks. That's an 89% employment rate from 28,000+ applicants — measured, dated and defined.",
-  cta1: { label: 'Read the stories', href: '#stories' },
+  cta1: { label: 'Download our reports', href: '#impact-reports' },
   cta2: { label: 'Hire our talent', href: '/hire' },
   photoAlt: 'cohort working at Lake Basin Mall',
   tagline: 'Results, not rhetoric',
@@ -14,20 +14,21 @@ export const REPORTING = {
 };
 
 export const HEADLINE_STATS = [
-  { value: '97', label: 'Inaugural cohort apprentices', note: 'Admitted to Cohort 1' },
-  { value: '86', label: 'Apprentices and graduates in paid work', note: 'Employment, contracts and freelance' },
-  { value: '89%', label: 'Employment rate', note: 'Of 97 admitted apprentices' },
-  { value: '~6 weeks', label: 'Median time to employment after graduation', note: 'To first paid engagement' },
-  { value: '28,000+', label: 'Applications received', note: 'Open to anyone — no credentials required' },
-  { value: 'USD 600', label: 'Average monthly income', note: 'Approximately USD 7,200 per year' },
-  { value: 'USD 7,200', label: 'Average annual income', note: 'Annual, not monthly' },
-  { value: 'USD 2,500', label: 'Top monthly income', note: 'Among top earners' },
+  { value: '97', label: 'Cohort  apprentices', note: 'Admitted to Cohort 1' },
+  { value: '107', label: 'Cohort  apprentices', note: 'Admitted to Cohort 2' },
+  { value: '154', label: 'Apprentices and graduates in paid work', note: 'Employment, contracts and freelance' },
+  { value: '417%', label: 'in apprentice earnings', },
+  { value: '~2 weeks', label: 'Median time to employment after graduation', note: 'To first paid engagement' },
+  { value: '35,891', label: 'Applications received', note: 'Open to anyone — no credentials required' },
+  { value: 'USD 630', label: 'Average monthly income'},
+  { value: 'USD 7,560', label: 'Average annual income'},
+  { value: 'USD 2,533', label: 'Top monthly income'},
   { value: '2 women', label: 'Earning more than USD 2,300 per month', note: 'Reported gross monthly income' },
 ];
 
 export const FUNNEL = [
   {
-    value: '28,000',
+    value: '35,891',
     label: 'Applications received',
     note: 'Open to anyone, no credentials required',
     width: '100%',
@@ -49,17 +50,23 @@ export const FUNNEL = [
   },
   {
     value: '97',
-    label: 'Admitted to\nthe cohort',
-    note: 'Inaugural cohort',
+    label: 'Admitted to\nthe cohort 1',
+    note: 'Cohort',
     width: '44%',
+    bg: 'var(--brand-primary)',
+  },
+  {
+    value: '97',
+    label: 'Admitted to\nthe cohort 2',
+    note: 'Cohort',
+    width: '31%',
     bg: 'var(--brand-primary)',
   },
 ];
 
 export const EMPLOYMENT_CARD = {
   title: 'Training completion and employment',
-  percentage: '89%',
-  subtext: 'In paid work',
+  percentage: '417%',
   breakdown: [
     { value: '86', label: 'In paid work' },
     { value: '11', label: 'In advanced training' },

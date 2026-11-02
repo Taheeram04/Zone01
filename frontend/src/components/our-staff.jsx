@@ -23,19 +23,73 @@ import staff10 from '../assets/010 Lydiah.webp';
  * pulses a soft brand-blue glow, echoing the reference "3D Glowing Card
  * Carousel" effect. Autoplay advances one card every AUTOPLAY_MS and pauses
  * while hovered or off-screen.
+ *
+ * The photo cards keep their original 4:5 presentation. The card at the front
+ * widens to the right, keeping its photo on the left and showing the staff
+ * member's name, role and bio in a details panel beside it.
  */
 
 const STAFF = [
-  { name: 'Dorcas', src: staff01 },
-  { name: 'Caleb', src: staff02 },
-  { name: 'Torsten', src: staff03 },
-  { name: 'Paul', src: staff04 },
-  { name: 'Alpha', src: staff05 },
-  { name: 'Bellah', src: staff06 },
-  { name: 'Rodgers', src: staff07 },
-  { name: 'Deril', src: staff08 },
-  { name: 'Daisy', src: staff09 },
-  { name: 'Lydiah', src: staff10 },
+  {
+    name: 'Dorcas Owinoh',
+    role: 'Co-Executive Director',
+    bio: 'Co-leads Zone01 Kisumu and its mission to widen access to digital skills.',
+    src: staff01,
+  },
+  {
+    name: 'Caleb Nyoiro',
+    role: 'Co-Executive Director',
+    bio: 'Co-leads Zone01 Kisumu, focused on inclusive digital transformation and talent.',
+    src: staff02,
+  },
+  {
+    name: 'Torsten Kremser',
+    role: 'Director Partnerships',
+    bio: 'Connects Zone01 talent with employers and industry partners.',
+    src: staff03,
+  },
+  {
+    name: 'Paul Oguda',
+    role: 'Head of Tech',
+    bio: 'Leads the technical programme and hands-on learner projects.',
+    src: staff04,
+  },
+  {
+    name: 'Alpha Omondi',
+    role: 'Tech Mentor (Bocal Team)',
+    bio: 'Supports technical delivery and apprentice progress on campus.',
+    src: staff05,
+  },
+  {
+    name: 'Bellah Oyucho',
+    role: 'Tech Mentor (Bocal Team)',
+    bio: 'Supports technical delivery and apprentice progress on campus.',
+    src: staff06,
+  },
+  {
+    name: 'Rodgers Kaunda',
+    role: 'Tech Mentor (Bocal Team)',
+    bio: 'Supports technical delivery and apprentice progress on campus.',
+    src: staff07,
+  },
+  {
+    name: 'Deril Okoth',
+    role: 'Communications Lead',
+    bio: 'Leads communications and shares happenings from the Zone01 community.',
+    src: staff08,
+  },
+  {
+    name: 'Daisy Achieng',
+    role: 'Communications Associate',
+    bio: 'Supports communications and community details.',
+    src: staff09,
+  },
+  {
+    name: 'Lydiah Ojowi',
+    role: 'Finance Manager',
+    bio: 'Oversees finance and keeps campus programmes running.',
+    src: staff10,
+  },
 ];
 
 /** How long each focal card holds before the next one slides in (ms). */
@@ -64,7 +118,7 @@ const OurStaff = () => {
 
   const count = STAFF.length;
 
-  // Autoplay: one step at a time, only while visible, hovered-off and motion is OK.
+  // Autoplay: one step at a time, only while visible, not hovered and motion is OK.
   useEffect(() => {
     if (reduced || !inView || paused) return undefined;
     const timer = window.setTimeout(
@@ -81,19 +135,16 @@ const OurStaff = () => {
       ref={sectionRef}
       data-nav-theme="dark"
       aria-labelledby="our-staff-title"
-      className="relative w-full overflow-hidden bg-secondary py-16 md:py-24"
+      className="relative w-full overflow-hidden bg-primary pb-10 pt-10 md:pb-14 md:pt-14"
     >
-      {/* Ambient glow behind the stage */}
+      {/* Ambient glow behind the stage — mirrors the talent-request section */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[min(80vw,560px)] w-[min(80vw,560px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/25 blur-[130px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[min(80vw,560px)] w-[min(80vw,560px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-[130px]"
       />
 
       <Container className="relative">
         <div className="mb-10 text-center md:mb-14">
-          <p className="mb-2 font-mono text-body-s uppercase tracking-[0.25em] text-blob-blue">
-            &lt; Our People &gt;
-          </p>
           <KineticHeading
             as="h2"
             id="our-staff-title"
@@ -118,22 +169,25 @@ const OurStaff = () => {
             const isActive = offset === 0;
             const hidden = abs > VISIBLE_RANGE;
             const pulse = isActive && !reduced;
+            const open = isActive;
 
             return (
               <motion.button
                 key={member.name}
                 type="button"
                 onClick={() => setActive(i)}
-                aria-label={`Show staff member ${member.name}`}
+                onMouseEnter={() => setActive(i)}
+                onFocus={() => setActive(i)}
+                aria-label={`Show ${member.name}, ${member.role}`}
                 aria-pressed={isActive}
                 aria-hidden={hidden || undefined}
                 tabIndex={isActive ? 0 : -1}
-                className="group relative block cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-[#0b1a26] outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                className="group relative flex cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-[#0b1a26] text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
                 style={{
                   gridArea: '1 / 1',
-                  width: 'clamp(175px, 44vw, 290px)',
-                  aspectRatio: '4 / 5',
-                  zIndex: 100 - abs,
+                  width: open ? 'min(660px, 92vw)' : 'clamp(175px, 44vw, 290px)',
+                  transition: 'width 520ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: open ? 150 : 100 - abs,
                   pointerEvents: hidden ? 'none' : 'auto',
                 }}
                 animate={{
@@ -155,20 +209,50 @@ const OurStaff = () => {
                     : { duration: 0.4, ease: 'easeOut' },
                 }}
               >
-                <img
-                  src={member.src}
-                  alt={member.name}
-                  draggable="false"
-                  loading="lazy"
-                  className="h-full w-full object-cover object-top"
-                />
+                {/* Photo — fixed size, so the card widens to the right of it */}
+                <div
+                  className="relative shrink-0 overflow-hidden"
+                  style={{
+                    width: 'clamp(175px, 44vw, 290px)',
+                    aspectRatio: '4 / 5',
+                  }}
+                >
+                  <img
+                    src={member.src}
+                    alt={member.name}
+                    draggable="false"
+                    loading="lazy"
+                    className="h-full w-full object-cover object-top"
+                  />
 
-                {/* Name plate */}
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-4 pt-12 text-left">
-                  <span className="block font-sans text-base font-black uppercase tracking-tight text-white">
-                    {member.name}
+                  {/* Name plate — kept on the photo for the cards riding behind */}
+                  <span
+                    aria-hidden={open || undefined}
+                    className={`pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-4 pt-12 text-left transition-opacity duration-300 ${
+                      open ? 'opacity-0' : 'opacity-100'
+                    }`}
+                  >
+                    <span className="block font-sans text-base font-black uppercase tracking-tight text-white">
+                      {member.name}
+                    </span>
                   </span>
-                </span>
+                </div>
+
+                {/* Bio data — displayed beside the photo while this card is in front */}
+                {open && (
+                  <div className="flex min-w-0 flex-1 flex-col justify-center overflow-hidden px-4 py-5 pr-8 sm:px-6 sm:pr-10">
+                    <span className="font-sans text-lg font-black leading-snug tracking-tight text-white sm:text-xl">
+                      {member.name}
+                    </span>
+                    <span className="mt-2 h-px w-8 bg-primary" aria-hidden="true" />
+                    <span className="mt-3 font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-blob-blue sm:text-xs">
+                      {member.role}
+                    </span>
+                    <span className="mt-3 font-sans text-[13px] leading-relaxed text-white/70 sm:text-sm">
+                      {member.bio}
+                    </span>
+                  </div>
+                )}
               </motion.button>
             );
           })}

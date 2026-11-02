@@ -64,10 +64,10 @@ const WhyOurCampus = () => {
   const [openFeature, setOpenFeature] = useState(0);
 
   return (
-    <section data-nav-theme="light" className="relative w-full bg-campus-bg pb-16 pt-8 md:pb-28 md:pt-14 overflow-hidden">
+    <section data-nav-theme="light" className="relative w-full bg-campus-bg pb-6 pt-0 md:pb-8 md:pt-0 overflow-hidden">
       <Container>
         {/* Incomplete rectangle border framing the whole section */}
-        <div className="relative px-6 sm:px-10 md:px-14 pb-12 pt-6 md:pb-16 md:pt-10">
+        <div className="relative px-6 sm:px-10 md:px-14 pb-8 pt-4 md:pb-10 md:pt-6">
           {/* Subtle Corner Brackets Framing the Section */}
           <div className="absolute top-0 left-0 pointer-events-none p-1">
             <svg

@@ -7,17 +7,28 @@ import { HEADLINE_STATS } from '../../data/impact';
 
 const findStat = (label) => HEADLINE_STATS.find((stat) => stat.label === label) || { value: '', label: '', note: '' };
 
-const EMPLOYMENT = findStat('Employment rate');
-const PAID = findStat('Apprentices and graduates in paid work');
-const SPEED = findStat('Median time to employment after graduation');
-const COHORT = findStat('Inaugural cohort apprentices');
-const DEMAND = findStat('Applications received');
+const EARNINGS =
+  HEADLINE_STATS.find((stat) => stat.label.toLowerCase().includes('earnings')) ||
+  { value: '417%', label: 'in apprentice earnings', note: '' };
+// const PAID = findStat('Apprentices and graduates in paid work');
+// const SPEED = findStat('Median time to employment after graduation');
+// const COHORT = findStat('Inaugural cohort apprentices');
+// const DEMAND = findStat('Applications received');
 const MONTHLY = findStat('Average monthly income');
 const ANNUAL = findStat('Average annual income');
 const TOP = findStat('Top monthly income');
-const WOMEN = findStat('Earning more than USD 2,300 per month');
+const WOMEN_COHORTS = [
+  { label: 'Cohort 1', value: 17 },
+  { label: 'Cohort 2', value: 36 },
+  { label: 'Cohort 3', value: 45 },
+];
+const WOMEN_TOTAL = WOMEN_COHORTS.reduce((sum, cohort) => sum + cohort.value, 0);
+const WOMEN_MAX = Math.max(...WOMEN_COHORTS.map((cohort) => cohort.value));
 
 function BentoRing({ value, inView }) {
+  const safeValue = Number.isFinite(value) ? value : 0;
+  const progress = Math.min(100, Math.max(0, safeValue));
+
   return (
     <div className="hb-ring" aria-hidden="true">
       <svg viewBox="0 0 160 160">
@@ -28,18 +39,19 @@ function BentoRing({ value, inView }) {
           r="66"
           className="hb-ring-value"
           initial={{ strokeDashoffset: 2 * Math.PI * 66 }}
-          whileInView={{ strokeDashoffset: 2 * Math.PI * 66 * (1 - value / 100) }}
+          whileInView={{ strokeDashoffset: 2 * Math.PI * 66 * (1 - progress / 100) }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 1.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />
       </svg>
       <span className="hb-ring-label">
-        <CountUp value={`${value}%`} inView={inView} delay={0.3} duration={1.4} />
+        <CountUp value={`${safeValue}%`} inView={inView} delay={0.3} duration={1.4} />
       </span>
     </div>
   );
 }
 
+/*
 function Dots() {
   return (
     <div className="hb-dots" aria-hidden="true">
@@ -49,6 +61,7 @@ function Dots() {
     </div>
   );
 }
+*/
 
 export default function HeadlineBento() {
   const gridRef = useRef(null);
@@ -70,17 +83,16 @@ export default function HeadlineBento() {
           <span className="hb-badge"><i className="hb-dot-mint" />Primary metric</span>
         </div>
         <div className="hb-key-body">
-          <BentoRing value={parseInt(EMPLOYMENT.value, 10)} inView={inView} />
-          <h3 className="hb-card-title">Employment rate</h3>
-          <p className="hb-card-sub">In paid work</p>
+          <BentoRing value={parseInt(EARNINGS.value, 10)} inView={inView} />
+          <h3 className="hb-card-title">Increase in apprentice earnings</h3>
         </div>
         <ul className="hb-key-list">
-          <li><i className="hb-dot-mint" /><strong>89%</strong> in paid work (86 apprentices)</li>
-          <li><i className="hb-dot-mint" /><strong>11%</strong> in training (11 apprentices)</li>
+          <li><i className="hb-dot-mint" /><strong>90%</strong> in paid work (154 apprentices)</li>
+          <li><i className="hb-dot-mint" /><strong>34%</strong> currently in training or selected for Cohort 3 (112 apprentices)</li>
         </ul>
       </motion.article>
 
-      {/* Placement — dot matrix */}
+      {/* Placement — dot matrix (commented out)
       <motion.article className="hb-card hb-placement" {...card(1)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Placement</span>
@@ -92,8 +104,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{PAID.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Speed — weeks to hire slider */}
+      {/* Speed — weeks to hire slider (commented out)
       <motion.article className="hb-card hb-speed" {...card(2)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Speed</span>
@@ -114,8 +127,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{SPEED.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Cohort — dashed ring */}
+      {/* Cohort — dashed ring (commented out)
       <motion.article className="hb-card hb-cohort" {...card(3)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow hb-eyebrow--primary">Cohort</span>
@@ -128,8 +142,9 @@ export default function HeadlineBento() {
           <p className="hb-caption">{COHORT.label}</p>
         </div>
       </motion.article>
+      */}
 
-      {/* Demand — applications arc */}
+      {/* Demand — applications arc (commented out)
       <motion.article className="hb-card hb-card--blue hb-demand" {...card(4)}>
         <div className="hb-card-top">
           <span className="hb-eyebrow">Demand</span>
@@ -147,6 +162,7 @@ export default function HeadlineBento() {
           <p className="hb-caption hb-caption--light">{DEMAND.label}</p>
         </div>
       </motion.article>
+      */}
 
       {/* Income — three income outcomes */}
       <motion.article className="hb-card hb-income" {...card(5)}>
@@ -156,42 +172,53 @@ export default function HeadlineBento() {
         </div>
         <div className="hb-income-grid">
           <div>
-            <div className="hb-income-label">Average monthly</div>
-            <div className="hb-income-value">{MONTHLY.value}</div>
+            <div className="hb-income-label">Average monthly income</div>
+            <div className="hb-income-value">{630}</div>
             <p className="hb-caption">{MONTHLY.note}</p>
           </div>
           <div>
-            <div className="hb-income-label">Average annual</div>
+            <div className="hb-income-label">Average annual income</div>
             <div className="hb-income-value">{ANNUAL.value}</div>
             <p className="hb-caption">{ANNUAL.note}</p>
           </div>
           <div>
-            <div className="hb-income-label">Top monthly</div>
+            <div className="hb-income-label">Top monthly earner</div>
             <div className="hb-income-value hb-income-value--accent">{TOP.value}</div>
             <p className="hb-caption">{TOP.note}</p>
           </div>
         </div>
       </motion.article>
 
-      {/* Gender equity */}
-      <motion.article className="hb-card hb-card--blue hb-gender" {...card(6)}>
+      {/* Women — cohort distribution */}
+      <motion.article className="hb-card hb-card--blue hb-gender hb-women" {...card(6)}>
         <div className="hb-card-top">
-          <span className="hb-eyebrow">Gender equity</span>
-          <span className="hb-badge"><i className="hb-dot-mint" />Top 2%</span>
+          <span className="hb-eyebrow">Women</span>
+          <span className="hb-badge"><i className="hb-dot-mint" />By cohort</span>
         </div>
-        <div className="hb-people" aria-hidden="true">
-          <span className="hb-person">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>
-            <i className="hb-dot-mint" />
-          </span>
-          <span className="hb-person">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>
-            <i className="hb-dot-mint" />
-          </span>
+        <div
+          className="hb-women-chart"
+          role="img"
+          aria-label={`Women per cohort: ${WOMEN_COHORTS.map((cohort) => `${cohort.label}, ${cohort.value}`).join('; ')}.`}
+        >
+          {WOMEN_COHORTS.map((cohort, index) => (
+            <div className="hb-women-bar" key={cohort.label}>
+              <span className="hb-women-value">{cohort.value}</span>
+              <div className="hb-women-track">
+                <motion.div
+                  className="hb-women-fill"
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${(cohort.value / WOMEN_MAX) * 100}%` }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.9, delay: 0.15 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </div>
+              <span className="hb-women-label">{cohort.label}</span>
+            </div>
+          ))}
         </div>
         <div className="hb-card-foot">
-          <div className="hb-stat hb-stat--light">{WOMEN.value}</div>
-          <p className="hb-caption hb-caption--light">{WOMEN.label}</p>
+          <div className="hb-stat hb-stat--light">{WOMEN_TOTAL}</div>
+          <p className="hb-caption hb-caption--light">Women across cohorts 1–3</p>
         </div>
       </motion.article>
     </div>

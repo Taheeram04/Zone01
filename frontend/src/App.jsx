@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/layout.jsx';
 import Home from './pages/Home.jsx';
 
@@ -10,9 +10,7 @@ const About = lazy(() => import('./pages/About.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Hire = lazy(() => import('./pages/Hire.jsx'));
 const Impact = lazy(() => import('./pages/Impact.jsx'));
-const Community = lazy(() => import('./components/community.jsx'));
-const OurStaff = lazy(() => import('./components/our-staff.jsx'));
-const CommunityFeed = lazy(() => import('./components/community-feed.jsx'));
+const Community = lazy(() => import('./pages/Community.jsx'));
 const Faqs = lazy(() => import('./components/faqs.jsx'));
 const ComingSoon = lazy(() => import('./components/coming-soon.jsx'));
 
@@ -26,9 +24,24 @@ const RouteFallback = () => (
   </div>
 );
 
+function ScrollToTopOnNavigate() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
-    <Suspense fallback={<RouteFallback />}>
+    <>
+      <ScrollToTopOnNavigate />
+      <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route
           path="/"
@@ -51,14 +64,12 @@ function App() {
           }
         />
 
-        {/* Community — partners hero, 3D staff carousel + news/event/blog/podcast feed */}
+        {/* Community — hero, partner directory, 3D staff carousel + community feed */}
         <Route
           path="/community"
           element={
             <Layout>
               <Community />
-              <OurStaff />
-              <CommunityFeed />
             </Layout>
           }
         />
@@ -106,6 +117,7 @@ function App() {
         ))}
       </Routes>
     </Suspense>
+    </>
   );
 }
 

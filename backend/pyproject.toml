@@ -1,0 +1,15 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "DJ", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Prose content for the FAQ knowledge base: the long text lines are intentional.
+"content/faq_data.py" = ["E501"]
+"content/faq_data_sw.py" = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"

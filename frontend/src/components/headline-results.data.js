@@ -7,7 +7,7 @@
  */
 export const HEADLINE_DATA = {
   header: {
-    title: 'Headline results.',
+    title: 'Headline results',
     dateBadge: 'As of August 2026',
   },
   cards: [

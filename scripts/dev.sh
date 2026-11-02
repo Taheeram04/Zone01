@@ -7,7 +7,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-backend="$root/Zone01web/backend"
+backend="$root/backend"
 frontend="$root/frontend"
 
 if [[ ! -x "$backend/.venv/bin/python" ]]; then

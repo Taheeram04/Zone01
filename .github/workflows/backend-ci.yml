@@ -4,16 +4,16 @@ on:
   push:
     branches: [main]
     paths:
-      - "Zone01web/backend/**"
+      - "backend/**"
       - ".github/workflows/backend-ci.yml"
   pull_request:
     paths:
-      - "Zone01web/backend/**"
+      - "backend/**"
       - ".github/workflows/backend-ci.yml"
 
 defaults:
   run:
-    working-directory: Zone01web/backend
+    working-directory: backend
 
 jobs:
   test:
@@ -50,8 +50,8 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: |
-            Zone01web/backend/requirements.txt
-            Zone01web/backend/requirements-dev.txt
+            backend/requirements.txt
+            backend/requirements-dev.txt
 
       - name: Install dependencies
         run: pip install -r requirements-dev.txt

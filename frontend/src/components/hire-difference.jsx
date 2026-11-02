@@ -46,7 +46,7 @@ const HireDifference = () => (
           variants={item}
           className="font-sans text-[1.875rem] font-black leading-[1.1] tracking-[-0.02em] text-secondary sm:text-section-headline"
         >
-          Why Zone01 engineers are different
+          Why Zone01 Kisumu engineers are different
         </motion.h2>
 
         <motion.p
@@ -56,13 +56,7 @@ const HireDifference = () => (
           Selected on potential. Proven on performance.
         </motion.p>
 
-        <motion.p
-          variants={item}
-          className="mx-auto mt-5 max-w-2xl font-sans text-body-m leading-relaxed text-black-900/65"
-        >
-          No lectures, no certificates to hide behind. Engineers earn their
-          progress by shipping work that survives peer review, then defend it.
-        </motion.p>
+    
       </motion.div>
 
       <motion.ul
