@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Container } from './layout.jsx';
-import chichwaImg from '../assets/Chichwa.png';
+import chichwaImg from '../assets/Chichwa.webp';
 import olpsKenyaImg from '../assets/projects/olps-kenya.webp';
 import bongoHubImg from '../assets/projects/bongohub.webp';
 import algocdkImg from '../assets/projects/algocdk.webp';

@@ -126,8 +126,12 @@ const HireOptions = () => (
       >
         <div className="flex flex-col items-center gap-3 text-center">
           <h3 className="font-sans text-cta-headline font-black tracking-tight text-secondary">
-            Engage with our talent.
+            Engage with our talent
           </h3>
+          <p className="mx-auto max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
+            Start with a single hire or build a long-term pipeline. Every route
+            begins with the same thing: a clear brief.
+          </p>
         </div>
 
         <motion.ol
