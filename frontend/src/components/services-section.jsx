@@ -99,7 +99,7 @@ const ServicesSection = ({ services }) => {
             <div
               role="tablist"
               aria-label="Our services"
-              className="grid grid-cols-2 border-b border-white/20 md:grid-cols-5"
+              className="grid grid-cols-2 border-b border-white/20 md:grid-cols-4"
             >
               {services.map((service, index) => {
                 const selected = index === safeActive;
