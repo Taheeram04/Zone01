@@ -14,7 +14,7 @@
   width: 100%;
   overflow: hidden;
   background: #cce0fe;
-  padding: clamp(3.5rem, 8vw, 6.5rem) 0;
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(3.5rem, 8vw, 6.5rem);
 }
 
 /* The powder-blue field with its soft mint accents. */

@@ -3,7 +3,7 @@ export const IMPACT_HERO = {
   headlinePart1: 'Our',
   headlinePart2: 'impact',
   body: "Eighty-six of our first 97 apprentices are now in paid tech work, and the median graduate found a first paid role in about six weeks. That's an 89% employment rate from 28,000+ applicants — measured, dated and defined.",
-  cta1: { label: 'Read the stories', href: '#stories' },
+  cta1: { label: 'Download our Impact Reports', href: '#impact-reports' },
   cta2: { label: 'Hire our talent', href: '/hire' },
   photoAlt: 'cohort working at Lake Basin Mall',
   tagline: 'Results, not rhetoric',
@@ -20,9 +20,9 @@ export const HEADLINE_STATS = [
   { value: '417%', label: 'in apprentice earnings', },
   { value: '~2 weeks', label: 'Median time to employment after graduation', note: 'To first paid engagement' },
   { value: '35,891', label: 'Applications received', note: 'Open to anyone — no credentials required' },
-  { value: 'USD 630', label: 'Average monthly income', note: 'Approximately USD 7,560 per year' },
-  { value: 'USD 7,560', label: 'Average annual income', note: 'Annual, not monthly' },
-  { value: 'USD 2,533', label: 'Top monthly income', note: 'Among top earners' },
+  { value: 'USD 630', label: 'Average monthly income'},
+  { value: 'USD 7,560', label: 'Average annual income'},
+  { value: 'USD 2,533', label: 'Top monthly income'},
   { value: '2 women', label: 'Earning more than USD 2,300 per month', note: 'Reported gross monthly income' },
 ];
 

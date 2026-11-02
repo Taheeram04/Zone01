@@ -8,8 +8,8 @@ import whoIsItFor1 from '../assets/whoisitfor1.webp';
 import whoIsItFor1Small from '../assets/whoisitfor1-700.webp';
 import whoIsItFor2 from '../assets/whoisitfor2.webp';
 import whoIsItFor2Small from '../assets/whoisitfor2-360.webp';
-import aokutu from '../assets/aokutu.JPG';
-import aokutuSmall from '../assets/aokutu-360.JPG';
+import aokutu from '../assets/aokutu.webp';
+import aokutuSmall from '../assets/aokutu-360.webp';
 
 const targetAudience = [
   {
@@ -71,7 +71,7 @@ const WhoIsItFor = () => {
   const { trackRef, index, handleScroll, goTo } = useSnapCarousel(targetAudience.length);
 
   return (
-    <section data-nav-theme="light" className="relative w-full bg-white py-16 md:py-24 overflow-hidden">
+    <section data-nav-theme="light" className="relative w-full bg-white pt-6 pb-8 md:pt-8 md:pb-12 overflow-hidden">
       <Container className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">

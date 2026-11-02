@@ -181,7 +181,7 @@ FAQ_TRANSLATIONS_SW = {
     },
     "How can I contact the Zone01 team?": {
         "question": "Ninawezaje kuwasiliana na timu ya Zone01?",
-        "answer": "Tuma barua pepe kwa info@zone01kisumu.ke na timu itakujibu. Kwa maswali kuhusu maombi, tumia portal ya Join us kwenye learn.zone01kisumu.ke. Kwa masuala ya kuajiri au ushirikiano, tuma barua pepe kwa Torsten@lakehub.co.ke.",
+        "answer": "Tuma barua pepe kwa info@zone01kisumu.ke na timu itakujibu. Kwa maswali kuhusu maombi, tumia portal ya Join us kwenye learn.zone01kisumu.ke. Kwa masuala ya kuajiri au ushirikiano, tuma barua pepe kwa talent@zone01kisumu.ke.",
         "keywords": "mawasiliano, wasiliana na wewe, barua pepe, barua pepe, barua pepe yako, anwani, nambari ya simu, wasiliana nawe, zungumza na mtu, binadamu, msaada, wasiliana, barua pepe, simu, msaada, mawasiliano",
     },
     "Where is the Zone01 Kisumu campus?": {
@@ -271,12 +271,12 @@ FAQ_TRANSLATIONS_SW = {
     },
     "How can I hire Zone01 talent?": {
         "question": "Ninawezaje kuajiri talanta ya Zone01?",
-        "answer": "Tembelea ukurasa wa Hire Talent kwenye zone01kisumu.ke au barua pepe Torsten@lakehub.co.ke na jukumu unaloajiri. Unaweza pia kutuma ujumbe kwa timu ya vipaji kwenye WhatsApp kwa wa.me/254748902779.",
+        "answer": "Tembelea ukurasa wa Hire Talent kwenye zone01kisumu.ke au barua pepe talent@zone01kisumu.ke na jukumu unaloajiri. Unaweza pia kutuma ujumbe kwa timu ya vipaji kwenye WhatsApp kwa wa.me/254748902779.",
         "keywords": "kuajiri vipaji, mwajiri, kuajiri, kuajiri watengenezaji, kuajiri, ajira",
     },
     "How can I partner with or support Zone01?": {
         "question": "Je, ninawezaje kushirikiana na au kuunga mkono Zone01?",
-        "answer": "Tungependa kusikia kutoka kwako. Tuma barua pepe kwa info@zone01kisumu.ke au Torsten@lakehub.co.ke kwa ushirikiano, ufadhili au mazungumzo ya kukodisha.",
+        "answer": "Tungependa kusikia kutoka kwako. Tuma barua pepe kwa info@zone01kisumu.ke au talent@zone01kisumu.ke kwa ushirikiano, ufadhili au mazungumzo ya kukodisha.",
         "keywords": "mshirika, ushirikiano, mfadhili, changia, eneo la usaidizi01, ushirikiano, ushirikiano, kuchangia, msaada",
     },
 }

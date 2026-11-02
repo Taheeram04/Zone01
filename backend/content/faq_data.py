@@ -531,7 +531,7 @@ FAQ_SEED = [
                 "answer": (
                     "Email info@zone01kisumu.ke and the team will get back to you. For application "
                     "questions, use the Join us portal at learn.zone01kisumu.ke. For hiring or "
-                    "partnership enquiries, email Torsten@lakehub.co.ke."
+                    "partnership enquiries, email talent@zone01kisumu.ke."
                 ),
                 "keywords": "contact, contact you, email, email address, your email, address, "
                 "phone number, reach you, talk to someone, human, support, wasiliana, barua pepe, "
@@ -716,7 +716,7 @@ FAQ_SEED = [
             {
                 "question": "How can I hire Zone01 talent?",
                 "answer": (
-                    "Visit the Hire Talent page on zone01kisumu.ke or email Torsten@lakehub.co.ke "
+                    "Visit the Hire Talent page on zone01kisumu.ke or email talent@zone01kisumu.ke "
                     "with the role you are hiring for. You can also message the talent team on "
                     "WhatsApp at wa.me/254748902779."
                 ),
@@ -726,7 +726,7 @@ FAQ_SEED = [
                 "question": "How can I partner with or support Zone01?",
                 "answer": (
                     "We would love to hear from you. Email info@zone01kisumu.ke or "
-                    "Torsten@lakehub.co.ke for partnership, sponsorship or hiring conversations."
+                    "talent@zone01kisumu.ke for partnership, sponsorship or hiring conversations."
                 ),
                 "keywords": "partner, partnership, sponsor, donate, support zone01, collaborate, "
                 "ushirikiano, kuchangia, msaada",

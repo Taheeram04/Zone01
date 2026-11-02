@@ -11,11 +11,13 @@ import {
   FaPlay,
 } from 'react-icons/fa6';
 import { Container } from './layout.jsx';
-import { KineticHeading } from './whocanapply.jsx';
 import StoryDialog from './story-dialog.jsx';
+import podcastCover from '../assets/Podcast.webp';
 import { plainText } from '../lib/plain-text.js';
 import { SOCIAL_LINKS, socialByKey } from '../social.js';
-import communityHeroImg from '../assets/community-hero.webp';
+
+const PODCAST_PLAYLIST_URL =
+  'https://youtube.com/playlist?list=PLrqp13m-1b2HjFPL9IaASYv2MhbPgbC25&si=4keocD_7bRFOcisP';
 
 /*
  * "Community Hub" — the four content streams that live under Our Staff.
@@ -62,52 +64,6 @@ const GROUPS = [
     accent: '#F59E0B',
   },
 ];
-
-// Shown in development when the API cannot be reached, so the section is never
-// blank while editors are still filling the CMS.
-const FALLBACK = {
-  news: [
-    {
-      id: 1,
-      title: 'US Embassy delegation visits Zone01 Kisumu',
-      summary: 'Partners toured the campus and met our learners building real products.',
-      image: communityHeroImg,
-      platform: 'linkedin',
-      external_url: 'https://www.linkedin.com/company/zone01kisumu/',
-      published_at: '2026-09-28T09:00:00+03:00',
-    },
-  ],
-  event: [
-    {
-      id: 2,
-      title: 'Piscine #7 kick-off',
-      summary: 'Four weeks of peer-to-peer immersion start on campus.',
-      platform: 'instagram',
-      external_url: 'https://www.instagram.com/zone01_kisumu/',
-      event_date: '2026-11-02T09:00:00+03:00',
-      published_at: '2026-09-20T09:00:00+03:00',
-    },
-  ],
-  blog: [
-    {
-      id: 3,
-      title: 'Why peer learning beats lectures',
-      summary: 'How collaboration turns raw potential into job-ready engineers.',
-      platform: 'website',
-      published_at: '2026-09-10T09:00:00+03:00',
-    },
-  ],
-  podcast: [
-    {
-      id: 4,
-      title: 'Voices of Zone01 — Episode 1',
-      summary: 'Learners and coaches on the mindset it takes to finish the Piscine.',
-      video_url: 'https://www.youtube.com/@Zone01Kisumu',
-      platform: 'youtube',
-      published_at: '2026-09-01T09:00:00+03:00',
-    },
-  ],
-};
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -334,6 +290,61 @@ const GroupRow = ({ group, posts, open, onToggle, reduced, onReadMore }) => {
   );
 };
 
+const PodcastFeature = () => (
+  <motion.a
+    href={PODCAST_PLAYLIST_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Watch the In The Zone Podcast playlist on YouTube"
+    initial={{ opacity: 0, y: 24 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.25 }}
+    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    className="group relative mb-8 grid overflow-hidden rounded-3xl border border-white/20 bg-primary text-white shadow-[0_24px_70px_-24px_rgba(9,44,62,0.55)] md:mb-10 lg:grid-cols-[360px_minmax(0,1fr)]"
+  >
+    <div className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-[#06182E] p-4 sm:p-6 lg:min-h-[420px]">
+      <img
+        src={podcastCover}
+        alt="In The Zone Podcast, Episode 2 — Accelerating Action"
+        className="mx-auto block w-full max-w-[320px] rounded-2xl object-contain shadow-[0_20px_45px_-18px_rgba(0,0,0,0.8)] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      />
+      <span className="absolute left-5 top-5 rounded-full bg-[#F59E0B] px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">
+        Latest episode
+      </span>
+    </div>
+
+    <div className="relative flex flex-col justify-center gap-4 p-6 sm:p-8 lg:p-10">
+      <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#F59E0B]">
+        <FaMicrophone className="h-3.5 w-3.5" aria-hidden="true" />
+        In The Zone Podcast
+      </span>
+
+      <h3 className="max-w-xl font-sans text-[26px] font-black leading-tight tracking-tight text-white sm:text-[32px]">
+        Accelerating Action
+        <span className="block pt-1 font-mono text-sm font-medium uppercase tracking-[0.14em] text-white/55">
+          Episode 2 · Hosted by Cynthia Oyango
+        </span>
+      </h3>
+
+      <p className="max-w-xl font-sans text-sm leading-relaxed text-white/70 sm:text-base">
+        Real conversations with the builders, mentors and partners behind Zone01
+        Kisumu — from first commit to first job and everything in between.
+      </p>
+
+      <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <span className="inline-flex items-center gap-2.5 rounded-full bg-[#F59E0B] px-5 py-3 font-sans text-sm font-bold text-secondary shadow-[0_10px_30px_-10px_rgba(245,158,11,0.8)] transition-transform duration-300 group-hover:translate-x-1">
+          <FaPlay className="ml-0.5 h-3.5 w-3.5" aria-hidden="true" />
+          Watch the playlist
+        </span>
+        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/50">
+          <FaArrowUpRightFromSquare className="h-3 w-3" aria-hidden="true" />
+          Opens on YouTube
+        </span>
+      </div>
+    </div>
+  </motion.a>
+);
+
 const CommunityFeed = () => {
   const [groups, setGroups] = useState(null);
   const [streams, setStreams] = useState(null);
@@ -367,9 +378,9 @@ const CommunityFeed = () => {
         setStreams(Array.isArray(payload.streams) ? payload.streams : null);
       } catch (error) {
         if (error?.name === 'AbortError') return;
-        // Keep the last good payload; in development fall back to samples so
-        // the design is visible without the backend running.
-        setGroups((prev) => prev ?? (import.meta.env.DEV ? FALLBACK : null));
+        // Keep the last good payload; otherwise leave the section empty until
+        // the CMS loads instead of showing sample posts.
+        setGroups((prev) => prev ?? null);
       }
     };
 
@@ -411,29 +422,13 @@ const CommunityFeed = () => {
       ref={sectionRef}
       id="community-hub"
       data-nav-theme="light"
-      aria-labelledby="community-hub-title"
+      aria-label="Community Hub"
       className="relative w-full overflow-hidden bg-white py-16 md:py-24"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       <Container className="relative">
-        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-          <KineticHeading
-            as="h2"
-            id="community-hub-title"
-            text="Community Hub"
-            className="font-sans font-black leading-tight tracking-tight text-secondary text-[30px] md:text-section-headline"
-          />
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-black-900/65 sm:text-base"
-          >
-            The latest news, events, blog posts and podcast episodes from the
-            Zone01 Kisumu community.
-          </motion.p>
-        </div>
+        <PodcastFeature />
 
         {/* Group accordion — only active streams with posts are shown */}
         {resolved.length > 0 && (
