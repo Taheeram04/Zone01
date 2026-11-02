@@ -12,8 +12,12 @@ import {
 } from 'react-icons/fa6';
 import { Container } from './layout.jsx';
 import StoryDialog from './story-dialog.jsx';
+import podcastCover from '../assets/Podcast.webp';
 import { plainText } from '../lib/plain-text.js';
 import { SOCIAL_LINKS, socialByKey } from '../social.js';
+
+const PODCAST_PLAYLIST_URL =
+  'https://youtube.com/playlist?list=PLrqp13m-1b2HjFPL9IaASYv2MhbPgbC25&si=4keocD_7bRFOcisP';
 
 /*
  * "Community Hub" — the four content streams that live under Our Staff.
@@ -286,6 +290,61 @@ const GroupRow = ({ group, posts, open, onToggle, reduced, onReadMore }) => {
   );
 };
 
+const PodcastFeature = () => (
+  <motion.a
+    href={PODCAST_PLAYLIST_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Watch the In The Zone Podcast playlist on YouTube"
+    initial={{ opacity: 0, y: 24 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.25 }}
+    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    className="group relative mb-8 grid overflow-hidden rounded-3xl border border-white/20 bg-primary text-white shadow-[0_24px_70px_-24px_rgba(9,44,62,0.55)] md:mb-10 lg:grid-cols-[360px_minmax(0,1fr)]"
+  >
+    <div className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-[#06182E] p-4 sm:p-6 lg:min-h-[420px]">
+      <img
+        src={podcastCover}
+        alt="In The Zone Podcast, Episode 2 — Accelerating Action"
+        className="mx-auto block w-full max-w-[320px] rounded-2xl object-contain shadow-[0_20px_45px_-18px_rgba(0,0,0,0.8)] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      />
+      <span className="absolute left-5 top-5 rounded-full bg-[#F59E0B] px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">
+        Latest episode
+      </span>
+    </div>
+
+    <div className="relative flex flex-col justify-center gap-4 p-6 sm:p-8 lg:p-10">
+      <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#F59E0B]">
+        <FaMicrophone className="h-3.5 w-3.5" aria-hidden="true" />
+        In The Zone Podcast
+      </span>
+
+      <h3 className="max-w-xl font-sans text-[26px] font-black leading-tight tracking-tight text-white sm:text-[32px]">
+        Accelerating Action
+        <span className="block pt-1 font-mono text-sm font-medium uppercase tracking-[0.14em] text-white/55">
+          Episode 2 · Hosted by Cynthia Oyango
+        </span>
+      </h3>
+
+      <p className="max-w-xl font-sans text-sm leading-relaxed text-white/70 sm:text-base">
+        Real conversations with the builders, mentors and partners behind Zone01
+        Kisumu — from first commit to first job and everything in between.
+      </p>
+
+      <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <span className="inline-flex items-center gap-2.5 rounded-full bg-[#F59E0B] px-5 py-3 font-sans text-sm font-bold text-secondary shadow-[0_10px_30px_-10px_rgba(245,158,11,0.8)] transition-transform duration-300 group-hover:translate-x-1">
+          <FaPlay className="ml-0.5 h-3.5 w-3.5" aria-hidden="true" />
+          Watch the playlist
+        </span>
+        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/50">
+          <FaArrowUpRightFromSquare className="h-3 w-3" aria-hidden="true" />
+          Opens on YouTube
+        </span>
+      </div>
+    </div>
+  </motion.a>
+);
+
 const CommunityFeed = () => {
   const [groups, setGroups] = useState(null);
   const [streams, setStreams] = useState(null);
@@ -369,6 +428,8 @@ const CommunityFeed = () => {
       onMouseLeave={() => setPaused(false)}
     >
       <Container className="relative">
+        <PodcastFeature />
+
         {/* Group accordion — only active streams with posts are shown */}
         {resolved.length > 0 && (
           <div className="mx-auto flex max-w-5xl flex-col gap-3">
