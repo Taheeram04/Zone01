@@ -1,9 +1,9 @@
 // components/impact-hero.jsx
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Container } from './layout.jsx';
-import impact1 from '../assets/impact.png';
-import impact2 from '../assets/impact2.jpeg';
-import impact3 from '../assets/impact3.jpg';
+import impact1 from '../assets/impact.webp';
+import impact2 from '../assets/impact2.webp';
+import impact3 from '../assets/impact3.webp';
 import ImpactCrossZoom from './impact-cross-zoom.jsx';
 
 /**

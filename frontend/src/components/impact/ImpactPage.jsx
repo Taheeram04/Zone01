@@ -13,7 +13,7 @@ import {
 import CountUp from './CountUp';
 import HeadlineBento from './HeadlineBento';
 import LatestReports from './LatestReports';
-import gdgBgImg from '../../assets/gdg.jpg';
+import gdgBgImg from '../../assets/gdg.webp';
 import impactBgVideo from '../../assets/Our Impact.mp4';
 import impactBgPoster from '../../assets/impact-bg-poster.webp';
 import startup1Img from '../../assets/zelani.webp';

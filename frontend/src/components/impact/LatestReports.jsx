@@ -103,7 +103,7 @@ export default function LatestReports() {
     [reports]
   );
 
-  const visibleReports = expanded ? orderedReports : orderedReports.slice(0, 6);
+  const visibleReports = expanded ? orderedReports : orderedReports.slice(0, 8);
 
   const groupedReports = useMemo(() => {
     const groups = new Map();
@@ -174,7 +174,7 @@ export default function LatestReports() {
           </div>
         ))}
 
-        {orderedReports.length > 6 ? (
+        {orderedReports.length > 8 ? (
           <div className="impact-reports-more">
             <button
               type="button"
