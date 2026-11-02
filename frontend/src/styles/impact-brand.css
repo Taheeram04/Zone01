@@ -360,6 +360,12 @@
   border-radius: 0;
 }
 
+/* Story portraits need more height than the venture banners so faces are
+   not cropped into a narrow strip. */
+.impact-page #stories .ri-story-thumbnail-wrap {
+  height: 320px;
+}
+
 .impact-page #stories .ri-story-thumbnail-wrap::after {
   content: '';
   position: absolute;
@@ -471,9 +477,11 @@
 }
 
 @media (max-width: 720px) {
-  .impact-page #startups .startup-card-banner,
-  .impact-page #stories .ri-story-thumbnail-wrap {
+  .impact-page #startups .startup-card-banner {
     height: 240px;
+  }
+  .impact-page #stories .ri-story-thumbnail-wrap {
+    height: 280px;
   }
 }
 

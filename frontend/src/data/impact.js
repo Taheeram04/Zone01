@@ -198,7 +198,7 @@ export const STORIES = [
     description: 'From struggling with simple loops to mastering Go, JavaScript, and databases, Andrew pushed through the intense Piscine, won a hackathon building a therapy app for GBV survivors, and now mentors aspiring tech talent.',
     author: 'Andrew Osindo · Apprentice & Hackathon Winner',
     imageKey: 'story-2',
-    imagePosition: 'center 20%',
+    imagePosition: 'center top',
     fullParagraphs: [
       'A year ago, programming was a mystery to Andrew Osindo — just lines of cryptic symbols that somehow made computers do incredible things. Everything changed when he was accepted into Zone01 Kisumu, marking the start of an unforgettable journey.',
       'The Piscine, an intense coding bootcamp, was his first real taste of programming, and it was brutal. With no lectures and just problems to solve, many nights were spent staring at the screen debugging errors he didn’t understand. Although he wanted to quit, he pushed through — and the first time his code worked felt like magic, fueling his passion to continue.',
@@ -219,7 +219,7 @@ export const STORIES = [
     description: 'Trapped in an uninspiring biomedical program in Chuka and an outdated university curriculum in Mombasa, Ferdynand traveled 800km to Zone01 Kisumu to master self-paced, peer-to-peer fullstack software engineering.',
     author: 'Ferdynand Odhiambo · Fullstack Developer & AI/Blockchain Enthusiast',
     imageKey: 'story-3',
-    imagePosition: 'center 20%',
+    imagePosition: 'center top',
     fullParagraphs: [
       'Ferdynand Odhiambo first walked through the gates of Chuka University in 2022 to pursue Biomedical Studies. Instead of feeling excited, he found himself filled with dread — trapped in a program he had no passion for, despite a lifelong fascination with computers since Form 3.',
       'After one semester, he initiated a transfer to the Technical University of Mombasa to pursue Computer Science. But static university curricula kept pace poorly with real-world technology, and debilitating social anxiety made traditional classrooms suffocating. Yearning to build real software with modern tools, he dropped out once again.',
