@@ -144,25 +144,14 @@ const isExternalHref = (href) => {
  * Displays a single project card with image placeholder, metadata, and hover/focus effects.
  */
 export const ProjectCard = ({ project }) => {
-  const isExternal = isExternalHref(project.href);
-  const isComingSoon = Boolean(project.comingSoon || !project.href);
-  const Card = isComingSoon ? 'div' : 'a';
-  const cardProps = isComingSoon
-    ? {}
-    : {
-        href: project.href,
-        target: isExternal ? '_blank' : undefined,
-        rel: isExternal ? 'noopener noreferrer' : undefined,
-      };
+  const isExternal = Boolean(project.href && (project.href.startsWith('http://') || project.href.startsWith('https://')));
 
   return (
-    <Card
-      {...cardProps}
-      className={`group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none ${
-        isComingSoon
-          ? 'cursor-default'
-          : 'hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2'
-      }`}
+    <a
+      href={project.href || '#'}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+      className="group relative flex flex-col h-full bg-white border border-[#D5E3F7] rounded-[6px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-[10px] hover:border-[#0063F9] hover:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:-translate-y-[10px] focus-visible:border-[#0063F9] focus-visible:shadow-[0_24px_48px_-16px_rgba(9,44,62,0.28)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 motion-reduce:transform-none motion-reduce:transition-none motion-reduce:shadow-none"
     >
       {/* Top 240px Image Area */}
       <div
