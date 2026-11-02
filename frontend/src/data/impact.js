@@ -219,7 +219,7 @@ export const STORIES = [
     description: 'Trapped in an uninspiring biomedical program in Chuka and an outdated university curriculum in Mombasa, Ferdynand traveled 800km to Zone01 Kisumu to master self-paced, peer-to-peer fullstack software engineering.',
     author: 'Ferdynand Odhiambo · Fullstack Developer & AI/Blockchain Enthusiast',
     imageKey: 'story-3',
-    imagePosition: 'center top',
+    imagePosition: 'center 8%',
     fullParagraphs: [
       'Ferdynand Odhiambo first walked through the gates of Chuka University in 2022 to pursue Biomedical Studies. Instead of feeling excited, he found himself filled with dread — trapped in a program he had no passion for, despite a lifelong fascination with computers since Form 3.',
       'After one semester, he initiated a transfer to the Technical University of Mombasa to pursue Computer Science. But static university curricula kept pace poorly with real-world technology, and debilitating social anxiety made traditional classrooms suffocating. Yearning to build real software with modern tools, he dropped out once again.',

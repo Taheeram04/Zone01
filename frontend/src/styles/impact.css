@@ -1142,7 +1142,9 @@
   position: relative;
   width: 100%;
   height: clamp(360px, 55vh, 540px);
+  flex: none;
   background: #0b1a26;
+  overflow: hidden;
 }
 
 .ri-story-modal-close {
