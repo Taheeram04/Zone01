@@ -120,11 +120,29 @@ const PROJECTS = [
 const EASE = [0.2, 0.7, 0.2, 1];
 
 /**
+ * Only absolute web URLs should open outside the site. Relative paths, hash
+ * links, mailto:, tel: and other schemes stay in the current tab.
+ */
+const isExternalHref = (href) => {
+  if (!href) return false;
+
+  try {
+    const url = new URL(href, window.location.origin);
+    return (
+      (url.protocol === 'http:' || url.protocol === 'https:') &&
+      url.origin !== window.location.origin
+    );
+  } catch {
+    return false;
+  }
+};
+
+/**
  * ProjectCard Component
  * Displays a single project card with image placeholder, metadata, and hover/focus effects.
  */
 export const ProjectCard = ({ project }) => {
-  const isExternal = Boolean(project.href && (project.href.startsWith('http://') || project.href.startsWith('https://')));
+  const isExternal = isExternalHref(project.href);
 
   return (
     <a
