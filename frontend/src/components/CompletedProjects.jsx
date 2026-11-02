@@ -338,7 +338,7 @@ export default function CompletedProjects() {
               variants={fadeUpVariants}
               className="font-sans font-black text-[#092C3E] text-[30px] md:text-section-headline leading-[1.15] tracking-tight mb-4 2xl:whitespace-nowrap"
             >
-              Real projects, built and delivered by our learners.
+              Real projects, built and delivered by our learners
             </motion.h2>
 
             {/* Section intro */}

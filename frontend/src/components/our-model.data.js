@@ -4,7 +4,7 @@
 import photo1 from '../assets/knoeus02.webp';
 import photo2 from '../assets/knowus01.webp';
 import photo3 from '../assets/knowus03.webp';
-import photo4 from '../assets/knowus04.webp';
+import photo4 from '../assets/grow.webp';
 import photo5 from '../assets/Know us.webp';
 
 export const STEPS = [
@@ -28,12 +28,9 @@ export const STEPS = [
   },
   {
     src: photo4,
-    alt: 'Three Zone01 Kisumu team members in front of the Zone01 mural',
+    alt: 'Zone01 Kisumu talent celebrating together at GopherCon Africa',
     title: 'Grow',
     text: 'Talents become highly-skilled, AI-ready, full-stack engineers.',
-    // Landscape group shot — fit the whole trio inside the circle with a
-    // blurred fill so all three individuals stay framed.
-    wide: true,
   },
   {
     src: photo5,

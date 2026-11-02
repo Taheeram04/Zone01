@@ -186,6 +186,11 @@ const OurStaff = () => {
                 style={{
                   gridArea: '1 / 1',
                   width: open ? 'min(660px, 92vw)' : 'clamp(175px, 44vw, 290px)',
+                  // Lock the height to the 4:5 photo. Without this the details
+                  // panel wraps into a very tall column while the card's width
+                  // is animating, stretching the photo into a full-height
+                  // strip for a frame.
+                  height: 'calc(clamp(175px, 44vw, 290px) * 1.25)',
                   transition: 'width 520ms cubic-bezier(0.16, 1, 0.3, 1)',
                   zIndex: open ? 150 : 100 - abs,
                   pointerEvents: hidden ? 'none' : 'auto',
@@ -215,6 +220,7 @@ const OurStaff = () => {
                   style={{
                     width: 'clamp(175px, 44vw, 290px)',
                     aspectRatio: '4 / 5',
+                    contain: 'paint',
                   }}
                 >
                   <img
@@ -222,7 +228,7 @@ const OurStaff = () => {
                     alt={member.name}
                     draggable="false"
                     loading="lazy"
-                    className="h-full w-full object-cover object-top"
+                    className="absolute inset-0 h-full w-full object-cover object-top"
                   />
 
                   {/* Name plate — kept on the photo for the cards riding behind */}

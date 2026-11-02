@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useLayoutEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/layout.jsx';
 import Home from './pages/Home.jsx';
@@ -24,14 +24,33 @@ const RouteFallback = () => (
   </div>
 );
 
+// Every page opens at the top: browsers remember the scroll offset of each
+// history entry and would otherwise drop the visitor back at the footer they
+// left on the previous page (see main.jsx, which sets scrollRestoration).
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    // Reset before the browser paints the new route. The global
+    // `scroll-behavior: smooth` (index.css) is disabled for this jump so the
+    // page starts at the top immediately instead of animating up from the
+    // footer of the previous page (an animation the route change cancels).
+    const resetScroll = () => {
+      const root = document.documentElement;
+      const previousBehavior = root.style.scrollBehavior;
+
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      root.scrollTop = 0;
+      root.style.scrollBehavior = previousBehavior;
+    };
+
+    resetScroll();
+
+    // Some browsers restore the previous offset one frame after the route
+    // commits, so reset once more when that bookkeeping is done.
+    const frame = window.requestAnimationFrame(resetScroll);
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   return null;
