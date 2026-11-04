@@ -117,7 +117,7 @@
 
 /* Stories: tighter vertical rhythm, wider canvas so cards get wider and shorter */
 .impact-page .ri-stories-section {
-  padding: 32px 0 80px;
+  padding: 8px 0 16px;
 }
 
 .impact-page .ri-stories-section .ri-stories-header {
@@ -257,7 +257,7 @@
 
 /* Ventures: centered header, wider canvas, shorter cards */
 .impact-page .impact-startups-section {
-  padding: 64px 0 80px;
+  padding: 8px 0 80px;
 }
 
 .impact-page .impact-startups-section .impact-wrap {
@@ -358,6 +358,12 @@
   position: relative;
   overflow: hidden;
   border-radius: 0;
+}
+
+/* Story portraits sit in a square frame so the subject fills the image area. */
+.impact-page #stories .ri-story-thumbnail-wrap {
+  height: auto;
+  aspect-ratio: 1 / 1;
 }
 
 .impact-page #stories .ri-story-thumbnail-wrap::after {
@@ -471,8 +477,7 @@
 }
 
 @media (max-width: 720px) {
-  .impact-page #startups .startup-card-banner,
-  .impact-page #stories .ri-story-thumbnail-wrap {
+  .impact-page #startups .startup-card-banner {
     height: 240px;
   }
 }

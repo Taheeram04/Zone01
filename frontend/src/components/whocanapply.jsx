@@ -250,7 +250,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={textContainerVariants}
-          className="w-full md:w-[58%] lg:w-[62%] pt-12 pb-8 md:py-20 lg:py-24 pl-[clamp(1.25rem,5vw,8rem)] pr-[clamp(1.25rem,3vw,2rem)]"
+          className="w-full md:w-[58%] lg:w-[62%] pt-8 pb-8 md:pt-12 md:pb-12 lg:pt-16 lg:pb-16 pl-[clamp(1.25rem,5vw,8rem)] pr-[clamp(1.25rem,3vw,2rem)]"
         >
           <div className="max-w-none">
             <KineticHeading
@@ -269,7 +269,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
               text={'From overlooked potential to\npaid employment'}
             />
 
-            <div className="space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal max-w-2xl">
+            <div className="body-copy space-y-6 font-mono font-normal text-black-900 text-base sm:text-lg md:text-[18px] lg:text-[19px] leading-[1.8] tracking-normal max-w-2xl">
               <motion.p variants={paragraphVariants}>
                 The Zone01 Kisumu digital training is open to anyone over 18 years
                 old.{' '}
@@ -293,7 +293,7 @@ const WhoCanApply = ({ image = defaultImage, className = '' }) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={imageWrapperVariants}
-          className="w-full md:w-[42%] lg:w-[38%] self-stretch flex items-center justify-end px-[clamp(1.25rem,5vw,8rem)] pb-10 md:px-0 md:pb-0"
+          className="w-full md:w-[42%] lg:w-[38%] self-stretch flex items-center justify-end px-[clamp(1.25rem,5vw,8rem)] pb-6 md:px-0 md:pb-0"
         >
           <motion.div
             whileHover={{ scale: 1.015 }}

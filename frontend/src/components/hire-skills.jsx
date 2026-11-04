@@ -54,7 +54,7 @@ const HireSkills = () => {
               <h2 className="font-sans text-[1.875rem] font-black leading-[1.1] tracking-[-0.02em] text-secondary sm:text-section-headline">
                 Skills and typical roles.
               </h2>
-              <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
+              <p className="body-copy mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
                 Every pathway ends in shipped, reviewed work. This is the depth your
                 team can hire against today.
               </p>

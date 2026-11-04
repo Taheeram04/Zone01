@@ -46,7 +46,7 @@ const Hire = () => {
   }, []);
 
   return (
-    <>
+    <div className="hire-page">
       <HireHero />
       <HireProof />
       <HireDifference />
@@ -58,7 +58,7 @@ const Hire = () => {
       {/* <WhatMakesUsUnique /> */}
       <HireFaq />
       <HireRequest />
-    </>
+    </div>
   );
 };
 

@@ -126,7 +126,7 @@ export default function LatestReports() {
           <h2 id="impact-reports-title" className="impact-reports-title">
             Our latest reports
           </h2>
-          <p className="impact-reports-sub">
+          <p className="body-copy impact-reports-sub">
             Annual performance, programme outcomes and independent evidence from
             the Zone01 Kisumu journey.
           </p>

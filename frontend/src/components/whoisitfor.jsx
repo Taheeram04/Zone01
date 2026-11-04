@@ -78,11 +78,11 @@ const WhoIsItFor = () => {
           <KineticHeading
             as="h2"
             text="Who is it for?"
-            className="font-sans font-black text-black-900 text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-tight tracking-tight text-center mb-3"
+            className="font-sans font-black text-black-900 text-[clamp(2.25rem,5.5vw,3.5rem)] leading-tight tracking-tight text-center mb-3"
           />
           <TypewriterText
             text="World class education made accessible to all, regardless of experience and background"
-            className="font-mono text-[15px] sm:text-[16px] md:text-[18px] text-black-900/85 max-w-2xl mx-auto leading-relaxed"
+            className="body-copy font-mono text-[15px] sm:text-[16px] md:text-[18px] text-black-900/85 max-w-2xl mx-auto leading-relaxed"
             speed={22}
             delay={200}
           />
@@ -113,7 +113,7 @@ const WhoIsItFor = () => {
                   srcSet={`${item.small} ${item.smallWidth}w, ${item.image} ${item.width}w`}
                   sizes="(min-width: 768px) 25vw, 85vw"
                   alt={item.alt}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                   loading="lazy"
                 />
               </div>

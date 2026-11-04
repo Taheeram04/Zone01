@@ -48,9 +48,9 @@
   --brand-display-lg: 96px;
   --brand-display-size: clamp(var(--brand-display-sm), 7vw, var(--brand-display-lg));
 
-  --brand-section-sm: 30px;
-  --brand-section-lg: 36px;
-  --brand-section-size: clamp(var(--brand-section-sm), 3.2vw, var(--brand-section-lg));
+  --brand-section-sm: 36px;
+  --brand-section-lg: 56px;
+  --brand-section-size: clamp(var(--brand-section-sm), 5.5vw, var(--brand-section-lg));
 
   --brand-cta-size: 24px;
 

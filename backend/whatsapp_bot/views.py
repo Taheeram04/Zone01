@@ -251,3 +251,25 @@ def _handle_message(message, names, matcher):
     reply, matched, score = _compose_reply(body, matcher, language)
     if reply:
         _send_and_record(contact, wa_id, reply, matched, score)
+        return
+
+    # Nothing in the FAQ knowledge base covers this question. Acknowledge it so
+    # the visitor knows it was received, then forward it to a human inbox when
+    # one is configured.
+    handoff = (getattr(settings, "WHATSAPP_HANDOFF_NUMBER", "") or "").strip()
+    if wa_id == handoff:
+        return
+
+    fallback = (getattr(settings, "WHATSAPP_FALLBACK_MESSAGE", "") or "").strip()
+    if fallback:
+        _send_and_record(contact, wa_id, fallback)
+
+    if handoff:
+        forward = f"New WhatsApp question from {name or wa_id} (+{wa_id}):\n\n{body}"
+        # Record the handoff on the handoff number's own thread, so staff can
+        # confirm from the admin messages whether it was sent and see any error.
+        handoff_contact, _created = WhatsAppContact.objects.get_or_create(
+            wa_id=handoff,
+            defaults={"profile_name": "Zone01 handoff inbox"},
+        )
+        _send_and_record(handoff_contact, handoff, forward)

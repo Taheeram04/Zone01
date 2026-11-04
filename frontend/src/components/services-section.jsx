@@ -78,10 +78,10 @@ const ServicesSection = ({ services }) => {
     >
       <Container>
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-sans text-[1.875rem] font-black leading-[1.1] tracking-[-0.02em] text-secondary sm:text-section-headline">
+          <h2 className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black leading-[1.1] tracking-[-0.02em] text-secondary">
             Our services
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
+          <p className="body-copy mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
             From a single specialist to a full delivery team, we make hiring easy,
             fast and reliable with a payment model that only moves when you are
             happy with the work.

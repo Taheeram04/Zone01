@@ -125,7 +125,7 @@ const Stats = () => {
   } = useSnapCarousel(mobileStats.length);
 
   return (
-    <section ref={sectionRef} data-nav-theme="dark" className="relative bg-primary overflow-hidden pt-8 pb-16 md:pt-10 md:pb-24">
+    <section ref={sectionRef} data-nav-theme="dark" className="relative bg-primary overflow-hidden pt-8 pb-10 md:pt-10 md:pb-14">
       <Container className="relative z-10">
         <motion.div
           initial="hidden"
@@ -159,7 +159,7 @@ const Stats = () => {
                     inView={isInView}
                     className="block font-sans font-extrabold text-primary text-[2.75rem] leading-none whitespace-nowrap"
                   />
-                  <p className="mt-3 font-mono text-sm font-bold text-secondary">
+                  <p className="stat-label mt-3 font-mono text-sm font-bold text-secondary">
                     {stat.label}
                   </p>
                 </div>
@@ -208,7 +208,7 @@ const Stats = () => {
                 inView={isInView}
                 className="block font-sans font-extrabold text-primary text-4xl sm:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl mb-2 leading-none whitespace-nowrap"
               />
-              <p className="font-mono font-bold text-sm text-black-900 max-w-[190px]">
+              <p className="stat-label font-mono font-bold text-sm text-black-900 max-w-[190px]">
                 {primaryStat.label}
               </p>
             </motion.div>
@@ -232,7 +232,7 @@ const Stats = () => {
                         inView={isInView}
                         className="block font-sans font-extrabold text-white text-4xl sm:text-5xl mb-1 leading-none whitespace-nowrap"
                       />
-                      <p className="font-mono font-bold text-body-s text-white whitespace-nowrap">
+                      <p className="stat-label font-mono font-bold text-body-s text-white whitespace-nowrap">
                         {stat.label}
                       </p>
                     </motion.div>
@@ -262,7 +262,7 @@ const Stats = () => {
                 inView={isInView}
                 className="block font-sans font-extrabold text-primary text-4xl sm:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl mb-2 leading-none whitespace-nowrap"
               />
-              <p className="font-mono font-bold text-sm text-black-900 max-w-[190px]">
+              <p className="stat-label font-mono font-bold text-sm text-black-900 max-w-[190px]">
                 {featuredStat.label}
               </p>
             </motion.div>

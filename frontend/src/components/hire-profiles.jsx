@@ -31,7 +31,7 @@ const HireProfiles = () => (
   <section id="profiles" data-nav-theme="light" className="bg-tint-blue pb-10 pt-4 md:pb-14 md:pt-6">
     <Container>
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-secondary sm:text-section-headline">
+        <h2 className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black leading-tight tracking-tight text-secondary">
           Specialization
         </h2>
         
@@ -56,14 +56,14 @@ const HireProfiles = () => (
             <motion.li
               key={profile.label}
               variants={item}
-              className="group grid gap-x-8 gap-y-4 border-b border-secondary/20 py-6 transition-colors duration-300 hover:bg-white/60 lg:grid-cols-[1fr_auto] lg:items-start"
+              className="group grid gap-x-8 gap-y-2 border-b border-secondary/20 py-4 transition-colors duration-300 hover:bg-white/60 lg:grid-cols-[1fr_auto] lg:items-start"
             >
               <div>
                 <h3 className="font-sans text-lg font-bold leading-snug text-secondary">
                   {profile.role}
                 </h3>
 
-                <p className="mt-2 font-sans text-body-m leading-relaxed text-black-900/65">
+                <p className="body-copy body-copy-tight mt-1 max-w-3xl font-sans text-body-m leading-relaxed text-black-900/65">
                   {profile.body}
                 </p>
 
