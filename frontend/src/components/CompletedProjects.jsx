@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Container } from './layout.jsx';
 import chichwaImg from '../assets/Chichwa.webp';
@@ -83,14 +83,24 @@ const PROJECTS = [
     textColor: '#FFFFFF',
   },
   {
+    id: 'replaylabb',
+    title: 'ReplayLabb',
+    category: 'Developer Tools · API Debugging',
+    description:
+      'A local-first API debugging app that captures traffic, redacts secrets and replays failures to prove fixes.',
+    image: replayLabbImg,
+    href: 'https://replaylabb.vercel.app/',
+    panelBg: '#080D0D',
+    textColor: '#FFFFFF',
+  },
+  {
     id: 'kisumu-explorers',
     title: 'Kisumu Explorers',
     category: 'Travel · Community',
     description:
       'Hikes, tours and community adventures that help builders unplug, explore Kisumu and touch grass.',
     image: kisumuExplorersImg,
-    href: null,
-    comingSoon: true,
+    href: 'https://kisumuexplorers.netlify.app/',
     panelBg: '#07231A',
     textColor: '#FFFFFF',
   },
@@ -104,17 +114,6 @@ const PROJECTS = [
     href: null,
     comingSoon: true,
     panelBg: '#170B2E',
-    textColor: '#FFFFFF',
-  },
-  {
-    id: 'replaylabb',
-    title: 'ReplayLabb',
-    category: 'Developer Tools · API Debugging',
-    description:
-      'A local-first API debugging app that captures traffic, redacts secrets and replays failures to prove fixes.',
-    image: replayLabbImg,
-    href: 'https://replaylabb.vercel.app/',
-    panelBg: '#080D0D',
     textColor: '#FFFFFF',
   },
 ];
@@ -279,10 +278,62 @@ export default function CompletedProjects() {
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
   const prefersReduced = useReducedMotion();
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
 
   // Scroll reveal triggered once with threshold ~0.15
   const headerInView = useInView(sectionRef, { once: true, amount: 0.15 });
   const gridInView = useInView(gridRef, { once: true, amount: 0.15 });
+
+  // Keep the arrow states in sync with how far the track can actually scroll.
+  const updateArrows = useCallback(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+    setCanPrev(el.scrollLeft > 1);
+    setCanNext(el.scrollLeft < maxScroll - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return undefined;
+
+    updateArrows();
+
+    const onResize = () => updateArrows();
+    window.addEventListener('resize', onResize);
+
+    let observer;
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(onResize);
+      observer.observe(el);
+      Array.from(el.children).forEach((child) => observer.observe(child));
+    }
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      observer?.disconnect();
+    };
+  }, [updateArrows]);
+
+  // Advance exactly one card (plus the gap between cards) in either direction.
+  const scrollProjects = useCallback(
+    (direction) => {
+      const el = gridRef.current;
+      if (!el || !el.children.length) return;
+
+      const styles = window.getComputedStyle(el);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      const step = el.children[0].getBoundingClientRect().width + gap;
+
+      el.scrollBy({
+        left: direction * step,
+        behavior: prefersReduced ? 'auto' : 'smooth',
+      });
+    },
+    [prefersReduced]
+  );
 
   const headerContainerVariants = {
     hidden: {},
@@ -321,7 +372,7 @@ export default function CompletedProjects() {
       ref={sectionRef}
       id="completed-projects"
       aria-labelledby="completed-projects-title"
-      className="relative w-full bg-[#F3F7FF] pt-[72px] pb-[32px] lg:pt-[120px] lg:pb-[40px]"
+      className="relative w-full bg-[#F3F7FF] pt-[40px] pb-[32px] lg:pt-[64px] lg:pb-[40px]"
     >
       <Container>
         {/* Header Row */}
@@ -331,7 +382,7 @@ export default function CompletedProjects() {
           variants={headerContainerVariants}
           className="flex flex-col items-center text-center gap-6 mb-12 sm:mb-14 lg:mb-16"
         >
-          <div className="max-w-5xl">
+          <div className="max-w-6xl">
             {/* H2 Title */}
             <motion.h2
               id="completed-projects-title"
@@ -344,33 +395,78 @@ export default function CompletedProjects() {
             {/* Section intro */}
             <motion.p
               variants={fadeUpVariants}
-              className="mx-auto font-sans text-[16px] md:text-body-l font-normal text-[#3B5566] leading-relaxed max-w-2xl"
+              className="body-copy mx-auto font-sans text-[16px] md:text-body-l font-normal text-[#3B5566] leading-relaxed max-w-none"
             >
               Explore production software, digital products and community platforms built by
-              Zone01 Kisumu apprentices — from trading tools and developer infrastructure to
+              Zone01 Kisumu apprentices from trading tools and developer infrastructure to
               esports, travel and career technology.
             </motion.p>
           </div>
         </motion.div>
 
         {/* Cards Grid */}
-        <motion.div
-          ref={gridRef}
-          initial="hidden"
-          animate={gridInView ? 'visible' : 'hidden'}
-          variants={gridContainerVariants}
-          className="flex snap-x snap-mandatory gap-[28px] overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {PROJECTS.map((project) => (
-            <motion.div
-              key={project.id}
-              variants={fadeUpVariants}
-              className="w-[85vw] max-w-[360px] flex-none snap-start sm:w-[340px] lg:w-[380px]"
+        <div className="relative mx-auto w-full max-w-[1600px]">
+          <motion.div
+            ref={gridRef}
+            onScroll={updateArrows}
+            initial="hidden"
+            animate={gridInView ? 'visible' : 'hidden'}
+            variants={gridContainerVariants}
+            id="completed-projects-track"
+            className="flex snap-x snap-mandatory gap-[28px] overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {PROJECTS.map((project) => (
+              <motion.div
+                key={project.id}
+                variants={fadeUpVariants}
+                className="w-[85vw] max-w-[360px] flex-none snap-start sm:w-[calc((100%-28px)/2)] sm:max-w-none lg:w-[calc((100%-56px)/3)] xl:w-[calc((100%-84px)/4)]"
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Prev / next controls, flanking the visible four projects */}
+          <button
+            type="button"
+            onClick={() => scrollProjects(-1)}
+            disabled={!canPrev}
+            aria-label="Previous projects"
+            aria-controls="completed-projects-track"
+            className="absolute left-0 top-[120px] z-10 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
             >
-              <ProjectCard project={project} />
-            </motion.div>
-          ))}
-        </motion.div>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => scrollProjects(1)}
+            disabled={!canNext}
+            aria-label="Next projects"
+            aria-controls="completed-projects-track"
+            className="absolute right-0 top-[120px] z-10 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
       </Container>
     </section>
   );
