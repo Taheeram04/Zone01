@@ -317,15 +317,19 @@ export default function CompletedProjects() {
     };
   }, [updateArrows]);
 
-  // Advance exactly one card (plus the gap between cards) in either direction.
+  // Advance by the real distance between two rendered cards. Card widths are
+  // breakpoint-dependent (1, 2, 3 or 4 per view), so measuring adjacent cards
+  // keeps the step in sync with whatever width is actually visible.
   const scrollProjects = useCallback(
     (direction) => {
       const el = gridRef.current;
       if (!el || !el.children.length) return;
 
-      const styles = window.getComputedStyle(el);
-      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
-      const step = el.children[0].getBoundingClientRect().width + gap;
+      const first = el.children[0];
+      const second = el.children[1];
+      const step = second
+        ? second.getBoundingClientRect().left - first.getBoundingClientRect().left
+        : first.getBoundingClientRect().width;
 
       el.scrollBy({
         left: direction * step,
@@ -405,7 +409,7 @@ export default function CompletedProjects() {
         </motion.div>
 
         {/* Cards Grid */}
-        <div className="relative mx-auto w-full max-w-[1600px]">
+        <div className="mx-auto w-full max-w-[1600px]">
           <motion.div
             ref={gridRef}
             onScroll={updateArrows}
@@ -426,46 +430,49 @@ export default function CompletedProjects() {
             ))}
           </motion.div>
 
-          {/* Prev / next controls, flanking the visible four projects */}
-          <button
-            type="button"
-            onClick={() => scrollProjects(-1)}
-            disabled={!canPrev}
-            aria-label="Previous projects"
-            aria-controls="completed-projects-track"
-            className="absolute left-0 top-[120px] z-10 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              aria-hidden="true"
+          {/* Prev / next controls, kept outside the scroll track so the cards
+              stay clickable on every breakpoint. */}
+          <div className="mt-6 flex items-center justify-center gap-3 md:mt-8">
+            <button
+              type="button"
+              onClick={() => scrollProjects(-1)}
+              disabled={!canPrev}
+              aria-label="Previous projects"
+              aria-controls="completed-projects-track"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => scrollProjects(1)}
-            disabled={!canNext}
-            aria-label="Next projects"
-            aria-controls="completed-projects-track"
-            className="absolute right-0 top-[120px] z-10 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              aria-hidden="true"
+            <button
+              type="button"
+              onClick={() => scrollProjects(1)}
+              disabled={!canNext}
+              aria-label="Next projects"
+              aria-controls="completed-projects-track"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D5E3F7] bg-white text-[#0063F9] shadow-[0_8px_24px_-8px_rgba(9,44,62,0.35)] transition duration-200 ease-out hover:bg-[#0063F9] hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#0063F9] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#0063F9] motion-reduce:transition-none md:h-12 md:w-12"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </Container>
     </section>
