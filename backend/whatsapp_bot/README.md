@@ -5,7 +5,8 @@ Zone01 WhatsApp number, the agent reads the text, sends it to an AI model
 together with the active FAQ knowledge base, and replies with an answer grounded
 in those FAQs. If the AI layer is not configured (or the provider fails), it
 falls back to a deterministic keyword/IDF matcher. If neither can answer, the
-bot stays silent and leaves the message for the communication team.
+visitor gets a short acknowledgement and the question is forwarded to the human
+inbox configured via `WHATSAPP_HANDOFF_NUMBER`.
 
 The AI integration talks to any OpenAI-compatible `/chat/completions` endpoint
 (OpenAI, Azure gateways, Groq, OpenRouter, a local server, ...) and is
@@ -29,7 +30,7 @@ whatsapp_bot.views
     ├─ detect the visitor's language (English / Swahili)
     ├─ ai.generate_reply(text, FAQs, language) → grounded answer (when configured)
     ├─ retrieval.get_matcher().best_match(text) → translated answer + audit FAQ
-    └─ no match → no reply; the message stays in the admin for a human
+    └─ no match → fallback acknowledgement + forward to the handoff number
        client.send_text(...)         (or dry-run log)
     │  reply
     ▼
@@ -84,8 +85,10 @@ Add these to `backend/.env` (see `.env.example`):
 | `WHATSAPP_PHONE_NUMBER_ID` | The "Phone number ID" of your WhatsApp sender. |
 | `WHATSAPP_APP_SECRET` | App secret, used to verify webhook signatures. |
 | `WHATSAPP_API_VERSION` | Graph API version (default `v21.0`). |
-| `WHATSAPP_DRY_RUN` | `true` (default) logs replies instead of sending them. |
-| `WHATSAPP_MATCH_THRESHOLD` | Minimum `0..1` match score before an answer is sent; below it the bot stays silent. |
+| `WHATSAPP_DRY_RUN` | `false` by default. Set `true` to log replies instead of sending them. |
+| `WHATSAPP_MATCH_THRESHOLD` | Minimum `0..1` match score before an answer is sent; below it the visitor gets the fallback acknowledgement. |
+| `WHATSAPP_HANDOFF_NUMBER` | Human WhatsApp inbox for unanswered questions (international format, no `+`). |
+| `WHATSAPP_FALLBACK_MESSAGE` | Reply sent when the assistant cannot answer, so the visitor knows the message was received. |
 | `WHATSAPP_WELCOME_MESSAGE` | English greeting sent on the first message of a conversation (and again after 24h of silence). Empty disables it. |
 | `WHATSAPP_WELCOME_MESSAGE_SW` | Swahili greeting used when the first message is in Swahili. |
 | `WHATSAPP_AI_ENABLED` | `true` (default) uses the AI answer when a key is set. |
@@ -94,9 +97,8 @@ Add these to `backend/.env` (see `.env.example`):
 | `WHATSAPP_AI_MODEL` | Chat model name (default `gpt-4o-mini`). |
 | `WHATSAPP_AI_SYSTEM_PROMPT` | Optional custom prompt; `{faqs}` inserts the FAQ block. |
 
-> Keep `WHATSAPP_DRY_RUN=true` until the rest is wired up. Replies are then
-> stored and logged but not actually sent, so you can exercise the whole flow
-> safely.
+> With real credentials, replies are sent. Set `WHATSAPP_DRY_RUN=true` only when
+> you want to exercise the flow without sending messages.
 
 ## 3. Point Meta at the webhook
 
@@ -143,8 +145,10 @@ Run the automated tests:
 ## Going live
 
 1. Set real credentials and `WHATSAPP_DRY_RUN=false`.
-2. Send a message from a phone that is allowed to reach the number.
-3. Watch **Admin → WhatsApp messages** to confirm replies are `sent` (statuses
+2. Set `WHATSAPP_HANDOFF_NUMBER` to the staff WhatsApp number that should
+   receive questions the assistant cannot answer.
+3. Send a message from a phone that is allowed to reach the number.
+4. Watch **Admin → WhatsApp messages** to confirm replies are `sent` (statuses
    from Meta, such as delivery failures, are captured there too).
 
 ## Tuning the matching

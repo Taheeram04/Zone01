@@ -252,11 +252,21 @@ class WebhookTests(TestCase):
         self.assertEqual(outbound.matched_faq, self.item)
         self.assertEqual(outbound.status, WhatsAppMessage.Status.DRY_RUN)
 
-    def test_unknown_message_gets_no_reply(self):
+    def test_unknown_message_gets_a_fallback_reply(self):
         self._post(self._payload("what is the weather in nairobi"))
-        self.assertFalse(
-            WhatsAppMessage.objects.filter(direction=WhatsAppMessage.Direction.OUTBOUND).exists()
-        )
+        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
+        self.assertIsNone(outbound.matched_faq)
+        self.assertIn("Zone01 Kisumu team", outbound.body)
+
+    @override_settings(WHATSAPP_HANDOFF_NUMBER="254700000099")
+    def test_unanswered_question_is_forwarded_to_handoff(self):
+        with patch("whatsapp_bot.client.send_text", wraps=views.client.send_text) as send:
+            self._post(self._payload("what is the weather in nairobi"))
+
+        self.assertEqual(send.call_count, 2)
+        self.assertEqual(send.call_args_list[0].args[0], "254700000001")
+        self.assertEqual(send.call_args_list[1].args[0], "254700000099")
+        self.assertIn("what is the weather in nairobi", send.call_args_list[1].args[1])
 
     def test_duplicate_delivery_is_ignored(self):
         payload = self._payload("how do i apply")
@@ -364,13 +374,12 @@ class AIAnswerTests(TestCase):
         outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
         self.assertEqual(outbound.body, self.item.answer)
 
-    def test_no_answer_sentinel_produces_no_reply(self):
+    def test_no_answer_sentinel_sends_a_fallback_reply(self):
         fake = {"choices": [{"message": {"content": "NO_ANSWER"}}]}
         with patch("whatsapp_bot.ai._post", return_value=fake):
             self._post("what is the weather in nairobi")
-        self.assertFalse(
-            WhatsAppMessage.objects.filter(direction=WhatsAppMessage.Direction.OUTBOUND).exists()
-        )
+        outbound = WhatsAppMessage.objects.get(direction=WhatsAppMessage.Direction.OUTBOUND)
+        self.assertIn("Zone01 Kisumu team", outbound.body)
 
     def test_swahili_prompt_instructs_the_model(self):
         prompt = ai.build_system_prompt([self.item], language="sw")
