@@ -265,10 +265,11 @@ def _handle_message(message, names, matcher):
         _send_and_record(contact, wa_id, fallback)
 
     if handoff:
-        forward = (
-            f"New WhatsApp question from {name or wa_id} (+{wa_id}):\n\n{body}"
+        forward = f"New WhatsApp question from {name or wa_id} (+{wa_id}):\n\n{body}"
+        # Record the handoff on the handoff number's own thread, so staff can
+        # confirm from the admin messages whether it was sent and see any error.
+        handoff_contact, _created = WhatsAppContact.objects.get_or_create(
+            wa_id=handoff,
+            defaults={"profile_name": "Zone01 handoff inbox"},
         )
-        try:
-            client.send_text(handoff, forward)
-        except client.WhatsAppSendError as exc:
-            logger.warning("Failed to forward WhatsApp question to %s: %s", handoff, exc)
+        _send_and_record(handoff_contact, handoff, forward)

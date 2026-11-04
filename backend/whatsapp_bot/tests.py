@@ -268,6 +268,13 @@ class WebhookTests(TestCase):
         self.assertEqual(send.call_args_list[1].args[0], "254700000099")
         self.assertIn("what is the weather in nairobi", send.call_args_list[1].args[1])
 
+        handoff_message = WhatsAppMessage.objects.get(
+            direction=WhatsAppMessage.Direction.OUTBOUND,
+            contact__wa_id="254700000099",
+        )
+        self.assertIn("what is the weather in nairobi", handoff_message.body)
+        self.assertEqual(handoff_message.status, WhatsAppMessage.Status.DRY_RUN)
+
     def test_duplicate_delivery_is_ignored(self):
         payload = self._payload("how do i apply")
         self._post(payload)

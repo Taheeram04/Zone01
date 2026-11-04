@@ -349,8 +349,7 @@ WHATSAPP_HANDOFF_NUMBER = env("WHATSAPP_HANDOFF_NUMBER", default="")
 WHATSAPP_FALLBACK_MESSAGE = env(
     "WHATSAPP_FALLBACK_MESSAGE",
     default=(
-        "Thanks for your message. A member of the Zone01 Kisumu team will get "
-        "back to you shortly."
+        "Thanks for your message. A member of the Zone01 Kisumu team will get back to you shortly."
     ),
 )
 # Sent automatically when someone starts a new conversation (their first

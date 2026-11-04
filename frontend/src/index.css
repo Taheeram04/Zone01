@@ -256,8 +256,9 @@ img, video, canvas, svg {
   line-height: 1.5 !important;
 }
 
-/* Compact labels inside the homepage impact stat cards. */
-.stat-label.stat-label {
-  font-size: 0.3125rem !important;
-  line-height: 1.2 !important;
+/* Compact labels inside the homepage impact stat cards. Sized above the
+   previous 5px value so they stay readable while sitting under the figures. */
+p.stat-label.stat-label {
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
 }
