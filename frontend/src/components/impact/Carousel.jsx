@@ -39,7 +39,7 @@ export default function Carousel({
         <div style={{ flex: '1 1 520px', minWidth: 0 }}>
           <div className="impact-mono" style={{ color: '#0063F9' }}>{type === 'startup' ? 'Startups' : 'Impact Stories'}</div>
           <h2 style={{ margin: '20px 0 0', fontWeight: 900, fontSize: 'clamp(40px, 5vw, 72px)', lineHeight: 1, letterSpacing: '-.03em', maxWidth: 900 }}>
-            {type === 'startup' ? 'Companies built by Zone01 Kisumu talent.' : 'Stories from the first cohort.'}
+            {type === 'startup' ? 'Startups built by Zone01 Kisumu talent' : 'Stories from the first cohort.'}
           </h2>
         </div>
         <div className="impact-cnav" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

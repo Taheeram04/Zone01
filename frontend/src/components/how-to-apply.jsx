@@ -343,7 +343,7 @@ const HowToApply = () => {
           <h2 id="how-to-apply-title" className="hta__title">
             How to Apply
           </h2>
-          <p className="hta__lead">
+          <p className="body-copy hta__lead">
             Follow these four steps to turn your potential into job placement
           </p>
         </header>
@@ -396,7 +396,7 @@ const HowToApply = () => {
                 >
                   <span className="hta-step__index">{`0${i + 1}`}</span>
                   <p className="hta-step__label">{step.label}</p>
-                  <p className="hta-step__text">{step.text}</p>
+                  <p className="body-copy hta-step__text">{step.text}</p>
                 </motion.div>
               </button>
             );

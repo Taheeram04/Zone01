@@ -44,19 +44,14 @@ const HireDifference = () => (
       >
         <motion.h2
           variants={item}
-          className="font-sans text-[1.875rem] font-black leading-[1.1] tracking-[-0.02em] text-secondary sm:text-section-headline"
+          className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black leading-[1.1] tracking-[-0.02em] text-primary"
         >
-          Why Zone01 Kisumu engineers are different
+          <span className="text-black-900">Why </span>
+          <span className="text-primary">Zone01 Kisumu</span>
+          <span className="text-black-900"> engineers are</span>{' '}
+          <span className="text-primary">different</span>
         </motion.h2>
 
-        <motion.p
-          variants={item}
-          className="mx-auto mt-4 max-w-2xl font-sans text-body-l font-medium leading-[1.6] text-secondary/70"
-        >
-          Selected on potential. Proven on performance.
-        </motion.p>
-
-    
       </motion.div>
 
       <motion.ul

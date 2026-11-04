@@ -142,7 +142,7 @@ const Careers = () => {
           <h2 id="careers-title" className="careers__title">
             Career Paths
           </h2>
-          <p className="careers__subtitle">
+          <p className="body-copy careers__subtitle">
             What is your true passion? Pursue a career path of your choice and become an
             expert through real world experience.
           </p>

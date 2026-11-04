@@ -20,7 +20,7 @@ const KnowUs = () => (
     id="know-us"
     data-nav-theme="light"
     aria-labelledby="know-us-title"
-    className="relative w-full overflow-hidden bg-white pb-8 pt-8 sm:pb-10 sm:pt-10 md:pb-12 md:pt-12 lg:pb-14 lg:pt-14"
+    className="relative w-full overflow-hidden bg-white pb-4 pt-8 sm:pb-5 sm:pt-10 md:pb-6 md:pt-12 lg:pb-8 lg:pt-14"
   >
     <Container className="relative">
       {/* Main title. */}
@@ -30,7 +30,7 @@ const KnowUs = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.7, ease: EASE }}
-        className="text-center font-sans font-black leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,4rem)]"
+        className="text-center font-sans font-black leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,3.5rem)]"
       >
         Know <span className="text-primary">Us</span>
       </motion.h2>
@@ -40,12 +40,12 @@ const KnowUs = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
-        className="mx-auto mt-10 max-w-5xl space-y-6 md:mt-14"
+        className="mx-auto mt-12 max-w-4xl space-y-8 md:mt-16"
       >
         {ABOUT_PARAGRAPHS.map((paragraph, i) => (
           <p
             key={i}
-            className="text-center font-mono text-[clamp(0.82rem,1.5vw,1.02rem)] leading-relaxed text-black-900/80"
+            className="body-copy text-center font-mono text-[clamp(0.82rem,1.5vw,1.02rem)] leading-relaxed text-black-900/80"
           >
             {paragraph}
           </p>

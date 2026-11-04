@@ -23,7 +23,6 @@ const WOMEN_COHORTS = [
   { label: 'Cohort 3', value: 45 },
 ];
 const WOMEN_TOTAL = WOMEN_COHORTS.reduce((sum, cohort) => sum + cohort.value, 0);
-const WOMEN_MAX = Math.max(...WOMEN_COHORTS.map((cohort) => cohort.value));
 
 function BentoRing({ value, inView }) {
   const safeValue = Number.isFinite(value) ? value : 0;
@@ -207,7 +206,7 @@ export default function HeadlineBento() {
                 <motion.div
                   className="hb-women-fill"
                   initial={{ height: 0 }}
-                  whileInView={{ height: `${(cohort.value / WOMEN_MAX) * 100}%` }}
+                  whileInView={{ height: `${(cohort.value / WOMEN_TOTAL) * 100}%` }}
                   viewport={{ once: true, amount: 0.4 }}
                   transition={{ duration: 0.9, delay: 0.15 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 />

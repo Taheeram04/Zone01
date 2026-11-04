@@ -5,7 +5,6 @@ import '../../styles/impact.css';
 import '../../styles/impact-brand.css';
 import {
   IMPACT_HERO,
-  REPORTING,
   // EMPLOYMENT_CARD,
   STARTUPS,
   STORIES,
@@ -186,32 +185,177 @@ export default function ImpactPage({ children }) {
         <img className="impact-results-bg" src={gdgBgImg} alt="" aria-hidden="true" />
         <div className="impact-results-veil" aria-hidden="true" />
         <div className="impact-wrap" style={{ position: 'relative', zIndex: 1 }}>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ margin: '32px 0 0', textAlign: 'center', fontWeight: 'var(--brand-weight-black)', fontSize: 'var(--brand-section-size)', letterSpacing: '-.02em', lineHeight: 1.1, color: 'var(--brand-black)', fontFamily: 'var(--brand-font-sans)' }}
-          >
-            Headline results
-          </motion.h2>
-
-          <motion.p
-            className="impact-results-sub"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.55, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {REPORTING.note}
-          </motion.p>
-
           <HeadlineBento />
 
         </div>
       </section>
 
       <LatestReports />
+
+      {/* STORIES OF IMPACT (RELIEF INTERNATIONAL FORMAT) */}
+      <section className="ri-stories-section" id="stories" data-nav-theme="light">
+        <div className="impact-wrap" ref={storiesRef}>
+          <motion.div
+            className="ri-stories-header"
+            initial={{ opacity: 0, y: 24 }}
+            animate={storiesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <h2 className="ri-stories-title">
+              Real journeys, <span style={{ color: 'var(--brand-primary)' }}>transformational</span> impact
+            </h2>
+          </motion.div>
+
+          <div className="ri-stories-grid">
+            {STORIES.map((story, idx) => (
+              <motion.article
+                key={story.id}
+                className="ri-story-card"
+                initial={{ opacity: 0, x: 70, scale: 0.94 }}
+                animate={storiesInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 70, scale: 0.94 }}
+                transition={{ duration: 0.8, delay: idx * 0.18, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -4, transition: { duration: 0.25 } }}
+              >
+                <div className="ri-story-thumbnail-wrap">
+                  <img
+                    src={STORY_IMAGES[story.imageKey]}
+                    alt={story.headline}
+                    className="ri-story-img"
+                    style={{ objectPosition: story.imagePosition || 'center 20%' }}
+                    loading="lazy"
+                  />
+                </div>
+
+                <div className="ri-story-card-body">
+                  <div className="ri-story-category">{story.category}</div>
+                  <h3 className="ri-story-headline">{story.headline}</h3>
+                  <p className="ri-story-text">{story.description}</p>
+                  <div className="ri-story-footer">
+                    <div className="ri-story-author">{story.author}</div>
+                    <button
+                      type="button"
+                      className="ri-story-readmore"
+                      onClick={() => setActiveStory(story)}
+                      aria-label={`Read full story: ${story.headline}`}
+                    >
+                      <span className="ri-story-readmore-plus">+</span>
+                      <span>Read More</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+
+        {/* Story Modal */}
+        {activeStory && (
+          <div
+            className="ri-story-modal-overlay"
+            onClick={() => setActiveStory(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="story-modal-title"
+          >
+            <div
+              className="ri-story-modal-box"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="ri-story-modal-header">
+                <img
+                  src={STORY_IMAGES[activeStory.imageKey]}
+                  alt={activeStory.headline}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center 25%',
+                  }}
+                />
+                <button
+                  type="button"
+                  className="ri-story-modal-close"
+                  onClick={() => setActiveStory(null)}
+                  aria-label="Close dialog"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="ri-story-modal-body">
+                <div className="ri-story-category" style={{ margin: 0, fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-caption)' }}>
+                  {activeStory.category}
+                </div>
+                <h3 id="story-modal-title" className="ri-story-headline" style={{ fontSize: 'var(--brand-cta-size)', margin: 0, fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-black)', color: 'var(--brand-black)' }}>
+                  {activeStory.headline}
+                </h3>
+                <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', fontFamily: 'var(--brand-font-mono)' }}>
+                  {activeStory.author}
+                </div>
+
+                {activeStory.journey && (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                      gap: '12px',
+                      padding: '16px',
+                      background: '#F8FAFC',
+                      borderRadius: 'var(--brand-radius-lg)',
+                      border: '1px solid var(--brand-line)',
+                      marginTop: '8px',
+                    }}
+                  >
+                    <div>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
+                        Before Zone01
+                      </div>
+                      <div className="journey-value journey-value--before">
+                        {activeStory.journey.before}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-primary)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
+                        During Zone01
+                      </div>
+                      <div className="journey-value journey-value--during">
+                        {activeStory.journey.during}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-mint-ink)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
+                        Current Outcome
+                      </div>
+                      <div className="journey-value journey-value--now">
+                        {activeStory.journey.now}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '8px' }}>
+                  {activeStory.fullParagraphs.map((para, idx) => (
+                    <p key={idx} style={{ fontFamily: 'var(--brand-font-sans)', fontSize: 'var(--brand-body-sm)', lineHeight: 1.6, color: 'var(--brand-slate)', margin: 0 }}>
+                      {para}
+                    </p>
+                  ))}
+                </div>
+
+                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    className="brand-btn brand-btn--primary"
+                    onClick={() => setActiveStory(null)}
+                    style={{ fontSize: 'var(--brand-body-sm)' }}
+                  >
+                    Close Story
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
 
       {/* STARTUPS (3 DISTINCT INTERACTIVE CARDS) */}
       <section className="impact-startups-section" id="startups" data-nav-theme="light">
@@ -224,11 +368,8 @@ export default function ImpactPage({ children }) {
           >
             <div>
               <h2 className="impact-startups-title">
-                Companies built by <span style={{ color: 'var(--brand-primary)' }}>Zone01 Kisumu</span> talent.
+                Startups built by <span style={{ color: 'var(--brand-primary)' }}>Zone01 Kisumu</span> talent
               </h2>
-            </div>
-            <div className="impact-mono" style={{ color: 'var(--brand-navy)', fontSize: 'var(--brand-caption)' }}>
-              3 Active Cohort 1 Ventures
             </div>
           </motion.div>
 
@@ -482,174 +623,6 @@ export default function ImpactPage({ children }) {
                     style={{ fontSize: 'var(--brand-body-sm)' }}
                   >
                     Close Details
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* STORIES OF IMPACT (RELIEF INTERNATIONAL FORMAT) */}
-      <section className="ri-stories-section" id="stories" data-nav-theme="light">
-        <div className="impact-wrap" ref={storiesRef}>
-          <motion.div
-            className="ri-stories-header"
-            initial={{ opacity: 0, y: 24 }}
-            animate={storiesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2 className="ri-stories-title">
-              Real journeys. <span style={{ color: 'var(--brand-primary)' }}>Transformational</span> impact.
-            </h2>
-            <p className="ri-stories-description">
-              Direct firsthand accounts of how peer-to-peer software education is opening global digital economy opportunities for youth across Western Kenya.
-            </p>
-          </motion.div>
-
-          <div className="ri-stories-grid">
-            {STORIES.map((story, idx) => (
-              <motion.article
-                key={story.id}
-                className="ri-story-card"
-                initial={{ opacity: 0, x: 70, scale: 0.94 }}
-                animate={storiesInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 70, scale: 0.94 }}
-                transition={{ duration: 0.8, delay: idx * 0.18, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -4, transition: { duration: 0.25 } }}
-              >
-                <div className="ri-story-thumbnail-wrap">
-                  <img
-                    src={STORY_IMAGES[story.imageKey]}
-                    alt={story.headline}
-                    className="ri-story-img"
-                    style={{ objectPosition: story.imagePosition || 'center 20%' }}
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="ri-story-card-body">
-                  <div className="ri-story-category">{story.category}</div>
-                  <h3 className="ri-story-headline">{story.headline}</h3>
-                  <p className="ri-story-text">{story.description}</p>
-                  <div className="ri-story-footer">
-                    <div className="ri-story-author">{story.author}</div>
-                    <button
-                      type="button"
-                      className="ri-story-readmore"
-                      onClick={() => setActiveStory(story)}
-                      aria-label={`Read full story: ${story.headline}`}
-                    >
-                      <span className="ri-story-readmore-plus">+</span>
-                      <span>Read More</span>
-                    </button>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-
-        {/* Story Modal */}
-        {activeStory && (
-          <div
-            className="ri-story-modal-overlay"
-            onClick={() => setActiveStory(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="story-modal-title"
-          >
-            <div
-              className="ri-story-modal-box"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="ri-story-modal-header">
-                <img
-                  src={STORY_IMAGES[activeStory.imageKey]}
-                  alt={activeStory.headline}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center 25%',
-                  }}
-                />
-                <button
-                  type="button"
-                  className="ri-story-modal-close"
-                  onClick={() => setActiveStory(null)}
-                  aria-label="Close dialog"
-                >
-                  &times;
-                </button>
-              </div>
-
-              <div className="ri-story-modal-body">
-                <div className="ri-story-category" style={{ margin: 0, fontFamily: 'var(--brand-font-mono)', fontSize: 'var(--brand-caption)' }}>
-                  {activeStory.category}
-                </div>
-                <h3 id="story-modal-title" className="ri-story-headline" style={{ fontSize: 'var(--brand-cta-size)', margin: 0, fontFamily: 'var(--brand-font-sans)', fontWeight: 'var(--brand-weight-black)', color: 'var(--brand-black)' }}>
-                  {activeStory.headline}
-                </h3>
-                <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', fontFamily: 'var(--brand-font-mono)' }}>
-                  {activeStory.author}
-                </div>
-
-                {activeStory.journey && (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                      gap: '12px',
-                      padding: '16px',
-                      background: '#F8FAFC',
-                      borderRadius: 'var(--brand-radius-lg)',
-                      border: '1px solid var(--brand-line)',
-                      marginTop: '8px',
-                    }}
-                  >
-                    <div>
-                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-slate-soft)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
-                        Before Zone01
-                      </div>
-                      <div className="journey-value journey-value--before">
-                        {activeStory.journey.before}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-primary)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
-                        During Zone01
-                      </div>
-                      <div className="journey-value journey-value--during">
-                        {activeStory.journey.during}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="impact-mono" style={{ fontSize: 'var(--brand-caption)', color: 'var(--brand-mint-ink)', textTransform: 'uppercase', fontFamily: 'var(--brand-font-mono)' }}>
-                        Current Outcome
-                      </div>
-                      <div className="journey-value journey-value--now">
-                        {activeStory.journey.now}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '8px' }}>
-                  {activeStory.fullParagraphs.map((para, idx) => (
-                    <p key={idx} style={{ fontFamily: 'var(--brand-font-sans)', fontSize: 'var(--brand-body-sm)', lineHeight: 1.6, color: 'var(--brand-slate)', margin: 0 }}>
-                      {para}
-                    </p>
-                  ))}
-                </div>
-
-                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
-                  <button
-                    type="button"
-                    className="brand-btn brand-btn--primary"
-                    onClick={() => setActiveStory(null)}
-                    style={{ fontSize: 'var(--brand-body-sm)' }}
-                  >
-                    Close Story
                   </button>
                 </div>
               </div>

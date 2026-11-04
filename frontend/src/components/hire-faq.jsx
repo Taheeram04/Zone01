@@ -39,16 +39,16 @@ const HireFaq = () => {
       <Container>
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-secondary sm:text-section-headline">
-              Employer questions, answered.
+            <h2 className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black leading-tight tracking-tight text-secondary">
+              Employer questions, answered
             </h2>
-            <p className="mt-4 max-w-sm font-sans text-base leading-relaxed text-black-900/70 sm:text-body-l">
+            <p className="body-copy mt-4 max-w-sm font-sans text-base leading-relaxed text-black-900/70 sm:text-body-l">
               Something more specific? The talent team replies to employer
               enquiries within five working days.
             </p>
             <a
               href={`mailto:${HIRE_EMAIL}`}
-              className="mt-5 inline-flex items-center gap-2 font-mono text-body-m font-medium text-primary underline-offset-4 hover:underline"
+              className="body-copy mt-5 inline-flex items-center gap-2 font-mono font-normal text-primary underline-offset-4 hover:underline"
             >
               {HIRE_EMAIL}
             </a>

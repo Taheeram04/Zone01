@@ -435,7 +435,7 @@ export default function GeographicReachSection() {
         const timeSinceInteraction = (now - physics.lastInteraction) / 1000;
         if (timeSinceInteraction > 2.0) {
           // Slow ambient eastward prograde rotation
-          const idleSpeed = -0.06;
+          const idleSpeed = -0.35;
           physics.vel += (idleSpeed - physics.vel) * Math.min(1, dt * 1.5);
         } else {
           // Decelerate inertia with smooth exponential damping
@@ -606,7 +606,7 @@ export default function GeographicReachSection() {
         const z2 = p.z2;
 
         const isActive = activeRegionIdRef.current === r.id;
-        const baseR = (r.id === 'kenya' ? 13 : 11) * scaleR;
+        const baseR = (r.id === 'kenya' ? 7 : 5.5) * scaleR;
         const dotR = baseR * (0.85 + 0.15 * ((z2 + 1) / 2));
 
         // Draw marker dot when on visible hemisphere
@@ -868,7 +868,8 @@ export default function GeographicReachSection() {
             color: var(--brand-black) !important;
             text-align: center !important;
             margin-bottom: 0 !important;
-            white-space: nowrap !important;
+            white-space: normal !important;
+            text-wrap: balance;
           }
           .reach-canvas-pos {
             position: absolute !important;

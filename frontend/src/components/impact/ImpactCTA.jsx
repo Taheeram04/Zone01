@@ -10,46 +10,48 @@ export default function ImpactCTA() {
   return (
     <section
       data-nav-theme="light"
-      className="relative w-full bg-campus-bg pt-10 pb-20 md:pt-14 md:pb-28 overflow-hidden border-t border-[#DCE9FF]/60"
+      className="relative w-full bg-campus-bg pt-6 pb-12 md:pt-8 md:pb-16 overflow-hidden border-t border-[#DCE9FF]/60"
       aria-labelledby="impact-cta-heading"
     >
       <div className="impact-wrap relative z-10 w-full">
-        <div className="max-w-4xl">
+        <div className="flex flex-col gap-6">
           {/* Heading token: font-sans font-black in black-900 with primary blue highlight */}
           <h2
             id="impact-cta-heading"
-            className="brand-section-title mt-4"
+            className="brand-section-title mt-4 lg:whitespace-nowrap"
           >
             Want to be part of our{' '}
             <span className="text-primary">impact?</span>
           </h2>
 
-          {/* Body text token: font-sans in secondary/slate tone */}
-          <p className="brand-body mt-5 max-w-2xl" style={{ color: 'var(--brand-slate)' }}>
-            Whether you are looking to hire world-class, work-ready software engineers
-            or collaborate with us to expand digital skills across Africa—we are ready
-            to build the future with you.
-          </p>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+            {/* Body text token: font-sans in secondary/slate tone */}
+            <p className="body-copy brand-body max-w-2xl" style={{ color: 'var(--brand-slate)' }}>
+              Whether you are looking to hire world-class, work-ready software engineers
+              or collaborate with us to expand digital skills across Africa—we are ready
+              to build the future with you.
+            </p>
 
-          {/* Buttons following design tokens: variant="primary" & variant="secondary" */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-5 mt-8 md:mt-10">
-            {/* Primary Action Button Token */}
-            <Link
-              to="/hire"
-              className="brand-btn brand-btn--primary"
-            >
-              Hire Talent &rarr;
-            </Link>
+            {/* Buttons following design tokens: variant="primary" & variant="secondary" */}
+            <div className="flex flex-wrap items-center gap-4 sm:gap-5 lg:shrink-0">
+              {/* Primary Action Button Token */}
+              <Link
+                to="/hire"
+                className="brand-btn brand-btn--primary"
+              >
+                Hire Talent &rarr;
+              </Link>
 
-            {/* Secondary Action Button Token */}
-            <a
-              href={partnerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="brand-btn brand-btn--secondary"
-            >
-              Partner with us
-            </a>
+              {/* Secondary Action Button Token */}
+              <a
+                href={partnerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="brand-btn brand-btn--secondary"
+              >
+                Partner with us
+              </a>
+            </div>
           </div>
         </div>
       </div>

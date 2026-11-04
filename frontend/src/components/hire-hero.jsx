@@ -64,7 +64,7 @@ const HireHero = () => (
 
       <motion.p
         {...fadeUp(0.12)}
-        className="mt-7 max-w-7xl text-balance font-sans text-base leading-relaxed text-white/85 sm:text-body-l"
+        className="body-copy mt-7 max-w-7xl text-balance font-sans text-base leading-relaxed text-white/85 sm:text-body-l"
       >
         Zone01 engineers are selected from 28,000+ applicants on cognitive
         potential, then trained through months of intensive, project-based,

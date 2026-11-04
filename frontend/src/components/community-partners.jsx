@@ -161,11 +161,11 @@ const CommunityPartners = () => {
         <div className="mx-auto mb-10 max-w-2xl text-center md:mb-12">
           <h2
             id="community-partners-title"
-            className="font-sans text-[30px] font-black leading-tight tracking-tight text-[#1E293B] md:text-section-headline"
+            className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black leading-tight tracking-tight text-[#1E293B]"
           >
             Our partners
           </h2>
-          <p className="mx-auto mt-3 max-w-xl font-sans text-body-m leading-relaxed text-[#64748B] sm:text-base">
+          <p className="body-copy mx-auto mt-3 max-w-xl font-sans text-body-m leading-relaxed text-[#64748B] sm:text-base">
             The organisations investing in Zone01 Kisumu&apos;s apprentices and the
             future of tech in Kisumu.
           </p>

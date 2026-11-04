@@ -20,7 +20,7 @@ const OurModelSection = ({ heading = 'How Our Model Works' }) => {
       id="our-model"
       data-nav-theme="light"
       aria-label="How Our Model Works steps"
-      className="relative w-full overflow-hidden bg-white pb-4 pt-4 sm:pb-6 sm:pt-5 md:pb-8 md:pt-6 lg:pb-10 lg:pt-8"
+      className="relative w-full overflow-hidden bg-white pb-4 pt-2 sm:pb-6 sm:pt-3 md:pb-8 md:pt-4 lg:pb-10 lg:pt-4"
     >
       <Container className="relative">
         <motion.h2
@@ -28,7 +28,7 @@ const OurModelSection = ({ heading = 'How Our Model Works' }) => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="text-center font-sans font-black leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,4rem)]"
+          className="text-center font-sans font-black leading-[1.02] tracking-tight text-black-900 text-[clamp(2.25rem,5.5vw,3.5rem)]"
         >
           {heading}
         </motion.h2>
@@ -62,7 +62,7 @@ const OurModelSection = ({ heading = 'How Our Model Works' }) => {
                           {step.title}
                         </span>
                       </span>
-                      <span className="mt-2 block pl-8 font-mono text-base leading-relaxed text-black-900/80 sm:text-lg">
+                      <span className="body-copy mt-2 block pl-8 font-mono text-base leading-relaxed text-black-900/80 sm:text-lg">
                         {step.text}
                       </span>
                     </button>
@@ -85,7 +85,7 @@ const OurModelSection = ({ heading = 'How Our Model Works' }) => {
         transition={{ duration: 0.7, ease: EASE }}
         className="mt-14 bg-primary px-[clamp(1.25rem,5vw,8rem)] py-6 sm:py-8"
       >
-        <p className="mx-auto max-w-4xl text-center font-mono font-medium leading-relaxed text-white text-[clamp(0.85rem,1.6vw,1.15rem)]">
+        <p className="body-copy mx-auto max-w-4xl text-center font-mono font-medium leading-relaxed text-white text-[clamp(0.85rem,1.6vw,1.15rem)]">
           &ldquo;We filter for the highest potential &ndash; not credentials.&rdquo;
         </p>
       </motion.div>

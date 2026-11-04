@@ -2278,7 +2278,7 @@
 .impact-reports-title {
   margin: 0;
   font-family: var(--brand-font-sans);
-  font-size: clamp(30px, 3.4vw, 36px);
+  font-size: var(--brand-section-size);
   font-weight: var(--brand-weight-black, 900);
   line-height: 1.12;
   letter-spacing: -0.02em;
