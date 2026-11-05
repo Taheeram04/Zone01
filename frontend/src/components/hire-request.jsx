@@ -88,7 +88,7 @@ const buildBrief = (values) =>
 
 const inputClasses = (hasError) =>
   [
-    'w-full rounded-lg border bg-white px-4 py-3 font-sans text-body-m text-secondary',
+    'body-copy w-full rounded-lg border bg-white px-4 py-3 font-sans text-body-m text-secondary',
     'placeholder:text-black-900/35 transition-colors',
     'focus:outline-none focus:ring-2',
     hasError
@@ -205,7 +205,7 @@ const HireRequest = () => {
             <h2 className="font-sans text-[1.875rem] font-black leading-tight tracking-tight text-white sm:text-section-headline">
               Request a talent shortlist
             </h2>
-            <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-white sm:text-body-l">
+            <p className="body-copy mt-4 max-w-md font-sans text-base leading-relaxed text-white sm:text-body-l">
               Tell us what you are hiring for. Shortlist requests are typically
               answered within five working days by the talent team.
             </p>
@@ -229,7 +229,7 @@ const HireRequest = () => {
                   <span className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white/10 text-white">
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </span>
-                  <span className="font-sans text-body-m leading-relaxed text-white">
+                  <span className="body-copy font-sans text-body-m leading-relaxed text-white">
                     {text}
                   </span>
                 </li>
@@ -239,7 +239,7 @@ const HireRequest = () => {
             <div className="mt-9 space-y-3 border-t border-white/15 pt-6">
               <a
                 href={`mailto:${HIRE_EMAIL}`}
-                className="flex items-center gap-3 font-mono text-body-m text-white transition-colors hover:text-white/80"
+                className="body-copy flex items-center gap-3 font-mono text-white transition-colors hover:text-white/80"
               >
                 <Mail className="h-4 w-4 text-white" aria-hidden="true" />
                 {HIRE_EMAIL}
@@ -250,7 +250,7 @@ const HireRequest = () => {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 font-mono text-body-m text-white transition-colors hover:text-white/80"
+                className="body-copy flex items-center gap-3 font-mono text-white transition-colors hover:text-white/80"
               >
                 <MessageCircle className="h-4 w-4 text-white" aria-hidden="true" />
                 WhatsApp the talent team
@@ -267,7 +267,7 @@ const HireRequest = () => {
                 <h3 className="mt-6 font-sans text-cta-headline font-black tracking-tight text-secondary">
                   Your brief is ready.
                 </h3>
-                <p className="mt-3 max-w-md font-sans text-body-m leading-relaxed text-black-900/65">
+                <p className="body-copy mt-3 max-w-md font-sans text-body-m leading-relaxed text-black-900/65">
                   We opened your email app with the request pre-filled and
                   addressed to <strong>{HIRE_EMAIL}</strong> — review and send it
                   to reach the talent team. If it did not open, use the button

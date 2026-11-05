@@ -117,7 +117,7 @@
 
 /* Stories: tighter vertical rhythm, wider canvas so cards get wider and shorter */
 .impact-page .ri-stories-section {
-  padding: 32px 0 80px;
+  padding: 8px 0 16px;
 }
 
 .impact-page .ri-stories-section .ri-stories-header {
@@ -257,7 +257,7 @@
 
 /* Ventures: centered header, wider canvas, shorter cards */
 .impact-page .impact-startups-section {
-  padding: 64px 0 80px;
+  padding: 8px 0 80px;
 }
 
 .impact-page .impact-startups-section .impact-wrap {

@@ -144,12 +144,12 @@ const OurStaff = () => {
       />
 
       <Container className="relative">
-        <div className="mb-10 text-center md:mb-14">
+        <div className="mb-4 text-center md:mb-6">
           <KineticHeading
             as="h2"
             id="our-staff-title"
             text="Our Staff"
-            className="font-sans font-black leading-tight tracking-tight text-white text-[30px] md:text-section-headline"
+            className="font-sans font-black leading-tight tracking-tight text-white text-[clamp(2.25rem,5.5vw,3.5rem)]"
           />
         </div>
 
@@ -254,7 +254,7 @@ const OurStaff = () => {
                     <span className="mt-3 font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-blob-blue sm:text-xs">
                       {member.role}
                     </span>
-                    <span className="mt-3 font-sans text-[13px] leading-relaxed text-white/70 sm:text-sm">
+                    <span className="body-copy mt-3 font-sans text-[13px] leading-relaxed text-white/70 sm:text-sm">
                       {member.bio}
                     </span>
                   </div>

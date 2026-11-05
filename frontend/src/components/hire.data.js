@@ -30,7 +30,7 @@ export const DIFFERENTIATORS = [
 export const SKILL_AREAS = [
   {
     title: 'Artificial intelligence',
-    body: 'Applied machine learning, model integration and AI-assisted engineering workflows.',
+    body: 'Applied machine learning, model integration and AI assisted engineering workflows.',
   },
   {
     title: 'Web and mobile development',
@@ -69,34 +69,71 @@ export const TYPICAL_ROLES = [
   'AI application engineer',
 ];
 
+// Mirrors the Career Paths carousel so employers see the same nine pathways
+// learners choose from.
 export const TALENT_PROFILES = [
   {
-    label: 'Apprentice profile A',
+    label: 'Career path 01',
     availability: 'Available now',
-    role: 'Backend engineering (Go)',
-    tags: ['Concurrency', 'API design', 'Postgres'],
-    body: 'Completed the peer-reviewed backend project path. Strong on service design and testing under load.',
+    role: 'Artificial Intelligence',
+    tags: ['Machine learning', 'Model integration', 'Python'],
+    body: 'Applied machine learning, model integration and AI assisted engineering workflows, from preparing data to shipping intelligent product features.',
   },
   {
-    label: 'Apprentice profile B',
+    label: 'Career path 02',
     availability: 'Available now',
-    role: 'Full-stack (TypeScript / React)',
-    tags: ['Product UI', 'Testing', 'Accessibility'],
-    body: 'Built and defended multiple full-stack applications under peer review, with a focus on accessible interfaces.',
+    role: 'Cloud & DevOps',
+    tags: ['CI/CD', 'Infrastructure as code', 'Observability'],
+    body: 'CI/CD, infrastructure as code, containerisation and observability for secure, reliable delivery on modern cloud platforms.',
   },
   {
-    label: 'Apprentice profile C',
+    label: 'Career path 03',
     availability: 'Available now',
-    role: 'Data engineering',
-    tags: ['SQL', 'Pipelines', 'Python'],
-    body: 'Data pipeline and analytics projects, peer-reviewed and defended against real datasets.',
+    role: 'Java FullStack',
+    tags: ['Java', 'Spring Boot', 'REST APIs'],
+    body: 'Enterprise-grade backends with Java and Spring Boot, paired with production frontends and typed REST APIs.',
   },
   {
-    label: 'Apprentice profile D',
+    label: 'Career path 04',
     availability: 'Available now',
-    role: 'Cybersecurity and DevOps',
-    tags: ['Linux', 'Containers', 'CI/CD'],
-    body: 'Infrastructure and security project path with operational exercises and incident-style reviews.',
+    role: 'Video Games Development',
+    tags: ['Game design', 'Gameplay programming', 'Real-time engines'],
+    body: 'Gameplay programming, game design and interactive graphics, shipping playable projects with real time engines.',
+  },
+  {
+    label: 'Career path 05',
+    availability: 'Available now',
+    role: 'Web App Development',
+    tags: ['React', 'APIs', 'Accessibility'],
+    body: 'End-to-end web platforms: accessible React interfaces, robust APIs and databases, tested and peer-reviewed.',
+  },
+  {
+    label: 'Career path 06',
+    availability: 'Available now',
+    role: 'Mobile App Development',
+    tags: ['Cross-platform', 'Native', 'Release'],
+    body: 'Native and cross-platform mobile products built with modern tooling, from interface design through to release.',
+  },
+  {
+    label: 'Career path 07',
+    availability: 'Available now',
+    role: 'Data Engineering',
+    tags: ['SQL', 'Pipelines', 'Analytics'],
+    body: 'Data pipelines, warehousing and analytics engineering that turn raw data into dependable production systems.',
+  },
+  {
+    label: 'Career path 08',
+    availability: 'Available now',
+    role: 'Cyber Security',
+    tags: ['Threat modelling', 'Security testing', 'Incident response'],
+    body: 'Secure architecture, threat modelling, security testing and incident response for real applications and infrastructure.',
+  },
+  {
+    label: 'Career path 09',
+    availability: 'Available now',
+    role: 'Blockchain',
+    tags: ['Smart contracts', 'Distributed ledgers', 'dApps'],
+    body: 'Distributed ledger fundamentals, smart contracts and decentralised applications built and reviewed on chain.',
   },
 ];
 
@@ -104,7 +141,7 @@ export const HIRING_OPTIONS = [
   {
     index: '01',
     title: 'Request a talent shortlist',
-    body: 'Tell us the role, seniority and stack. We return matched, screened profiles with project evidence.',
+    body: 'Share the role, seniority and stack. We return matched, screened profiles backed by project evidence.',
     cta: 'Start a brief',
   },
   {
@@ -116,7 +153,7 @@ export const HIRING_OPTIONS = [
   {
     index: '03',
     title: 'Become a hiring partner',
-    body: 'Ongoing pipeline access, early visibility of graduating cohorts and a recurring presence on campus.',
+    body: 'Get ongoing pipeline access, early visibility of graduating cohorts and a recurring presence on campus.',
     cta: 'Talk partnership',
   },
   {
@@ -131,22 +168,22 @@ export const PROCESS_STEPS = [
   {
     index: '01',
     title: 'Request a talent shortlist',
-    body: 'Role, skills, seniority and start date. It takes about five minutes.',
+    body: 'Share the role, seniority and stack. We return matched, screened profiles backed by project evidence.',
   },
   {
     index: '02',
     title: 'Host an internship or project',
-    body: 'Matched, screened profiles with project evidence, typically within five working days.',
+    body: 'Bring a team of apprentices onto a real problem for a defined period, with campus support throughout.',
   },
   {
     index: '03',
     title: 'Become a hiring partner',
-    body: 'Technical interviews with your team. We coordinate logistics, references and feedback.',
+    body: 'Get ongoing pipeline access, early visibility of graduating cohorts and a recurring presence on campus.',
   },
   {
     index: '04',
     title: 'Build a delivery team in Kisumu',
-    body: 'Offer, onboarding and a check-in with our talent team at 30 and 90 days.',
+    body: 'Stand up a full engineering team with local onboarding, workspace and operational support.',
   },
 ];
 

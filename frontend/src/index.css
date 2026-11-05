@@ -199,3 +199,66 @@ img, video, canvas, svg {
 .animate-kenburns {
   animation: kenburns 5.5s ease-out forwards;
 }
+
+/* Shared body-copy style: matches the "Who can apply?" paragraph typography. */
+.body-copy {
+  font-family: var(--font-mono) !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.8 !important;
+  letter-spacing: normal !important;
+}
+
+@media (min-width: 640px) {
+  .body-copy {
+    font-size: 1.125rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .body-copy {
+    font-size: 1.1875rem !important;
+  }
+}
+
+/* Apply the body-copy style to all supporting text across the public pages
+   and the FAQ tables, while leaving titles, navigation and controls alone. */
+:is(.home-page, .about-page, .community-page, .impact-page, .hire-page, .faq)
+  :is(p, dd, dt, blockquote, figcaption, .faq-a__list li, .faq-row__q-text, .faq-table__title) {
+  font-family: var(--font-mono) !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.8 !important;
+  letter-spacing: normal !important;
+}
+
+@media (min-width: 640px) {
+  :is(.home-page, .about-page, .community-page, .impact-page, .hire-page, .faq)
+    :is(p, dd, dt, blockquote, figcaption, .faq-a__list li, .faq-row__q-text, .faq-table__title) {
+    font-size: 1.125rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  :is(.home-page, .about-page, .community-page, .impact-page, .hire-page, .faq)
+    :is(p, dd, dt, blockquote, figcaption, .faq-a__list li, .faq-row__q-text, .faq-table__title) {
+    font-size: 1.1875rem !important;
+  }
+}
+/* Smaller supporting copy used inside compact step/engagement grids. */
+.body-copy.body-copy-sm {
+  font-size: 0.625rem !important;
+  line-height: 1.45 !important;
+}
+
+/* Tighter line spacing for long specialization descriptions. */
+.body-copy.body-copy-tight {
+  line-height: 1.5 !important;
+}
+
+/* Compact labels inside the homepage impact stat cards. Sized above the
+   previous 5px value so they stay readable while sitting under the figures. */
+p.stat-label.stat-label {
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+}

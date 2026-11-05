@@ -328,19 +328,30 @@ CORS_ALLOW_CREDENTIALS = True
 #   WHATSAPP_PHONE_NUMBER_ID   - the "Phone number ID" of your WhatsApp sender.
 #   WHATSAPP_APP_SECRET        - app secret, used to verify webhook signatures.
 #
-# Leave DRY_RUN on (the default) until credentials are set: replies are logged
-# and stored but not actually sent, so you can test the flow safely.
+# Replies are sent when WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID are
+# set. Set WHATSAPP_DRY_RUN=true to log replies instead of sending them (useful
+# for local testing).
 WHATSAPP_VERIFY_TOKEN = env("WHATSAPP_VERIFY_TOKEN", default="")
 WHATSAPP_ACCESS_TOKEN = env("WHATSAPP_ACCESS_TOKEN", default="")
 WHATSAPP_PHONE_NUMBER_ID = env("WHATSAPP_PHONE_NUMBER_ID", default="")
 WHATSAPP_APP_SECRET = env("WHATSAPP_APP_SECRET", default="")
 WHATSAPP_API_VERSION = env("WHATSAPP_API_VERSION", default="v21.0")
-WHATSAPP_DRY_RUN = env.bool("WHATSAPP_DRY_RUN", default=True)
+WHATSAPP_DRY_RUN = env.bool("WHATSAPP_DRY_RUN", default=False)
 WHATSAPP_TIMEOUT = env.float("WHATSAPP_TIMEOUT", default=10.0)
 # Minimum match score (0..1) before an FAQ answer is sent. When nothing clears
-# the threshold the assistant stays silent and the message is left for the
-# communication team in the admin inbox.
+# the threshold, the visitor gets an acknowledgement and the question is
+# forwarded to WHATSAPP_HANDOFF_NUMBER (when set) for a human to answer.
 WHATSAPP_MATCH_THRESHOLD = env.float("WHATSAPP_MATCH_THRESHOLD", default=0.34)
+# Human inbox for questions the assistant cannot answer. Use the international
+# number without a leading "+", e.g. 254748902779. Leave empty to disable.
+WHATSAPP_HANDOFF_NUMBER = env("WHATSAPP_HANDOFF_NUMBER", default="")
+# Acknowledges an unanswered question so the visitor knows it was received.
+WHATSAPP_FALLBACK_MESSAGE = env(
+    "WHATSAPP_FALLBACK_MESSAGE",
+    default=(
+        "Thanks for your message. A member of the Zone01 Kisumu team will get back to you shortly."
+    ),
+)
 # Sent automatically when someone starts a new conversation (their first
 # message, or the first after 24 hours of silence). Leave empty to disable.
 WHATSAPP_WELCOME_MESSAGE = env(

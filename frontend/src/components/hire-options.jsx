@@ -41,8 +41,8 @@ const stepNode = {
   hidden: { scale: 0, backgroundColor: '#EAF2FF', color: '#0063F9' },
   visible: {
     scale: 1,
-    backgroundColor: '#0063F9',
-    color: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
+    color: '#0063F9',
     transition: { type: 'spring', stiffness: 360, damping: 22 },
   },
 };
@@ -65,7 +65,7 @@ const progressLine = {
 const HIRING_OPTIONS_ENABLED = false;
 
 const HireOptions = () => (
-  <section id="options" data-nav-theme="light" className="bg-white pb-6 pt-10 md:pb-8 md:pt-14">
+  <section id="options" data-nav-theme="light" className="bg-white pb-6 pt-0 md:pb-8 md:pt-0">
     <Container>
       {HIRING_OPTIONS_ENABLED && (
         <>
@@ -122,16 +122,12 @@ const HireOptions = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-16 overflow-hidden rounded-3xl bg-tint-blue p-7 sm:p-10"
+        className="mt-6 overflow-hidden rounded-3xl bg-primary p-7 sm:p-10"
       >
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="font-sans text-cta-headline font-black tracking-tight text-secondary">
+          <h3 className="font-sans text-[clamp(2.25rem,5.5vw,3.5rem)] font-black tracking-tight text-white">
             Engage with our talent
           </h3>
-          <p className="mx-auto max-w-2xl font-sans text-base leading-relaxed text-black-900/65">
-            Start with a single hire or build a long-term pipeline. Every route
-            begins with the same thing: a clear brief.
-          </p>
         </div>
 
         <motion.ol
@@ -143,12 +139,12 @@ const HireOptions = () => (
         >
           <span
             aria-hidden="true"
-            className="absolute inset-x-0 top-0 hidden h-px bg-secondary/15 lg:block"
+            className="absolute inset-x-0 top-0 hidden h-px bg-white/25 lg:block"
           />
           <motion.span
             aria-hidden="true"
             variants={progressLine}
-            className="absolute inset-x-0 top-0 hidden h-px origin-left bg-primary lg:block"
+            className="absolute inset-x-0 top-0 hidden h-px origin-left bg-white lg:block"
           />
           <motion.span
             aria-hidden="true"
@@ -160,14 +156,14 @@ const HireOptions = () => (
               ease: [0.16, 1, 0.3, 1],
               times: [0, 0.1, 0.9, 1],
             }}
-            className="absolute top-0 z-20 hidden h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary lg:block"
+            className="absolute top-0 z-20 hidden h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white lg:block"
           />
 
           {PROCESS_STEPS.map((step) => (
             <motion.li
               key={step.index}
               variants={stepItem}
-              className="relative z-10 border-t border-secondary/15 pt-5"
+              className="relative z-10 border-t border-white/20 pt-5"
             >
               <motion.span
                 variants={stepNode}
@@ -177,13 +173,13 @@ const HireOptions = () => (
               </motion.span>
               <motion.h4
                 variants={stepItem}
-                className="mt-2 font-sans text-base font-bold text-secondary"
+                className="mt-2 font-sans text-lg font-bold text-white sm:text-xl"
               >
                 {step.title}
               </motion.h4>
               <motion.p
                 variants={stepItem}
-                className="mt-1.5 font-sans text-body-m leading-relaxed text-black-900/60"
+                className="body-copy body-copy-sm mt-1.5 font-sans text-body-m leading-relaxed text-white/80"
               >
                 {step.body}
               </motion.p>

@@ -35,23 +35,23 @@ const AboutHero = () => {
 
       {/* Text layer — centred */}
       <Container className="relative z-10 py-28 sm:py-32">
-        <div className="mx-auto max-w-6xl translate-y-6 text-center sm:translate-y-10">
+        <div className="mx-auto max-w-6xl translate-y-16 text-center sm:translate-y-28">
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-sans font-black text-white tracking-tight leading-[1.06] text-[clamp(1.25rem,6.2vw,4.5rem)]"
+            className="font-sans font-black text-white tracking-tight leading-[1.06] text-[clamp(2.25rem,5.5vw,3.5rem)]"
           >
             <span className="whitespace-nowrap">Tackling youth unemployment</span>
             <br />
-            at scale.
+            at scale
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-8 max-w-3xl font-sans text-base leading-relaxed text-white/90 sm:text-lg md:text-xl"
+            className="body-copy mx-auto mt-8 max-w-3xl text-center font-mono text-[clamp(0.82rem,1.5vw,1.02rem)] leading-relaxed text-white/90"
           >
             We identify the{' '}
             <strong className="font-black text-white">top 1%</strong> of talent

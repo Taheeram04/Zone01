@@ -326,7 +326,7 @@ const PodcastFeature = () => (
         </span>
       </h3>
 
-      <p className="max-w-xl font-sans text-sm leading-relaxed text-white/70 sm:text-base">
+      <p className="body-copy max-w-xl font-sans text-sm leading-relaxed text-white/70 sm:text-base">
         Real conversations with the builders, mentors and partners behind Zone01
         Kisumu — from first commit to first job and everything in between.
       </p>
@@ -449,14 +449,14 @@ const CommunityFeed = () => {
 
         {/* Social strip — same accounts as the footer */}
         <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-secondary/15 bg-campus-bg px-5 py-6 sm:px-8">
-          <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
-            <div>
+          <div className="flex flex-col items-center gap-5 text-center lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:text-left">
+            <div className="min-w-0 lg:flex-1">
               <h3 className="font-sans text-lg font-bold text-secondary">Follow the journey</h3>
               <p className="mt-1 text-sm text-black-900/60">
                 New posts land on our socials first — join the conversation.
               </p>
             </div>
-            <ul className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+            <ul className="flex shrink-0 flex-nowrap items-center justify-center gap-2.5 sm:gap-3">
               {SOCIAL_LINKS.map(({ key, Icon, href, label, color }) => (
                 <li key={key}>
                   <a

@@ -324,11 +324,11 @@ const Hero = () => {
           />
 
           <p
-            className="font-sans font-bold text-white mb-3 sm:mb-4 max-w-3xl leading-snug tracking-tight"
+            className="body-copy font-sans font-normal text-white mb-3 sm:mb-4 max-w-3xl leading-snug tracking-tight"
             style={{
               fontFamily: 'var(--brand-font-sans)',
               fontSize: 'clamp(var(--brand-caption, 12px), 1.5vw, 18px)',
-              fontWeight: 'var(--brand-weight-bold, 700)',
+              fontWeight: 'var(--brand-weight-regular, 400)',
               color: 'var(--brand-white, #ffffff)',
               lineHeight: 1.25,
             }}
