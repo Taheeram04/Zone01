@@ -1,3 +1,5 @@
+import communityHeroImg from '../assets/community-hero.webp';
+
 /**
  * Community News Data
  *
@@ -13,7 +15,7 @@ export const INITIAL_NEWS_DATA = [
     excerpt: 'For many young people, the opportunity to learn can be shaped by the resources available to them. These resources are often limited and in many cases, inaccessible.',
     category: 'Partnerships',
     date: '[DD Mon YYYY]',
-    image: null,
+    image: communityHeroImg,
     pinned: true,
     tone: 'c',
   },

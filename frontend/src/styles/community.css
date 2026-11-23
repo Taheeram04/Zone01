@@ -86,14 +86,14 @@
 .community-pill {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
-  min-height: 52px;
-  padding: 6px 6px 6px 24px;
+  gap: 12px;
+  min-height: 44px;
+  padding: 4px 4px 4px 18px;
   border: 1px solid var(--community-line);
   background: #ffffff;
   border-radius: 9999px;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--community-ink);
   transition: border-color 0.3s ease, background-color 0.3s ease;
@@ -102,8 +102,8 @@
 }
 
 .community-pill i {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--community-blue);
   color: #ffffff;
@@ -350,7 +350,7 @@
   font-family: var(--font-sans);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: clamp(48px, 6vw, 88px);
+  font-size: clamp(32px, 4vw, 54px);
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px rgba(0, 99, 249, 0.35);
@@ -378,7 +378,7 @@
 
 @media (min-width: 1000px) {
   .community-off {
-    margin-top: 56px;
+    margin-top: 24px;
   }
 }
 
@@ -390,7 +390,7 @@
 
 .community-mason-item {
   break-inside: avoid;
-  margin-bottom: 72px;
+  margin-bottom: 36px;
   display: flex;
   flex-direction: column;
 }

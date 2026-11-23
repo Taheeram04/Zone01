@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Container } from '../components/layout.jsx';
 import CommunityViewAllHero from '../components/community/CommunityViewAllHero.jsx';
 import CommunityImagePlaceholder from '../components/community/CommunityImagePlaceholder.jsx';
 import { INITIAL_NEWS_DATA } from '../data/community-news.data.js';
@@ -60,63 +61,70 @@ export default function CommunityAllNews() {
       />
 
       {/* Pinned Featured Story */}
-      <section className="pb-24 pt-0">
-        <div className="mx-auto max-w-[1240px] px-8">
-          <Link
-            to="/community/news"
-            className="community-lift flex flex-wrap items-center gap-12 lg:gap-[72px]"
-          >
-            <div className="community-thumb relative aspect-[5/4] min-w-[min(300px,100%)] flex-[1.1_1_480px] overflow-hidden rounded-[36px]">
-              <CommunityImagePlaceholder
-                src={pinnedStory.image}
-                alt={pinnedStory.title}
-                tone={pinnedStory.tone || 'c'}
-                label="Featured image 5:4"
-                className="community-zoom"
-              />
-              <i
-                className="community-orb"
-                aria-hidden="true"
-                style={{ width: '130px', height: '130px', top: '8%', right: '8%' }}
-              />
-              <i
-                className="community-orb"
-                aria-hidden="true"
-                style={{
-                  width: '56px',
-                  height: '56px',
-                  bottom: '12%',
-                  left: '9%',
-                  animationDelay: '-4s',
-                }}
-              />
-            </div>
+      <section className="pb-12 pt-0 sm:pb-16">
+        <Container>
+          <div className="mx-auto w-full max-w-7xl">
+            <Link
+              to="/community/news"
+              className="community-lift flex flex-wrap items-center gap-8 lg:gap-14"
+            >
+              <div className="community-thumb relative aspect-[5/4] max-h-[360px] min-w-[min(280px,100%)] flex-[1_1_420px] overflow-hidden rounded-2xl sm:rounded-[28px]">
+                <CommunityImagePlaceholder
+                  src={pinnedStory.image}
+                  alt={pinnedStory.title}
+                  tone={pinnedStory.tone || 'c'}
+                  label="Featured image 5:4"
+                  className="community-zoom"
+                />
+                {!pinnedStory.image && (
+                  <>
+                    <i
+                      className="community-orb"
+                      aria-hidden="true"
+                      style={{ width: '130px', height: '130px', top: '8%', right: '8%' }}
+                    />
+                    <i
+                      className="community-orb"
+                      aria-hidden="true"
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        bottom: '12%',
+                        left: '9%',
+                        animationDelay: '-4s',
+                      }}
+                    />
+                  </>
+                )}
+              </div>
 
-            <div className="flex flex-[1_1_380px] flex-col gap-5">
-              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
-                Pinned &nbsp;/&nbsp; {pinnedStory.category} &nbsp;/&nbsp; {pinnedStory.date}
-              </span>
+              <div className="flex flex-[1_1_340px] flex-col gap-4">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
+                  Pinned &nbsp;/&nbsp; {pinnedStory.category} &nbsp;/&nbsp; {pinnedStory.date}
+                </span>
 
-              <h2 className="community-ttl font-sans text-[clamp(24px,2.6vw,36px)] font-extrabold uppercase leading-[1.15] tracking-tight text-black">
-                {pinnedStory.title}
-              </h2>
+                <h2 className="community-ttl font-sans text-[clamp(20px,2.2vw,28px)] font-extrabold uppercase leading-[1.18] tracking-tight text-black">
+                  {pinnedStory.title}
+                </h2>
 
-              <p className="font-mono text-[15px] leading-[1.75] text-[var(--community-muted)]">
-                {pinnedStory.excerpt}
-              </p>
+                <p className="font-mono text-xs leading-relaxed text-[var(--community-muted)] sm:text-sm">
+                  {pinnedStory.excerpt}
+                </p>
 
-              <span className="community-ulink self-start text-sm font-semibold text-[var(--community-blue)]">
-                Read the story
-              </span>
-            </div>
-          </Link>
-        </div>
+                <span className="community-ulink self-start text-xs font-semibold uppercase tracking-wider text-[var(--community-blue)]">
+                  Read the story
+                </span>
+              </div>
+            </Link>
+          </div>
+        </Container>
       </section>
 
       {/* Toolbar */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1240px] px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-y border-[var(--community-line)] py-1.5 md:gap-8">
+        <Container>
+          <div className="mx-auto w-full max-w-7xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-y border-[var(--community-line)] py-1.5 md:gap-6">
             {/* Category Tabs */}
             <div
               role="tablist"
@@ -179,24 +187,26 @@ export default function CommunityAllNews() {
             </div>
           </div>
         </div>
-      </section>
+      </Container>
+    </section>
 
-      {/* Grid of Cards */}
-      <section className="pb-32 pt-16">
-        <div className="mx-auto max-w-[1240px] px-8">
+    {/* Grid of Cards */}
+    <section className="pb-20 pt-10 sm:pb-24 sm:pt-12">
+      <Container>
+        <div className="mx-auto w-full max-w-7xl">
           {visibleItems.length === 0 ? (
             <div className="py-20 text-center font-mono text-sm text-[var(--community-muted)]">
               No news articles found matching your criteria.
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(320px,100%),1fr))] gap-x-8 gap-y-14">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {visibleItems.map((item, idx) => (
                 <Link
                   key={`${item.id}-${idx}`}
                   to="/community/news"
-                  className="community-lift flex flex-col gap-6"
+                  className="community-lift flex flex-col gap-4 sm:gap-5"
                 >
-                  <div className="community-thumb relative aspect-[4/3] w-full overflow-hidden rounded-[28px]">
+                  <div className="community-thumb relative aspect-[16/10] w-full overflow-hidden rounded-2xl sm:aspect-[4/3]">
                     <CommunityImagePlaceholder
                       src={item.image}
                       alt={item.title}
@@ -206,20 +216,20 @@ export default function CommunityAllNews() {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
+                  <div className="flex flex-col gap-2 px-1">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
                       {item.category} &nbsp;/&nbsp; {item.date}
                     </span>
 
-                    <h3 className="community-ttl line-clamp-3 font-sans text-[20px] font-extrabold uppercase leading-[1.25] tracking-tight text-black">
+                    <h3 className="community-ttl line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-black sm:text-[17px]">
                       {item.title}
                     </h3>
 
-                    <p className="line-clamp-3 font-mono text-[14px] leading-[1.7] text-[var(--community-muted)]">
+                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-[var(--community-muted)] sm:text-sm">
                       {item.excerpt}
                     </p>
 
-                    <span className="community-ulink mt-1 self-start font-mono text-sm font-semibold text-[var(--community-blue)]">
+                    <span className="community-ulink mt-1 self-start font-mono text-xs font-semibold uppercase tracking-wider text-[var(--community-blue)]">
                       Read more
                     </span>
                   </div>
@@ -229,7 +239,7 @@ export default function CommunityAllNews() {
           )}
 
           {/* Pagination Footer */}
-          <div className="mt-20 flex flex-col items-center gap-6 text-center">
+          <div className="mt-14 flex flex-col items-center gap-5 text-center sm:mt-16">
             <span className="font-mono text-xs tracking-wider text-[var(--community-muted)]">
               Showing {Math.min(visibleItems.length, filteredItems.length)} of{' '}
               {filteredItems.length} news items
@@ -261,7 +271,8 @@ export default function CommunityAllNews() {
             )}
           </div>
         </div>
-      </section>
+      </Container>
+    </section>
     </div>
   );
 }

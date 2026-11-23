@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Container } from '../layout.jsx';
 import CommunitySectionHeader from './CommunitySectionHeader.jsx';
 import CommunityImagePlaceholder from './CommunityImagePlaceholder.jsx';
 import { INITIAL_NEWS_DATA } from '../../data/community-news.data.js';
@@ -103,134 +104,140 @@ export default function CommunityNewsSection() {
       <section
         id="community-news"
         aria-labelledby="community-news-header"
-        className="w-full bg-white pb-24 pt-28"
+        className="w-full bg-white py-16 md:py-20"
       >
-        <div className="mx-auto max-w-[1240px] px-8">
-          <CommunitySectionHeader
-            step="01 — News"
-            titleLead="Latest from"
-            titleAccent="the Zone"
-            description="Stories about our apprentices, partners and the impact we are building across Kisumu."
-            viewAllText="View all news"
-            viewAllLink="/community/news"
-          />
+        <Container>
+          <div className="w-full">
+            <CommunitySectionHeader
+              step="01 — News"
+              titleLead="Latest from"
+              titleAccent="the Zone"
+              description="Stories about our apprentices, partners and the impact we are building across Kisumu."
+              viewAllText="View all news"
+              viewAllLink="/community/news"
+            />
 
-          <div className="flex flex-wrap items-start gap-14 lg:gap-[72px]">
-            {/* Featured Story (Left Column) */}
-            <Link
-              to="/community/news"
-              className="community-lift community-rise flex min-w-0 flex-[1.15_1_500px] flex-col gap-7"
-              style={{ animationDelay: '0.15s' }}
-            >
-              <div className="community-thumb relative aspect-[5/4] w-full overflow-hidden rounded-[32px]">
-                <CommunityImagePlaceholder
-                  src={featured.image}
-                  alt={featured.title}
-                  tone={featured.tone || 'c'}
-                  label="Featured image 5:4"
-                  className="community-zoom"
-                />
-                {/* Floating hollow orbs */}
-                <i
-                  className="community-orb"
-                  aria-hidden="true"
-                  style={{ width: '120px', height: '120px', top: '8%', right: '8%' }}
-                />
-                <i
-                  className="community-orb"
-                  aria-hidden="true"
-                  style={{
-                    width: '56px',
-                    height: '56px',
-                    bottom: '12%',
-                    left: '9%',
-                    animationDelay: '-4s',
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-col gap-4 pr-6">
-                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
-                  {featured.category} &nbsp;/&nbsp; {featured.date}
-                </span>
-
-                <h3 className="community-ttl font-sans text-[clamp(22px,2.3vw,32px)] font-extrabold uppercase leading-[1.18] tracking-tight text-black">
-                  {featured.title}
-                </h3>
-
-                <p className="font-mono text-[15px] leading-[1.75] text-[var(--community-muted)]">
-                  {featured.excerpt}
-                </p>
-
-                <span className="community-ulink self-start text-sm font-semibold text-[var(--community-blue)]">
-                  Read the story
-                </span>
-              </div>
-            </Link>
-
-            {/* List Rows 02 to 05 (Right Column) */}
-            <div className="flex min-w-0 flex-[1_1_380px] flex-col border-t border-[var(--community-line)]">
-              {listRows.map((row, index) => {
-                const rowNum = String(index + 2).padStart(2, '0');
-                const delay = `${0.3 + index * 0.1}s`;
-
-                return (
-                  <Link
-                    key={`${row.id}-${index}`}
-                    to="/community/news"
-                    className="community-row community-rise gap-6 border-b border-[var(--community-line)] py-7"
-                    style={{ animationDelay: delay }}
-                  >
-                    <span className="w-6 shrink-0 font-mono text-[11px] font-semibold tracking-wider text-[var(--community-muted)]">
-                      {rowNum}
-                    </span>
-
-                    <div className="community-thumb h-[92px] w-[92px] shrink-0 rounded-[20px]">
-                      <CommunityImagePlaceholder
-                        src={row.image}
-                        alt={row.title}
-                        tone={row.tone || (index === 0 ? 'a' : index === 1 ? 'b' : index === 2 ? 'd' : 'c')}
-                        label=""
-                        className="community-zoom"
-                      />
-                    </div>
-
-                    <div className="flex min-w-0 flex-1 flex-col gap-2.5">
-                      <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
-                        {row.category} / {row.date}
-                      </span>
-                      <h4 className="community-ttl line-clamp-3 font-sans text-[17px] font-extrabold uppercase leading-[1.25] tracking-tight text-black">
-                        {row.title}
-                      </h4>
-                    </div>
-
-                    <span className="community-round">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+            <div className="flex flex-wrap items-start gap-8 lg:gap-12">
+              {/* Featured Story (Left Column) */}
+              <Link
+                to="/community/news"
+                className="community-lift community-rise flex min-w-0 flex-1 flex-col gap-5 lg:max-w-[480px]"
+                style={{ animationDelay: '0.15s' }}
+              >
+                <div className="community-thumb relative aspect-[5/4] max-h-[360px] w-full overflow-hidden rounded-2xl sm:rounded-[28px]">
+                  <CommunityImagePlaceholder
+                    src={featured.image}
+                    alt={featured.title}
+                    tone={featured.tone || 'c'}
+                    label="Featured image 5:4"
+                    className="community-zoom"
+                  />
+                  {/* Floating hollow orbs (shown on fallback placeholders) */}
+                  {!featured.image && (
+                    <>
+                      <i
+                        className="community-orb"
                         aria-hidden="true"
-                      >
-                        <path d="M5 12h14M13 6l6 6-6 6" />
-                      </svg>
-                    </span>
-                  </Link>
-                );
-              })}
+                        style={{ width: '120px', height: '120px', top: '8%', right: '8%' }}
+                      />
+                      <i
+                        className="community-orb"
+                        aria-hidden="true"
+                        style={{
+                          width: '56px',
+                          height: '56px',
+                          bottom: '12%',
+                          left: '9%',
+                          animationDelay: '-4s',
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-3 pr-2">
+                  <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
+                    {featured.category} &nbsp;/&nbsp; {featured.date}
+                  </span>
+
+                  <h3 className="community-ttl font-sans text-[clamp(18px,2vw,24px)] font-extrabold uppercase leading-snug tracking-tight text-black">
+                    {featured.title}
+                  </h3>
+
+                  <p className="line-clamp-3 font-mono text-sm leading-relaxed text-[var(--community-muted)]">
+                    {featured.excerpt}
+                  </p>
+
+                  <span className="community-ulink self-start text-xs font-semibold uppercase tracking-wider text-[var(--community-blue)]">
+                    Read the story
+                  </span>
+                </div>
+              </Link>
+
+              {/* List Rows 02 to 05 (Right Column) */}
+              <div className="flex min-w-0 flex-[1_1_340px] flex-col border-t border-[var(--community-line)]">
+                {listRows.map((row, index) => {
+                  const rowNum = String(index + 2).padStart(2, '0');
+                  const delay = `${0.3 + index * 0.1}s`;
+
+                  return (
+                    <Link
+                      key={`${row.id}-${index}`}
+                      to="/community/news"
+                      className="community-row community-rise gap-4 border-b border-[var(--community-line)] py-4 sm:gap-5 sm:py-5"
+                      style={{ animationDelay: delay }}
+                    >
+                      <span className="w-6 shrink-0 font-mono text-[11px] font-semibold tracking-wider text-[var(--community-muted)]">
+                        {rowNum}
+                      </span>
+
+                      <div className="community-thumb h-16 w-16 shrink-0 rounded-xl sm:h-[72px] sm:w-[72px] sm:rounded-2xl">
+                        <CommunityImagePlaceholder
+                          src={row.image}
+                          alt={row.title}
+                          tone={row.tone || (index === 0 ? 'a' : index === 1 ? 'b' : index === 2 ? 'd' : 'c')}
+                          label=""
+                          className="community-zoom"
+                        />
+                      </div>
+
+                      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
+                          {row.category} / {row.date}
+                        </span>
+                        <h4 className="community-ttl line-clamp-2 font-sans text-sm font-extrabold uppercase leading-snug tracking-tight text-black sm:text-[15px]">
+                          {row.title}
+                        </h4>
+                      </div>
+
+                      <span className="community-round">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Decorative Marquee Directly After News */}
       <div
         aria-hidden="true"
-        className="w-full overflow-hidden border-y border-[var(--community-line)] bg-white py-10 select-none"
+        className="w-full overflow-hidden border-y border-[var(--community-line)] bg-white py-6 select-none sm:py-8"
       >
         <div className="community-mq">
           {[0, 1].map((copyIndex) => (

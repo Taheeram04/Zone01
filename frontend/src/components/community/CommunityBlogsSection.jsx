@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Container } from '../layout.jsx';
 import CommunitySectionHeader from './CommunitySectionHeader.jsx';
 import CommunityImagePlaceholder from './CommunityImagePlaceholder.jsx';
 import { INITIAL_BLOGS_DATA } from '../../data/community-blogs.data.js';
@@ -78,64 +79,66 @@ export default function CommunityBlogsSection() {
     <section
       id="community-blogs"
       aria-labelledby="community-blogs-header"
-      className="w-full bg-white pb-32 pt-28"
+      className="w-full bg-white py-16 md:py-20"
     >
-      <div className="mx-auto max-w-[1240px] px-8">
-        <CommunitySectionHeader
-          step="03 — Blogs"
-          titleLead="Stories from"
-          titleAccent="the builders"
-          description="Ideas, tutorials and reflections from apprentices, mentors and partners."
-          viewAllText="View all blogs"
-          viewAllLink="/community/blogs"
-        />
+      <Container>
+        <div className="mx-auto w-full max-w-7xl">
+          <CommunitySectionHeader
+            step="03 — Blogs"
+            titleLead="Stories from"
+            titleAccent="the builders"
+            description="Ideas, tutorials and reflections from apprentices, mentors and partners."
+            viewAllText="View all blogs"
+            viewAllLink="/community/blogs"
+          />
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(320px,100%),1fr))] items-start gap-x-10 gap-y-14">
-          {displayCards.map((blog, idx) => {
-            const isMiddle = idx === 1;
-            const offClass = isMiddle ? 'community-off' : '';
-            const tone = blog.tone || (idx === 0 ? 'a' : idx === 1 ? 'c' : 'b');
+          <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            {displayCards.map((blog, idx) => {
+              const isMiddle = idx === 1;
+              const offClass = isMiddle ? 'community-off' : '';
+              const tone = blog.tone || (idx === 0 ? 'a' : idx === 1 ? 'c' : 'b');
 
-            return (
-              <Link
-                key={`${blog.id}-${idx}`}
-                to="/community/blogs"
-                className={`community-lift flex flex-col gap-7 ${offClass}`}
-              >
-                {/* Arch-shaped 3:4 cover: top corners fully rounded (999px), bottom corners 32px */}
-                <div className="community-thumb relative aspect-[3/4] w-full overflow-hidden rounded-[999px_999px_32px_32px]">
-                  <CommunityImagePlaceholder
-                    src={blog.cover}
-                    alt={blog.title}
-                    tone={tone}
-                    label="Cover 3:4"
-                    className="community-zoom"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3.5 px-2">
-                  <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
-                    {blog.category} &nbsp;/&nbsp; {blog.readMinutes} min read
-                  </span>
-
-                  <h3 className="community-ttl line-clamp-3 font-sans text-[21px] font-extrabold uppercase leading-[1.2] tracking-tight text-black">
-                    {blog.title}
-                  </h3>
-
-                  <p className="line-clamp-2 font-mono text-[14px] leading-[1.7] text-[var(--community-muted)]">
-                    {blog.excerpt}
-                  </p>
-
-                  <div className="mt-1 flex items-center gap-3 font-mono text-[13px] text-black">
-                    <span className="h-8 w-8 shrink-0 rounded-full bg-[var(--community-soft2)]" />
-                    <span>{blog.author?.name || '[Author name]'}</span>
+              return (
+                <Link
+                  key={`${blog.id}-${idx}`}
+                  to="/community/blogs"
+                  className={`community-lift flex flex-col gap-4 sm:gap-5 ${offClass}`}
+                >
+                  {/* Arch-shaped cover: top corners fully rounded (999px), bottom corners 24px, capped max-height */}
+                  <div className="community-thumb relative aspect-[4/3] max-h-[280px] w-full overflow-hidden rounded-[999px_999px_24px_24px] sm:aspect-[3/4] sm:max-h-[320px]">
+                    <CommunityImagePlaceholder
+                      src={blog.cover}
+                      alt={blog.title}
+                      tone={tone}
+                      label="Cover 3:4"
+                      className="community-zoom"
+                    />
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+
+                  <div className="flex flex-col gap-2.5 px-1">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
+                      {blog.category} &nbsp;/&nbsp; {blog.readMinutes} min read
+                    </span>
+
+                    <h3 className="community-ttl line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-black sm:text-[18px]">
+                      {blog.title}
+                    </h3>
+
+                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-[var(--community-muted)] sm:text-sm">
+                      {blog.excerpt}
+                    </p>
+
+                    <div className="mt-1 flex items-center gap-2.5 font-mono text-xs text-black sm:text-[13px]">
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-[var(--community-soft2)]" />
+                      <span>{blog.author?.name || '[Author name]'}</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }
