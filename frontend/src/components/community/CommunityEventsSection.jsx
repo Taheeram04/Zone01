@@ -86,14 +86,11 @@ export default function CommunityEventsSection() {
       className="w-full bg-[var(--community-soft)] py-16 md:py-20"
     >
       <Container>
-        <div className="mx-auto w-full max-w-7xl">
+        <div className="w-full">
           <CommunitySectionHeader
             step="02 — Events"
             titleLead="Join us"
             titleAccent="in the Zone"
-            description="Open days, workshops and demo days. Come and meet the community in person."
-            viewAllText="View all events"
-            viewAllLink="/community/events"
           />
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
@@ -256,6 +253,28 @@ export default function CommunityEventsSection() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          {/* View All Events - Bottom Right */}
+          <div className="mt-8 flex justify-end sm:mt-10">
+            <Link to="/community/events" className="community-pill">
+              <span>View all events</span>
+              <i>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </i>
+            </Link>
           </div>
         </div>
       </Container>
