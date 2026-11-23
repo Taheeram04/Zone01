@@ -113,8 +113,6 @@ export default function CommunityNewsSection() {
               titleLead="Latest from"
               titleAccent="the Zone"
               description="Stories about our apprentices, partners and the impact we are building across Kisumu."
-              viewAllText="View all news"
-              viewAllLink="/community/news"
             />
 
             <div className="flex flex-wrap items-start gap-8 lg:gap-12">
@@ -228,6 +226,28 @@ export default function CommunityNewsSection() {
                     </Link>
                   );
                 })}
+
+                {/* View All News - Bottom Right */}
+                <div className="mt-6 flex justify-end pt-2 sm:mt-8">
+                  <Link to="/community/news" className="community-pill">
+                    <span>View all news</span>
+                    <i>
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </i>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
