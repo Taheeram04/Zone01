@@ -205,6 +205,30 @@
   color: var(--community-blue);
 }
 
+.community-erow {
+  display: flex;
+  transition: background-color 0.35s ease, padding 0.35s ease;
+  text-decoration: none;
+}
+
+.community-erow:hover {
+  background-color: var(--community-soft);
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 24px;
+}
+
+.community-erow:hover .community-round {
+  background-color: var(--community-blue);
+  color: #ffffff;
+  border-color: var(--community-blue);
+  transform: rotate(-45deg);
+}
+
+.community-erow:hover .community-ttl {
+  color: var(--community-blue);
+}
+
 .community-thumb {
   overflow: hidden;
   position: relative;
