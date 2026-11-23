@@ -3,6 +3,7 @@ import CommunityPartners from '../components/community-partners.jsx';
 import OurStaff from '../components/our-staff.jsx';
 import CommunityNewsSection from '../components/community/CommunityNewsSection.jsx';
 import CommunityEventsSection from '../components/community/CommunityEventsSection.jsx';
+import CommunityBlogsSection from '../components/community/CommunityBlogsSection.jsx';
 import CommunityFeed from '../components/community-feed.jsx';
 
 export default function Community() {
@@ -13,6 +14,7 @@ export default function Community() {
       <OurStaff />
       <CommunityNewsSection />
       <CommunityEventsSection />
+      <CommunityBlogsSection />
       <CommunityFeed />
     </div>
   );
