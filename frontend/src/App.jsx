@@ -11,6 +11,7 @@ const Register = lazy(() => import('./pages/Register.jsx'));
 const Hire = lazy(() => import('./pages/Hire.jsx'));
 const Impact = lazy(() => import('./pages/Impact.jsx'));
 const Community = lazy(() => import('./pages/Community.jsx'));
+const CommunityAllNews = lazy(() => import('./pages/CommunityAllNews.jsx'));
 const Faqs = lazy(() => import('./components/faqs.jsx'));
 const ComingSoon = lazy(() => import('./components/coming-soon.jsx'));
 
@@ -55,6 +56,16 @@ function App() {
           element={
             <Layout>
               <Community />
+            </Layout>
+          }
+        />
+
+        {/* Community — All News */}
+        <Route
+          path="/community/news"
+          element={
+            <Layout>
+              <CommunityAllNews />
             </Layout>
           }
         />
