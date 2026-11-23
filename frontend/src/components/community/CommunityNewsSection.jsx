@@ -101,6 +101,25 @@ export default function CommunityNewsSection() {
 
   return (
     <>
+      {/* Decorative Marquee Before News */}
+      <div
+        aria-hidden="true"
+        className="w-full overflow-hidden border-y border-[var(--community-line)] bg-white py-6 select-none sm:py-8"
+      >
+        <div className="community-mq">
+          {[0, 1].map((copyIndex) => (
+            <div key={copyIndex} className="community-mq-half">
+              {marqueeWords.map((word, wordIndex) => (
+                <Fragment key={`${word}-${wordIndex}`}>
+                  <span className="community-outline">{word}</span>
+                  <span className="h-3.5 w-3.5 shrink-0 rounded-full bg-[var(--community-blue)]" />
+                </Fragment>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
       <section
         id="community-news"
         aria-labelledby="community-news-header"
@@ -252,25 +271,6 @@ export default function CommunityNewsSection() {
           </div>
         </Container>
       </section>
-
-      {/* Decorative Marquee Directly After News */}
-      <div
-        aria-hidden="true"
-        className="w-full overflow-hidden border-y border-[var(--community-line)] bg-white py-6 select-none sm:py-8"
-      >
-        <div className="community-mq">
-          {[0, 1].map((copyIndex) => (
-            <div key={copyIndex} className="community-mq-half">
-              {marqueeWords.map((word, wordIndex) => (
-                <Fragment key={`${word}-${wordIndex}`}>
-                  <span className="community-outline">{word}</span>
-                  <span className="h-3.5 w-3.5 shrink-0 rounded-full bg-[var(--community-blue)]" />
-                </Fragment>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
     </>
   );
 }
