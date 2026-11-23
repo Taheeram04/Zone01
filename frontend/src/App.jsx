@@ -13,6 +13,7 @@ const Impact = lazy(() => import('./pages/Impact.jsx'));
 const Community = lazy(() => import('./pages/Community.jsx'));
 const CommunityAllNews = lazy(() => import('./pages/CommunityAllNews.jsx'));
 const CommunityAllEvents = lazy(() => import('./pages/CommunityAllEvents.jsx'));
+const CommunityAllBlogs = lazy(() => import('./pages/CommunityAllBlogs.jsx'));
 const Faqs = lazy(() => import('./components/faqs.jsx'));
 const ComingSoon = lazy(() => import('./components/coming-soon.jsx'));
 
@@ -77,6 +78,16 @@ function App() {
           element={
             <Layout>
               <CommunityAllEvents />
+            </Layout>
+          }
+        />
+
+        {/* Community — All Blogs */}
+        <Route
+          path="/community/blogs"
+          element={
+            <Layout>
+              <CommunityAllBlogs />
             </Layout>
           }
         />

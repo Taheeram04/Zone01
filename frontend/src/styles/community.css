@@ -382,6 +382,19 @@
   }
 }
 
+/* Three-column CSS multi-column masonry */
+.community-mason {
+  columns: 3 320px;
+  column-gap: 40px;
+}
+
+.community-mason-item {
+  break-inside: avoid;
+  margin-bottom: 72px;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Prefers Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
