@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Container } from './layout.jsx';
+import chichwaImg from '../assets/Chichwa.png';
 
 /**
  * Completed Projects data.

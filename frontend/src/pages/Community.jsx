@@ -4,7 +4,7 @@ import OurStaff from '../components/our-staff.jsx';
 import CommunityNewsSection from '../components/community/CommunityNewsSection.jsx';
 import CommunityEventsSection from '../components/community/CommunityEventsSection.jsx';
 import CommunityBlogsSection from '../components/community/CommunityBlogsSection.jsx';
-import CommunityFeed from '../components/community-feed.jsx';
+import CommunityPodcastBanner from '../components/community/CommunityPodcastBanner.jsx';
 
 export default function Community() {
   return (
@@ -15,7 +15,7 @@ export default function Community() {
       <CommunityNewsSection />
       <CommunityEventsSection />
       <CommunityBlogsSection />
-      <CommunityFeed />
+      <CommunityPodcastBanner />
     </div>
   );
 }
