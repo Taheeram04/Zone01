@@ -1,0 +1,376 @@
+/* Scoped Community Styles & Animations */
+:root {
+  --community-blue: #0063F9;
+  --community-deep: #092C3E;
+  --community-ink: #000000;
+  --community-muted: #55627F;
+  --community-line: #E1E8F5;
+  --community-soft: #EEF3FF;
+  --community-soft2: #DCE7FF;
+  --community-soft3: #C4D6FF;
+  --community-ground: #FAFBFF;
+}
+
+/* Animations */
+@keyframes community-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes community-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(20px, 20px);
+  }
+}
+
+@keyframes community-fdrift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 22px 22px;
+  }
+}
+
+@keyframes community-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes community-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes community-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes community-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* Reusable Scoped Utility Classes */
+.community-rise {
+  opacity: 0;
+  animation: community-rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.community-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 6px 6px 6px 24px;
+  border: 1px solid var(--community-line);
+  background: #ffffff;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--community-ink);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.community-pill i {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--community-blue);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-style: normal;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.3s ease;
+}
+
+.community-pill:hover {
+  border-color: var(--community-blue);
+}
+
+.community-pill:hover i {
+  transform: rotate(-45deg);
+}
+
+.community-pill-light {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.community-pill-light i {
+  background: var(--community-deep);
+}
+
+.community-round {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--community-line);
+  display: grid;
+  place-items: center;
+  color: var(--community-blue);
+  flex-shrink: 0;
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.community-lift {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  text-decoration: none;
+}
+
+.community-lift:hover {
+  transform: translateY(-6px);
+}
+
+.community-lift:hover .community-zoom {
+  transform: scale(1.05);
+}
+
+.community-lift:hover .community-round {
+  background-color: var(--community-blue);
+  color: #ffffff;
+  border-color: var(--community-blue);
+  transform: rotate(-45deg);
+}
+
+.community-lift:hover .community-ttl {
+  color: var(--community-blue);
+}
+
+.community-lift:hover .community-ulink {
+  background-size: 100% 1px;
+}
+
+.community-ttl {
+  transition: color 0.3s ease;
+}
+
+.community-ulink {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  padding-bottom: 4px;
+  font-family: var(--font-mono);
+}
+
+.community-row {
+  display: flex;
+  align-items: center;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  text-decoration: none;
+}
+
+.community-row:hover {
+  transform: translateX(12px);
+}
+
+.community-row:hover .community-round {
+  background-color: var(--community-blue);
+  color: #ffffff;
+  border-color: var(--community-blue);
+  transform: rotate(-45deg);
+}
+
+.community-row:hover .community-ttl {
+  color: var(--community-blue);
+}
+
+.community-thumb {
+  overflow: hidden;
+  position: relative;
+}
+
+.community-zoom {
+  width: 100%;
+  height: 100%;
+  transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.community-ph {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  width: 100%;
+  height: 100%;
+}
+
+.community-ph::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background-image: radial-gradient(circle, rgba(0, 99, 249, 0.3) 1.4px, transparent 1.8px);
+  background-size: 20px 20px;
+  animation: community-drift 14s linear infinite;
+}
+
+.community-ph span {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  color: #0046b8;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  z-index: 1;
+}
+
+.community-ph-a {
+  background-color: var(--community-soft2);
+}
+
+.community-ph-b {
+  background-color: var(--community-soft3);
+}
+
+.community-ph-c {
+  background-color: var(--community-blue);
+}
+
+.community-ph-d {
+  background-color: var(--community-deep);
+}
+
+.community-ph-c::before,
+.community-ph-d::before {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.34) 1.4px, transparent 1.8px);
+}
+
+.community-ph-c span,
+.community-ph-d span {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--community-deep);
+}
+
+.community-orb {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  animation: community-float 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.community-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 99, 249, 0.35);
+  animation: community-float 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.community-field {
+  position: absolute;
+  right: -40px;
+  top: 0;
+  width: 58%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(0, 99, 249, 0.3) 1.6px, transparent 2px);
+  background-size: 22px 22px;
+  animation: community-fdrift 16s linear infinite;
+  -webkit-mask-image: radial-gradient(circle at 78% 35%, #000 0, transparent 66%);
+  mask-image: radial-gradient(circle at 78% 35%, #000 0, transparent 66%);
+  pointer-events: none;
+}
+
+.community-mq {
+  display: flex;
+  width: max-content;
+  animation: community-marquee 70s linear infinite;
+}
+
+.community-mq-half {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  padding-right: 56px;
+}
+
+.community-outline {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0, 99, 249, 0.35);
+  white-space: nowrap;
+}
+
+.community-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  animation: community-pulse 2s ease-out infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.community-colon {
+  animation: community-blink 1s steps(1) infinite;
+}
+
+/* Offset for middle card in blogs section */
+.community-off {
+  margin-top: 0;
+}
+
+@media (min-width: 1000px) {
+  .community-off {
+    margin-top: 56px;
+  }
+}
+
+/* Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .community-rise {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .community-ulink {
+    background-size: 100% 1px !important;
+  }
+}

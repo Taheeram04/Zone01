@@ -1,7 +1,7 @@
 import CommunityHero from '../components/community.jsx';
 import CommunityPartners from '../components/community-partners.jsx';
 import OurStaff from '../components/our-staff.jsx';
-import CommunityFeaturedArticle from '../components/community-featured-article.jsx';
+import CommunityNewsSection from '../components/community/CommunityNewsSection.jsx';
 import CommunityFeed from '../components/community-feed.jsx';
 
 export default function Community() {
@@ -10,7 +10,7 @@ export default function Community() {
       <CommunityHero />
       <CommunityPartners />
       <OurStaff />
-      <CommunityFeaturedArticle />
+      <CommunityNewsSection />
       <CommunityFeed />
     </div>
   );
