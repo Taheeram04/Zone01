@@ -112,7 +112,6 @@ export default function CommunityNewsSection() {
               step="01 — News"
               titleLead="Latest from"
               titleAccent="the Zone"
-              description="Stories about our apprentices, partners and the impact we are building across Kisumu."
             />
 
             <div className="flex flex-wrap items-start gap-8 lg:gap-12">
