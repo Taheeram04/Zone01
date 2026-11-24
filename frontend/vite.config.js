@@ -2,6 +2,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { vitePrerenderPlugin } from 'vite-prerender-plugin'
 
 // The Django CMS backend serves the countdown config at /api/.
 // Proxy it during dev/preview so the browser can call it same-origin.
@@ -38,11 +41,31 @@ function inlineCssPlugin() {
   }
 }
 
+const rootDir = path.dirname(fileURLToPath(import.meta.url))
+
 export default defineConfig({
   // When Django serves the SPA it collects the bundle as static files, so the
   // assets must be requested under /static/. `make frontend` sets VITE_BASE.
   base: process.env.VITE_BASE || '/',
-  plugins: [react(), tailwindcss(), inlineCssPlugin()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    inlineCssPlugin(),
+    vitePrerenderPlugin({
+      renderTarget: '#root',
+      prerenderScript: path.resolve(rootDir, 'src/entry-prerender.jsx'),
+      additionalPrerenderRoutes: [
+        '/',
+        '/about',
+        '/community',
+        '/hire',
+        '/impact',
+        '/faq',
+        '/register',
+        '/donate',
+      ],
+    }),
+  ],
   build: {
     // The single main bundle (React + framer-motion + lucide) is ~500 kB
     // minified. Raise the warning threshold so deploy logs (Render/Fly) stay

@@ -20,7 +20,7 @@ export const TypewriterText = ({
   // the typewriter uses dozens of timers and reflows, which is wasted work on
   // a small screen.
   const staticMode =
-    typeof window !== 'undefined' &&
+    typeof window === 'undefined' ||
     window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)')
       .matches;
   const [displayedText, setDisplayedText] = useState(staticMode ? text : '');
@@ -100,7 +100,7 @@ export const KineticHeading = ({
   // readable text instead of one animated span per character. This removes
   // hundreds of animation nodes from the mobile main thread.
   const staticMode =
-    typeof window !== 'undefined' &&
+    typeof window === 'undefined' ||
     window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)')
       .matches;
 
