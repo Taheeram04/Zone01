@@ -33,6 +33,7 @@
     "globals": "^17.11.0",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vite-prerender-plugin": "^0.5.14"
   }
 }
