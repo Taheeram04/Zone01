@@ -163,7 +163,7 @@ const CommunityPartners = () => {
             id="community-partners-title"
             className="font-sans text-[30px] font-black leading-tight tracking-tight text-[#1E293B] md:text-section-headline"
           >
-            Our partners
+            Our Partners
           </h2>
           <p className="mx-auto mt-3 max-w-xl font-sans text-body-m leading-relaxed text-[#64748B] sm:text-base">
             The organisations investing in Zone01 Kisumu&apos;s apprentices and the
