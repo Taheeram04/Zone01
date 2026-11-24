@@ -1,3 +1,5 @@
+import gdgImg from '../assets/gdg.jpg';
+
 /**
  * Community Events Data
  *
@@ -24,15 +26,15 @@ export const INITIAL_EVENTS_DATA = [
   },
   {
     id: 'event-2',
-    title: 'Event title placeholder, two lines at most',
+    title: 'Google Developer Group AI Training',
     type: 'Workshop',
     dateNumeral: 'DD',
     month: 'Mon',
     year: 'YYYY',
     startDate: '2026-12-12',
     time: '[00:00 – 00:00 EAT]',
-    venue: '[Venue placeholder], Kisumu',
-    image: null,
+    venue: 'Zone01 Kisumu Campus',
+    image: gdgImg,
     registerUrl: '/community/events',
     isPast: false,
     next: false,

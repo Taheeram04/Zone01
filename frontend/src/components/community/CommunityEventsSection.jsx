@@ -51,7 +51,7 @@ export default function CommunityEventsSection() {
               startDate: ev.event_date || '2026-12-05',
               time: '[00:00 – 00:00 EAT]',
               venue: '[Venue placeholder], Kisumu',
-              image: ev.image || null,
+              image: ev.image || INITIAL_EVENTS_DATA[idx]?.image || null,
               registerUrl: ev.external_url || '/community/events',
               isPast: false,
               next: idx === 0,
