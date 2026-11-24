@@ -82,14 +82,11 @@ export default function CommunityBlogsSection() {
       className="w-full bg-white py-16 md:py-20"
     >
       <Container>
-        <div className="mx-auto w-full max-w-7xl">
+        <div className="w-full">
           <CommunitySectionHeader
             step="03 — Blogs"
             titleLead="Stories from"
             titleAccent="the builders"
-            description="Ideas, tutorials and reflections from apprentices, mentors and partners."
-            viewAllText="View all blogs"
-            viewAllLink="/community/blogs"
           />
 
           <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
@@ -136,6 +133,28 @@ export default function CommunityBlogsSection() {
                 </Link>
               );
             })}
+          </div>
+
+          {/* View All Blogs - Bottom Right */}
+          <div className="mt-8 flex justify-end sm:mt-10">
+            <Link to="/community/blogs" className="community-pill">
+              <span>View all blogs</span>
+              <i>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </i>
+            </Link>
           </div>
         </div>
       </Container>
