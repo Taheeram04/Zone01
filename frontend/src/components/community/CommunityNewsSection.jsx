@@ -133,14 +133,14 @@ export default function CommunityNewsSection() {
               titleAccent="the Zone"
             />
 
-            <div className="flex flex-wrap items-start gap-8 lg:gap-12">
-              {/* Featured Story (Left Column) */}
+            <div className="flex flex-wrap items-start justify-between gap-8 lg:gap-12 xl:gap-16">
+              {/* Featured Story (Left Column - Highlight Card) */}
               <Link
                 to="/community/news"
-                className="community-lift community-rise flex min-w-0 flex-1 flex-col gap-5 lg:max-w-[480px]"
+                className="community-lift community-rise flex min-w-0 flex-1 flex-col gap-5 sm:gap-6 lg:max-w-[560px] xl:max-w-[620px]"
                 style={{ animationDelay: '0.15s' }}
               >
-                <div className="community-thumb relative aspect-[5/4] max-h-[360px] w-full overflow-hidden rounded-2xl sm:rounded-[28px]">
+                <div className="community-thumb relative aspect-[5/4] max-h-[420px] w-full overflow-hidden rounded-2xl sm:rounded-[28px]">
                   <CommunityImagePlaceholder
                     src={featured.image}
                     alt={featured.title}
@@ -176,7 +176,7 @@ export default function CommunityNewsSection() {
                     {featured.category} &nbsp;/&nbsp; {featured.date}
                   </span>
 
-                  <h3 className="community-ttl font-sans text-[clamp(18px,2vw,24px)] font-extrabold uppercase leading-snug tracking-tight text-black">
+                  <h3 className="community-ttl font-sans text-[clamp(20px,2.2vw,28px)] font-extrabold uppercase leading-snug tracking-tight text-black">
                     {featured.title}
                   </h3>
 
@@ -190,8 +190,8 @@ export default function CommunityNewsSection() {
                 </div>
               </Link>
 
-              {/* List Rows 02 to 05 (Right Column) */}
-              <div className="flex min-w-0 flex-[1_1_340px] flex-col border-t border-[var(--community-line)]">
+              {/* List Rows 02 to 05 (Right Column - Side Cards) */}
+              <div className="flex min-w-0 flex-1 flex-col border-t border-[var(--community-line)] lg:max-w-[540px] xl:max-w-[580px]">
                 {listRows.map((row, index) => {
                   const rowNum = String(index + 2).padStart(2, '0');
                   const delay = `${0.3 + index * 0.1}s`;
