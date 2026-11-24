@@ -1,4 +1,5 @@
 import maggieImg from '../assets/maggie.JPG';
+import womenInTechImg from '../assets/002.webp';
 
 /**
  * Community Blogs Data
@@ -44,17 +45,17 @@ export const INITIAL_BLOGS_DATA = [
   },
   {
     id: 'blog-3',
-    slug: 'blog-title-placeholder-3',
-    title: 'Blog title placeholder that can run to three lines',
-    excerpt: 'A short excerpt placeholder that gives readers a reason to open the article.',
-    category: 'Career',
+    slug: 'women-in-tech',
+    title: 'Women in Tech: Empowering the Next Generation of Developers',
+    excerpt: 'How Zone01 Kisumu is breaking barriers, closing the digital divide and championing women in software engineering.',
+    category: 'Community',
     author: {
       name: '[Author name]',
       avatar: null,
     },
-    readMinutes: '[0]',
+    readMinutes: '4',
     date: '[DD Mon YYYY]',
-    cover: null,
+    cover: womenInTechImg,
     aspect: 'arch-3:4',
     tone: 'c',
     featured: false,
