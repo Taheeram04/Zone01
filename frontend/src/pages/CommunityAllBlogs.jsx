@@ -208,41 +208,33 @@ export default function CommunityAllBlogs() {
               No blog posts found matching your criteria.
             </div>
           ) : (
-            <div className="community-mason">
+            <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {visibleBlogs.map((blog, idx) => {
-                // Determine cover aspect ratio: arch 3:4, 4:3, or 1:1
-                const aspect = blog.aspect || (idx % 3 === 0 ? 'arch-3:4' : idx % 3 === 1 ? '4:3' : '1:1');
-                const aspectClass =
-                  aspect === 'arch-3:4'
-                    ? 'aspect-[3/4] max-h-[300px] rounded-[999px_999px_24px_24px]'
-                    : aspect === '4:3'
-                      ? 'aspect-[4/3] rounded-2xl'
-                      : 'aspect-square rounded-2xl';
-
                 const tone = blog.tone || (idx % 4 === 0 ? 'a' : idx % 3 === 0 ? 'b' : idx % 2 === 0 ? 'd' : 'c');
 
                 return (
                   <Link
                     key={`${blog.id}-${idx}`}
                     to="/community/blogs"
-                    className="community-lift community-mason-item gap-4"
+                    className="community-lift group flex flex-col gap-4 sm:gap-5"
                   >
-                    <div className={`community-thumb relative w-full overflow-hidden ${aspectClass}`}>
+                    {/* Arch-shaped cover: top corners fully rounded (999px), bottom corners 24px, capped max-height */}
+                    <div className="community-thumb relative aspect-[4/3] max-h-[280px] w-full overflow-hidden rounded-[999px_999px_24px_24px] sm:aspect-[3/4] sm:max-h-[320px]">
                       <CommunityImagePlaceholder
                         src={blog.cover}
                         alt={blog.title}
                         tone={tone}
-                        label={aspect === 'arch-3:4' ? 'Cover 3:4' : aspect === '4:3' ? 'Cover 4:3' : 'Cover 1:1'}
+                        label="Cover 3:4"
                         className="community-zoom"
                       />
                     </div>
 
-                    <div className="flex flex-col gap-2 px-1">
+                    <div className="flex flex-col gap-2.5 px-1">
                       <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
                         {blog.category} &nbsp;/&nbsp; {blog.readMinutes} min read
                       </span>
 
-                      <h3 className="community-ttl line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-black sm:text-[17px]">
+                      <h3 className="community-ttl line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-black transition-colors duration-200 group-hover:text-[var(--community-blue)] sm:text-[18px]">
                         {blog.title}
                       </h3>
 
