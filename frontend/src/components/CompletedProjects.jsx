@@ -125,7 +125,7 @@ const EASE = [0.2, 0.7, 0.2, 1];
  * links, mailto:, tel: and other schemes stay in the current tab.
  */
 const isExternalHref = (href) => {
-  if (!href) return false;
+  if (!href || typeof window === 'undefined') return false;
 
   try {
     const url = new URL(href, window.location.origin);
