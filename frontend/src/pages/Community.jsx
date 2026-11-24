@@ -10,8 +10,8 @@ export default function Community() {
   return (
     <div className="community-page">
       <CommunityHero />
-      <CommunityPartners />
       <OurStaff />
+      <CommunityPartners />
       <CommunityNewsSection />
       <CommunityEventsSection />
       <CommunityBlogsSection />
