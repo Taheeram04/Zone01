@@ -1,3 +1,5 @@
+import maggieImg from '../assets/maggie.JPG';
+
 /**
  * Community Blogs Data
  *
@@ -35,7 +37,7 @@ export const INITIAL_BLOGS_DATA = [
     },
     readMinutes: '[0]',
     date: '[DD Mon YYYY]',
-    cover: null,
+    cover: maggieImg,
     aspect: 'arch-3:4',
     tone: 'a',
     featured: false,

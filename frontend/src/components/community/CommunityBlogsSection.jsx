@@ -53,7 +53,7 @@ export default function CommunityBlogsSection() {
             },
             readMinutes: post.read_minutes || '[0]',
             date: post.published_at ? new Date(post.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '[DD Mon YYYY]',
-            cover: post.image || null,
+            cover: post.image || INITIAL_BLOGS_DATA[idx + 1]?.cover || null,
             tone: idx === 0 ? 'a' : idx === 1 ? 'c' : 'b',
           }));
 
