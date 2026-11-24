@@ -20,7 +20,7 @@ export default function CommunitySectionHeader({
       <div>
         <span
           className={`font-mono text-[11px] font-bold uppercase tracking-[0.14em] ${
-            dark ? 'text-blue-400' : 'text-[var(--community-blue)]'
+            dark ? 'text-white/80' : 'text-[var(--community-blue)]'
           }`}
         >
           {step}
@@ -32,7 +32,7 @@ export default function CommunitySectionHeader({
         >
           {titleLead}
           <br />
-          <span className={dark ? 'text-[#38BDF8]' : 'text-[var(--community-blue)]'}>
+          <span className={dark ? 'text-[#DCE7FF]' : 'text-[var(--community-blue)]'}>
             {titleAccent}
           </span>
         </h2>

@@ -93,7 +93,7 @@ export default function CommunityBlogsSection() {
           height: '130px',
           top: '50px',
           right: '8%',
-          borderColor: 'rgba(0, 99, 249, 0.35)',
+          borderColor: 'rgba(255, 255, 255, 0.25)',
         }}
       />
       <i
@@ -104,7 +104,7 @@ export default function CommunityBlogsSection() {
           height: '64px',
           bottom: '80px',
           left: '5%',
-          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderColor: 'rgba(255, 255, 255, 0.18)',
           animationDelay: '-5s',
         }}
       />
@@ -142,20 +142,20 @@ export default function CommunityBlogsSection() {
                   </div>
 
                   <div className="flex flex-col gap-2.5 px-1">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-blue-400 sm:text-[11px]">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#DCE7FF] sm:text-[11px]">
                       {blog.category} &nbsp;/&nbsp; {blog.readMinutes} min read
                     </span>
 
-                    <h3 className="line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-white transition-colors duration-200 group-hover:text-blue-400 sm:text-[18px]">
+                    <h3 className="line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-white transition-colors duration-200 group-hover:text-[#DCE7FF] sm:text-[18px]">
                       {blog.title}
                     </h3>
 
-                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-slate-300 sm:text-sm">
+                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-white/80 sm:text-sm">
                       {blog.excerpt}
                     </p>
 
-                    <div className="mt-1 flex items-center gap-2.5 font-mono text-xs text-white/90 sm:text-[13px]">
-                      <span className="h-7 w-7 shrink-0 rounded-full bg-white/20" />
+                    <div className="mt-1 flex items-center gap-2.5 font-mono text-xs text-white sm:text-[13px]">
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-white/25" />
                       <span>{blog.author?.name || '[Author name]'}</span>
                     </div>
                   </div>
