@@ -79,14 +79,43 @@ export default function CommunityBlogsSection() {
     <section
       id="community-blogs"
       aria-labelledby="community-blogs-header"
-      className="w-full bg-white py-16 md:py-20"
+      className="community-dark-bg relative w-full overflow-hidden py-16 text-white md:py-20"
     >
-      <Container>
+      {/* Dynamic Animated Motion Elements */}
+      <div className="community-dark-blob-1" aria-hidden="true" />
+      <div className="community-dark-blob-2" aria-hidden="true" />
+      <div className="community-dark-field" aria-hidden="true" />
+      <i
+        className="community-ring"
+        aria-hidden="true"
+        style={{
+          width: '130px',
+          height: '130px',
+          top: '50px',
+          right: '8%',
+          borderColor: 'rgba(0, 99, 249, 0.35)',
+        }}
+      />
+      <i
+        className="community-ring"
+        aria-hidden="true"
+        style={{
+          width: '64px',
+          height: '64px',
+          bottom: '80px',
+          left: '5%',
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          animationDelay: '-5s',
+        }}
+      />
+
+      <Container className="relative z-10">
         <div className="w-full">
           <CommunitySectionHeader
             step="03 — Blogs"
             titleLead="Stories from"
             titleAccent="the builders"
+            dark
           />
 
           <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
@@ -99,7 +128,7 @@ export default function CommunityBlogsSection() {
                 <Link
                   key={`${blog.id}-${idx}`}
                   to="/community/blogs"
-                  className={`community-lift flex flex-col gap-4 sm:gap-5 ${offClass}`}
+                  className={`community-lift group flex flex-col gap-4 sm:gap-5 ${offClass}`}
                 >
                   {/* Arch-shaped cover: top corners fully rounded (999px), bottom corners 24px, capped max-height */}
                   <div className="community-thumb relative aspect-[4/3] max-h-[280px] w-full overflow-hidden rounded-[999px_999px_24px_24px] sm:aspect-[3/4] sm:max-h-[320px]">
@@ -113,20 +142,20 @@ export default function CommunityBlogsSection() {
                   </div>
 
                   <div className="flex flex-col gap-2.5 px-1">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)] sm:text-[11px]">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-blue-400 sm:text-[11px]">
                       {blog.category} &nbsp;/&nbsp; {blog.readMinutes} min read
                     </span>
 
-                    <h3 className="community-ttl line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-black sm:text-[18px]">
+                    <h3 className="line-clamp-2 font-sans text-base font-extrabold uppercase leading-snug tracking-tight text-white transition-colors duration-200 group-hover:text-blue-400 sm:text-[18px]">
                       {blog.title}
                     </h3>
 
-                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-[var(--community-muted)] sm:text-sm">
+                    <p className="line-clamp-2 font-mono text-xs leading-relaxed text-slate-300 sm:text-sm">
                       {blog.excerpt}
                     </p>
 
-                    <div className="mt-1 flex items-center gap-2.5 font-mono text-xs text-black sm:text-[13px]">
-                      <span className="h-7 w-7 shrink-0 rounded-full bg-[var(--community-soft2)]" />
+                    <div className="mt-1 flex items-center gap-2.5 font-mono text-xs text-white/90 sm:text-[13px]">
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-white/20" />
                       <span>{blog.author?.name || '[Author name]'}</span>
                     </div>
                   </div>

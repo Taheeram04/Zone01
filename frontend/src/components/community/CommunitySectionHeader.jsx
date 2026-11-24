@@ -13,24 +13,39 @@ export default function CommunitySectionHeader({
   description,
   viewAllText,
   viewAllLink,
+  dark = false,
 }) {
   return (
     <div className="community-rise mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
       <div>
-        <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--community-blue)]">
+        <span
+          className={`font-mono text-[11px] font-bold uppercase tracking-[0.14em] ${
+            dark ? 'text-blue-400' : 'text-[var(--community-blue)]'
+          }`}
+        >
           {step}
         </span>
-        <h2 className="mt-3 font-sans text-[clamp(28px,3.2vw,44px)] font-extrabold uppercase leading-[1.08] tracking-tight text-black sm:mt-4">
+        <h2
+          className={`mt-3 font-sans text-[clamp(28px,3.2vw,44px)] font-extrabold uppercase leading-[1.08] tracking-tight sm:mt-4 ${
+            dark ? 'text-white' : 'text-black'
+          }`}
+        >
           {titleLead}
           <br />
-          <span className="text-[var(--community-blue)]">{titleAccent}</span>
+          <span className={dark ? 'text-[#38BDF8]' : 'text-[var(--community-blue)]'}>
+            {titleAccent}
+          </span>
         </h2>
       </div>
 
       {(description || viewAllLink) && (
         <div className="flex max-w-[340px] flex-col items-start gap-4 sm:gap-5">
           {description && (
-            <p className="font-mono text-sm leading-relaxed text-[var(--community-muted)]">
+            <p
+              className={`font-mono text-sm leading-relaxed ${
+                dark ? 'text-slate-300' : 'text-[var(--community-muted)]'
+              }`}
+            >
               {description}
             </p>
           )}
